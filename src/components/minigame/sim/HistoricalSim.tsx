@@ -268,12 +268,18 @@ function WorldBackdrop({ stage, reduceMotion }: { stage: SimStage; reduceMotion:
 function TopBar({
   state,
   stage,
+  settings,
+  onChangeSettings,
   onOpenTech,
   onOpenInsights,
   onRestart,
 }: {
   state: SimState;
   stage: SimStage;
+  settings: import("./cinematic/SettingsToggle").CinematicSettings;
+  onChangeSettings: (
+    patch: Partial<import("./cinematic/SettingsToggle").CinematicSettings>,
+  ) => void;
   onOpenTech: () => void;
   onOpenInsights: () => void;
   onRestart: () => void;
@@ -301,6 +307,7 @@ function TopBar({
       </div>
 
       <div className="flex items-center gap-1.5">
+        <SettingsToggle settings={settings} onChange={onChangeSettings} />
         <IconBtn label="Tech tree" onClick={onOpenTech}>
           <Cpu className="h-4 w-4" />
           <span className="hidden text-xs sm:inline">Tech</span>
@@ -322,6 +329,7 @@ function TopBar({
     </header>
   );
 }
+
 
 function IconBtn({
   children,
