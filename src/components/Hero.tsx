@@ -76,13 +76,22 @@ export function Hero({ onStart }: { onStart: () => void }) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 1.2 }}
           className="mt-12 flex flex-col items-center gap-6"
-        >
-          <button
-            onClick={onStart}
-            className="group relative inline-flex items-center gap-3 overflow-hidden rounded-full bg-amber-200 px-8 py-4 text-sm font-medium uppercase tracking-[0.25em] text-stone-950 transition-transform hover:scale-[1.02]"
-          >
-            <span>Bắt đầu hành trình</span>
-            <ArrowDown className="h-4 w-4 transition-transform group-hover:translate-y-0.5" />
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <button
+              onClick={onStart}
+              className="group relative inline-flex items-center gap-3 overflow-hidden rounded-full bg-amber-200 px-8 py-4 text-sm font-medium uppercase tracking-[0.25em] text-stone-950 transition-transform hover:scale-[1.02]"
+            >
+              <span>Bắt đầu hành trình</span>
+              <ArrowDown className="h-4 w-4 transition-transform group-hover:translate-y-0.5" />
+            </button>
+            <Link
+              to="/minigame"
+              className="inline-flex items-center gap-2 rounded-full border border-amber-200/40 bg-white/5 px-6 py-4 text-sm uppercase tracking-[0.25em] text-amber-100 backdrop-blur transition hover:bg-white/10"
+            >
+              <Gamepad2 className="h-4 w-4" /> Chơi mini game
+            </Link>
+          </div>
+
           </button>
           <div className="flex flex-col items-center gap-2 text-white/40">
             <span className="text-[10px] uppercase tracking-[0.4em]">scroll</span>
