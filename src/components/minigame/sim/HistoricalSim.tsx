@@ -716,68 +716,8 @@ function MetricBar({ k, value }: { k: MetricKey; value: number }) {
   );
 }
 
-/* =========================================================
-   Revolution cinematic
-   ========================================================= */
-function RevolutionPanel({
-  stage,
-  metrics,
-  onDone,
-}: {
-  stage: SimStage;
-  metrics: Record<MetricKey, number>;
-  onDone: () => void;
-}) {
-  const burst = metrics.revolution >= stage.revolutionThreshold;
-  useEffect(() => {
-    const t = setTimeout(onDone, 3800);
-    return () => clearTimeout(t);
-  }, [onDone]);
-  return (
-    <motion.section
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.4 }}
-      className="mx-auto max-w-3xl pt-8 text-center"
-    >
-      <motion.div
-        initial={{ scale: 0.7, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ duration: 0.8 }}
-        className="relative mx-auto h-28 w-28"
-      >
-        <div className="absolute inset-0 animate-era-pulse rounded-full border border-white/40" />
-        <div className="absolute inset-0 flex items-center justify-center text-5xl text-white">
-          {burst ? "⚡" : "✦"}
-        </div>
-      </motion.div>
+/* (Legacy RevolutionPanel removed — replaced by RevolutionCinematic.) */
 
-      <p className="mt-8 text-xs uppercase tracking-[0.5em] text-white/50">
-        {burst ? "Cách mạng bùng nổ" : "Chuyển hình thái"}
-      </p>
-      <h2 className="mt-3 font-display text-4xl text-balance text-white sm:text-5xl">
-        {stage.transitionTitle}
-      </h2>
-      <motion.p
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.6, duration: 0.6 }}
-        className="mx-auto mt-4 max-w-xl text-white/75 italic"
-      >
-        "{stage.transitionLine}"
-      </motion.p>
-      <motion.p
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.2 }}
-        className="mt-8 text-sm text-white/50"
-      >
-        Lực lượng sản xuất đã vượt khỏi quan hệ sản xuất cũ…
-      </motion.p>
-    </motion.section>
-  );
-}
 
 /* =========================================================
    Finale
