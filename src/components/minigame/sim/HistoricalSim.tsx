@@ -195,13 +195,14 @@ import { NARRATOR_LINES, STRESS } from "./cinematic/cinematicConfig";
               />
             )}
             {state.phase === "revolution" && (
-              <RevolutionPanel
+              <RevolutionCinematic
                 key={`rev-${stage.id}`}
                 stage={stage}
                 metrics={state.metrics}
                 onDone={() => dispatch({ type: "ackRevolution" })}
               />
             )}
+
             {state.phase === "finale" && (
               <Finale
                 key="finale"
