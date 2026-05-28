@@ -241,7 +241,7 @@ export function MiniGame() {
           <span className={`text-2xl ${stage.palette.accent}`}>{stage.glyph}</span>
           <div>
             <p className="text-[10px] uppercase tracking-[0.35em] text-white/40">
-              Evolution Quiz
+              Trắc nghiệm tiến hóa
             </p>
             <p className="font-display text-lg">Hành trình Tiến hoá</p>
           </div>
@@ -345,11 +345,10 @@ function AmbientLayer({ stage }: { stage: MiniStage }) {
 function ScoreBadge({ total, max }: { total: number; max: number }) {
   return (
     <div className="rounded-full border border-white/15 bg-white/5 px-4 py-2 text-xs backdrop-blur">
-      <span className="text-white/50">Insight</span>{" "}
+      <span className="text-white/50">Nhận thức</span>{" "}
       <span className="font-mono font-semibold text-white">{total}</span>
       <span className="text-white/40"> / {max}</span>
     </div>
-  );
 }
 
 function StageStepper({
@@ -489,9 +488,7 @@ function PlayPanel({
     >
       <div className="mb-4 flex items-center justify-between text-xs text-white/50">
         <span className="uppercase tracking-[0.3em]">
-          {stage.title} · Câu {state.currentQ + 1}/{stage.questions.length}
-        </span>
-        <span className={`${stage.palette.accent}`}>+{q.points} insight</span>
+        <span className={`${stage.palette.accent}`}>+{q.points} nhận thức</span>
       </div>
 
       <div
@@ -890,7 +887,8 @@ function ResultPanel({
         className={`mt-8 rounded-2xl border ${stage.palette.ring} bg-stone-950/60 p-6 text-left ${stage.palette.glow}`}
       >
         <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-[10px] uppercase tracking-[0.25em] text-white/70">
-          <Sparkles className="h-3 w-3" /> Lore card
+          <Sparkles className="h-3 w-3" /> Thẻ tri thức
+        </div>
         </div>
         <h3 className="font-display text-2xl text-white">
           {stage.rewards.loreTitle}
@@ -915,8 +913,7 @@ function ResultPanel({
 
         <p className="mt-5 rounded-md border border-white/10 bg-white/5 p-3 text-sm italic text-white/80">
           💡 {stage.learningSummary}
-        </p>
-        <p className="mt-2 text-xs text-white/50">Fun fact: {stage.funFact}</p>
+        <p className="mt-2 text-xs text-white/50">Sự thật thú vị: {stage.funFact}</p>
       </div>
 
       <button
@@ -1105,13 +1102,13 @@ function MetersBar({
     >
       <div className="mx-auto grid max-w-4xl gap-3 px-6 py-3 sm:grid-cols-2">
         <Meter
-          label="Historical Progress"
+          label="Tiến trình lịch sử"
           value={progress}
           colorClass={accent}
           barClass="bg-gradient-to-r from-emerald-400 to-teal-300"
         />
         <Meter
-          label="Contradiction"
+          label="Mâu thuẫn"
           value={contradiction}
           colorClass="text-rose-300"
           barClass={`bg-gradient-to-r from-amber-400 via-orange-500 to-rose-500 ${

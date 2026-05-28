@@ -25,7 +25,7 @@ export function ReplayTimeline({ state }: Props) {
   return (
     <section className="mx-auto mt-12 max-w-3xl text-left">
       <p className="text-center text-xs uppercase tracking-[0.5em] text-white/50">
-        Your Historical Path
+        Hành trình lịch sử của bạn
       </p>
       <h2 className="mt-2 text-center font-display text-3xl text-white sm:text-4xl">
         Dòng chảy bạn đã đi qua

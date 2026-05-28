@@ -553,9 +553,9 @@ export const STAGES: MiniStage[] = [
 
 export const TOTAL_STAGES = STAGES.length;
 
-export function rankFromPercent(pct: number): "Bronze" | "Silver" | "Gold" | "Master" {
-  if (pct >= 0.95) return "Master";
-  if (pct >= 0.85) return "Gold";
-  if (pct >= 0.7) return "Silver";
-  return "Bronze";
+export function rankFromPercent(pct: number): "Đồng" | "Bạc" | "Vàng" | "Bậc thầy" {
+  if (pct >= 0.95) return "Bậc thầy";
+  if (pct >= 0.85) return "Vàng";
+  if (pct >= 0.7) return "Bạc";
+  return "Đồng";
 }
