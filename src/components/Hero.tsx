@@ -1,5 +1,7 @@
 import { motion } from "framer-motion";
-import { ArrowDown, Compass } from "lucide-react";
+import { ArrowDown, Compass, Gamepad2 } from "lucide-react";
+import { Link } from "@tanstack/react-router";
+
 
 export function Hero({ onStart }: { onStart: () => void }) {
   return (
