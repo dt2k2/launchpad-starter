@@ -349,6 +349,7 @@ function ScoreBadge({ total, max }: { total: number; max: number }) {
       <span className="font-mono font-semibold text-white">{total}</span>
       <span className="text-white/40"> / {max}</span>
     </div>
+  );
 }
 
 function StageStepper({
@@ -486,10 +487,10 @@ function PlayPanel({
       transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
       className="mx-auto max-w-2xl"
     >
-      <div className="mb-4 flex items-center justify-between text-xs text-white/50">
         <span className="uppercase tracking-[0.3em]">
+          {stage.title} · Câu {state.currentQ + 1}/{stage.questions.length}
+        </span>
         <span className={`${stage.palette.accent}`}>+{q.points} nhận thức</span>
-      </div>
 
       <div
         className={`rounded-2xl border ${stage.palette.ring} bg-stone-950/60 p-6 backdrop-blur-md sm:p-8 ${stage.palette.glow}`}
@@ -913,6 +914,7 @@ function ResultPanel({
 
         <p className="mt-5 rounded-md border border-white/10 bg-white/5 p-3 text-sm italic text-white/80">
           💡 {stage.learningSummary}
+        </p>
         <p className="mt-2 text-xs text-white/50">Sự thật thú vị: {stage.funFact}</p>
       </div>
 
