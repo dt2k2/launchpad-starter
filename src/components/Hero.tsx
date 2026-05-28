@@ -49,7 +49,6 @@ export function Hero({ onStart }: { onStart: () => void }) {
         >
           <Compass className="h-3.5 w-3.5" /> Bài luận tương tác
         </motion.div>
-        </motion.div>
 
         <motion.h1
           initial={{ opacity: 0, y: 20 }}
@@ -96,6 +95,7 @@ export function Hero({ onStart }: { onStart: () => void }) {
 
           <div className="flex flex-col items-center gap-2 text-white/40">
             <span className="text-[10px] uppercase tracking-[0.4em]">cuộn xuống</span>
+            <motion.div
               animate={{ y: [0, 8, 0] }}
               transition={{ duration: 1.8, repeat: Infinity }}
               className="h-8 w-px bg-gradient-to-b from-white/40 to-transparent"
