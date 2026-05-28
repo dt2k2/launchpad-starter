@@ -931,7 +931,10 @@ function InsightsDrawer({
             className="fixed inset-y-0 left-0 z-40 w-full max-w-md overflow-y-auto border-r border-white/10 bg-stone-950 p-6"
           >
             <div className="mb-6 flex items-center justify-between">
-            <div className="mb-6 flex items-center justify-between">
+              <div className="flex items-center gap-2 text-white">
+                <Library className="h-4 w-4" />
+                <h2 className="font-display text-2xl">Kho tri thức</h2>
+              </div>
               <div className="flex items-center gap-2 text-white">
                 <Library className="h-4 w-4" />
                 <h2 className="font-display text-2xl">Kho tri thức</h2>
