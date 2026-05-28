@@ -10,7 +10,7 @@
  * - Class perspective picker
  * - Multiple endings
  */
-import { useReducer, useEffect, useMemo, useState } from "react";
+import { useReducer, useEffect, useMemo, useState, useRef } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import {
   STAGES,
@@ -42,6 +42,17 @@ import {
   Check,
   ChevronRight,
 } from "lucide-react";
+import { AmbientEngine } from "./cinematic/AmbientEngine";
+import { StressOverlay } from "./cinematic/StressOverlay";
+import { Narrator, type NarratorPayload } from "./cinematic/Narrator";
+import { RevolutionCinematic } from "./cinematic/RevolutionCinematic";
+import { ReplayTimeline } from "./cinematic/ReplayTimeline";
+import {
+  SettingsToggle,
+  useCinematicSettings,
+} from "./cinematic/SettingsToggle";
+import { NARRATOR_LINES, STRESS } from "./cinematic/cinematicConfig";
+
 
 /* =========================================================
    Root
