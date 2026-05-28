@@ -91,5 +91,3 @@ export function Narrator({ line, onDone }: Props) {
     </AnimatePresence>
   );
 }
-
-}
