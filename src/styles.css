@@ -224,10 +224,52 @@
   50% { box-shadow: 0 0 40px 8px var(--era-glow); }
 }
 .animate-era-pulse { animation: era-pulse 3.2s ease-in-out infinite; }
+.animate-era-pulse { animation: era-pulse 3.2s ease-in-out infinite; }
 
 @keyframes fracture {
   0% { transform: translate(0,0) rotate(0); opacity: 1; }
   100% { transform: translate(var(--tx,20px), var(--ty,-20px)) rotate(var(--r,8deg)); opacity: 0; }
+}
+
+/* ---------- Cinematic stress overlay ---------- */
+.stress-vignette {
+  background:
+    radial-gradient(ellipse at center, transparent 50%,
+      rgba(160, 20, 20, calc(var(--stress-vignette, 0) * 0.55)) 100%);
+  animation: stress-pulse 2.4s ease-in-out infinite;
+  opacity: calc(0.4 + var(--stress-vignette, 0) * 0.6);
+}
+@keyframes stress-pulse {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(calc(1 + var(--stress-vignette, 0) * 0.15)); }
+}
+
+.stress-scanlines {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, calc(var(--stress-scan, 0) * 0.06)) 0px,
+    rgba(255, 255, 255, calc(var(--stress-scan, 0) * 0.06)) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  opacity: var(--stress-scan, 0);
+  mix-blend-mode: overlay;
+  animation: stress-flicker 0.18s steps(2) infinite;
+}
+@keyframes stress-flicker {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(0.5px); }
+}
+
+.stress-cracks {
+  opacity: var(--stress-crack, 0);
+  mix-blend-mode: screen;
+  animation: crack-jitter 0.7s ease-in-out infinite;
+}
+@keyframes crack-jitter {
+  0%, 100% { transform: translate(0, 0); }
+  25% { transform: translate(0.5px, -0.5px); }
+  75% { transform: translate(-0.5px, 0.5px); }
 }
 
 @media (prefers-reduced-motion: reduce) {
