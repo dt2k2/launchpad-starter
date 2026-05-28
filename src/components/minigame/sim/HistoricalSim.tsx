@@ -265,7 +265,7 @@ function IconBtn({
 /* =========================================================
    Perspective picker
    ========================================================= */
-function PerspectivePicker({ onChoose }: { onChoose: (id: any) => void }) {
+function PerspectivePicker({ onChoose }: { onChoose: (id: PerspectiveId) => void }) {
   return (
     <motion.section
       initial={{ opacity: 0, y: 24 }}
