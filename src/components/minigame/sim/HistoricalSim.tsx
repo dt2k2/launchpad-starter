@@ -945,7 +945,7 @@ function InsightsDrawer({
             </div>
             {insights.length === 0 ? (
               <p className="text-sm text-white/50">
-                Chưa có insight nào. Hãy chọn các quyết định mang tính bước ngoặt
+                Chưa có tri thức nào. Hãy chọn các quyết định mang tính bước ngoặt
                 để mở khoá tri thức lịch sử.
               </p>
             ) : (
