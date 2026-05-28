@@ -53,9 +53,12 @@ import {
 } from "./cinematic/SettingsToggle";
 import { NARRATOR_LINES, STRESS } from "./cinematic/cinematicConfig";
 
-
 /* =========================================================
+   Root
+   ========================================================= */
+export function HistoricalSim() {
   const [state, dispatch] = useReducer(reducer, undefined, initialState);
+
   const stage = STAGES[state.stageIdx];
   const reduceMotion = useReducedMotion();
   const [techOpen, setTechOpen] = useState(false);
