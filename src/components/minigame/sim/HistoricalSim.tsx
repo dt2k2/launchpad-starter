@@ -455,6 +455,11 @@ function StageIntro({ stage, onStart }: { stage: SimStage; onStart: () => void }
         className="mt-8 inline-flex items-center gap-3 rounded-full bg-white px-8 py-4 text-sm font-medium uppercase tracking-[0.25em] text-stone-950 transition-transform hover:scale-[1.02]"
       >
         <Sparkles className="h-4 w-4" /> Bước vào thời kỳ
+      </button>
+    </motion.section>
+  );
+}
+
 
 function InfoCard({ title, items }: { title: string; items: string[] }) {
   return (
