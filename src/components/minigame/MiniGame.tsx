@@ -581,14 +581,15 @@ function QuestionRenderer({
   state: GameState;
   dispatch: React.Dispatch<Action>;
 }) {
-  if (q.type === "mcq" || q.type === "truefalse" || q.type === "scenario") {
-    return <MCQ q={q} stage={stage} state={state} dispatch={dispatch} />;
-  }
   if (q.type === "match") {
     return <MatchUI q={q} stage={stage} state={state} dispatch={dispatch} />;
   }
-  return <OrderUI q={q} stage={stage} state={state} dispatch={dispatch} />;
+  if (q.type === "order") {
+    return <OrderUI q={q} stage={stage} state={state} dispatch={dispatch} />;
+  }
+  return <MCQ q={q} stage={stage} state={state} dispatch={dispatch} />;
 }
+
 
 function MCQ({
   q,
