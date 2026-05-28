@@ -782,11 +782,18 @@ function Finale({
         onClick={onRestart}
         className="mt-10 inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-medium uppercase tracking-[0.25em] text-stone-950"
       >
+      <button
+        onClick={onRestart}
+        className="mt-10 inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-medium uppercase tracking-[0.25em] text-stone-950"
+      >
         <RotateCcw className="h-4 w-4" /> Chơi lại với góc nhìn khác
       </button>
+
+      <ReplayTimeline state={state} />
     </motion.section>
   );
 }
+
 
 /* =========================================================
    Tech tree drawer
