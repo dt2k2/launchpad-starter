@@ -55,14 +55,14 @@ import { NARRATOR_LINES, STRESS } from "./cinematic/cinematicConfig";
 
 
 /* =========================================================
-   Root
-   ========================================================= */
-export function HistoricalSim() {
   const [state, dispatch] = useReducer(reducer, undefined, initialState);
   const stage = STAGES[state.stageIdx];
   const reduceMotion = useReducedMotion();
   const [techOpen, setTechOpen] = useState(false);
   const [insightsOpen, setInsightsOpen] = useState(false);
+  const [settings, setSettings] = useCinematicSettings();
+  const [narratorLine, setNarratorLine] = useState<NarratorPayload | null>(null);
+  const lastTensionEra = useRef<string | null>(null);
 
   // Keyboard: Esc closes drawers
   useEffect(() => {
@@ -75,6 +75,84 @@ export function HistoricalSim() {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, []);
+
+  // Narrator: fire on entering a stage
+  useEffect(() => {
+    if (state.phase === "intro") {
+      const line = NARRATOR_LINES[stage.id]?.enter;
+      if (line) {
+        setNarratorLine({
+          id: `enter-${stage.id}`,
+          text: line.text,
+          tone: "calm",
+          holdMs: 4500,
+        });
+      }
+      lastTensionEra.current = null;
+    }
+  }, [state.phase, stage.id]);
+
+  // Narrator: fire on revolution
+  useEffect(() => {
+    if (state.phase === "revolution") {
+      const line = NARRATOR_LINES[stage.id]?.revolution;
+      if (line) {
+        setNarratorLine({
+          id: `rev-${stage.id}-${state.stagesCompleted}`,
+          text: line.text,
+          tone: "rupture",
+          holdMs: 4800,
+        });
+      }
+    }
+  }, [state.phase, stage.id, state.stagesCompleted]);
+
+  // Narrator: tension when contradiction crosses unease threshold (once per era)
+  useEffect(() => {
+    if (
+      state.metrics.contradiction >= STRESS.unease &&
+      lastTensionEra.current !== stage.id &&
+      state.phase === "playing"
+    ) {
+      const line = NARRATOR_LINES[stage.id]?.tension;
+      if (line) {
+        setNarratorLine({
+          id: `tension-${stage.id}`,
+          text: line.text,
+          tone: "tense",
+          holdMs: 4000,
+        });
+        lastTensionEra.current = stage.id;
+      }
+    }
+  }, [state.metrics.contradiction, stage.id, state.phase]);
+
+  const shake = state.metrics.contradiction >= 70 && !reduceMotion && !settings.reducedFx;
+
+  return (
+    <div
+      data-era={stage.id}
+      className={`relative min-h-screen overflow-hidden bg-gradient-to-b ${stage.theme.bg} text-stone-100 transition-colors duration-700`}
+    >
+      <AmbientEngine
+        era={stage.id}
+        contradiction={state.metrics.contradiction}
+        muted={settings.muted}
+      />
+      <StressOverlay
+        contradiction={state.metrics.contradiction}
+        reduced={settings.reducedFx}
+      />
+      <Narrator line={narratorLine} onDone={() => setNarratorLine(null)} />
+
+      <WorldBackdrop stage={stage} reduceMotion={!!reduceMotion || settings.reducedFx} />
+
+      <motion.div
+        animate={shake ? { x: [0, -2, 3, -2, 0] } : { x: 0 }}
+        transition={shake ? { duration: 0.35, repeat: Infinity } : { duration: 0.4 }}
+        className="relative z-10"
+      >
+
 
   const shake = state.metrics.contradiction >= 70 && !reduceMotion;
 
