@@ -935,10 +935,6 @@ function InsightsDrawer({
                 <Library className="h-4 w-4" />
                 <h2 className="font-display text-2xl">Kho tri thức</h2>
               </div>
-              <div className="flex items-center gap-2 text-white">
-                <Library className="h-4 w-4" />
-                <h2 className="font-display text-2xl">Kho tri thức</h2>
-              </div>
               <button onClick={onClose} aria-label="Đóng" className="text-white/60 hover:text-white">
                 <X className="h-5 w-5" />
               </button>
