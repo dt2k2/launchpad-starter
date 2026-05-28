@@ -1,19 +1,17 @@
 /**
- * Narrator — cinematic quote overlay.
+ * Narrator — cinematic centered overlay with blurred backdrop.
  *
  * Triggered externally by passing a `line` prop (key changes ⇒ new reveal).
- * Auto-dismisses after `holdMs`.
+ * Auto-dismisses after `holdMs`, or on click/keypress.
  */
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 
 export interface NarratorPayload {
-  id: string; // unique per appearance
+  id: string;
   text: string;
   attribution?: string;
-  /** Hold visible duration */
   holdMs?: number;
-  /** Tone modifies typography */
   tone?: "calm" | "tense" | "rupture";
 }
 
@@ -28,7 +26,7 @@ export function Narrator({ line, onDone }: Props) {
   useEffect(() => {
     if (!line) return;
     setActive(line);
-    const hold = line.holdMs ?? 4200;
+    const hold = line.holdMs ?? 4500;
     const t = setTimeout(() => {
       setActive(null);
       onDone?.();
@@ -36,56 +34,134 @@ export function Narrator({ line, onDone }: Props) {
     return () => clearTimeout(t);
   }, [line, onDone]);
 
+  const dismiss = () => {
+    setActive(null);
+    onDone?.();
+  };
+
+  useEffect(() => {
+    if (!active) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape" || e.key === " " || e.key === "Enter") dismiss();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [active]);
+
   const toneAccent =
     active?.tone === "rupture"
-      ? "border-rose-300/30 shadow-[0_30px_80px_-20px_rgba(244,63,94,0.45)]"
+      ? {
+          ring: "border-rose-300/40",
+          glow: "shadow-[0_0_120px_-10px_rgba(244,63,94,0.55)]",
+          text: "text-rose-50",
+          rule: "from-transparent via-rose-300/60 to-transparent",
+          label: "text-rose-200/80",
+        }
       : active?.tone === "tense"
-        ? "border-amber-300/30 shadow-[0_30px_80px_-20px_rgba(245,158,11,0.35)]"
-        : "border-white/15 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.7)]";
+        ? {
+            ring: "border-amber-300/40",
+            glow: "shadow-[0_0_120px_-10px_rgba(245,158,11,0.45)]",
+            text: "text-amber-50",
+            rule: "from-transparent via-amber-300/60 to-transparent",
+            label: "text-amber-200/80",
+          }
+        : {
+            ring: "border-white/25",
+            glow: "shadow-[0_0_120px_-10px_rgba(255,255,255,0.18)]",
+            text: "text-white",
+            rule: "from-transparent via-white/40 to-transparent",
+            label: "text-white/70",
+          };
 
   return (
     <AnimatePresence mode="wait">
       {active && (
         <motion.div
           key={active.id}
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: 16 }}
-          transition={{ duration: 1.0, ease: [0.22, 1, 0.36, 1] }}
-          className="pointer-events-none fixed inset-x-0 bottom-6 z-[40] flex justify-center px-4 sm:bottom-10"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+          onClick={dismiss}
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-stone-950/55 px-6 backdrop-blur-xl"
           aria-live="polite"
+          role="dialog"
         >
-          <div
-            className={`relative max-w-2xl rounded-2xl border ${toneAccent} bg-stone-950/80 px-6 py-4 text-center backdrop-blur-xl sm:px-8 sm:py-5`}
+          {/* Cinematic letterbox bars */}
+          <motion.div
+            initial={{ scaleY: 0 }}
+            animate={{ scaleY: 1 }}
+            exit={{ scaleY: 0 }}
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+            className="pointer-events-none absolute inset-x-0 top-0 h-[8vh] origin-top bg-black"
+          />
+          <motion.div
+            initial={{ scaleY: 0 }}
+            animate={{ scaleY: 1 }}
+            exit={{ scaleY: 0 }}
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+            className="pointer-events-none absolute inset-x-0 bottom-0 h-[8vh] origin-bottom bg-black"
+          />
+
+          {/* Radial vignette focus */}
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.5)_80%)]" />
+
+          <motion.div
+            initial={{ opacity: 0, y: 24, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -16, scale: 0.98 }}
+            transition={{ duration: 0.9, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
+            onClick={(e) => e.stopPropagation()}
+            className={`relative max-w-3xl rounded-3xl border ${toneAccent.ring} ${toneAccent.glow} bg-stone-950/70 px-8 py-10 text-center backdrop-blur-2xl sm:px-14 sm:py-14`}
           >
-            <span className="pointer-events-none absolute left-4 top-2 text-[10px] uppercase tracking-[0.4em] text-white/40">
-              Người kể chuyện
-            </span>
             <motion.p
-              initial={{ letterSpacing: "0.02em" }}
-              animate={{ letterSpacing: "0em" }}
-              transition={{ duration: 1.6 }}
-              className={`mt-3 font-display text-balance text-lg leading-snug sm:text-2xl ${
-                active.tone === "rupture"
-                  ? "text-rose-50"
-                  : active.tone === "tense"
-                    ? "text-amber-50"
-                    : "text-white"
-              }`}
+              initial={{ opacity: 0, letterSpacing: "0.1em" }}
+              animate={{ opacity: 1, letterSpacing: "0.5em" }}
+              transition={{ duration: 1, delay: 0.3 }}
+              className={`text-[10px] uppercase tracking-[0.5em] ${toneAccent.label}`}
             >
-              "{active.text}"
+              Người kể chuyện
             </motion.p>
+
+            <motion.div
+              initial={{ scaleX: 0 }}
+              animate={{ scaleX: 1 }}
+              transition={{ duration: 0.9, delay: 0.5 }}
+              className={`mx-auto mt-4 h-px w-32 bg-gradient-to-r ${toneAccent.rule}`}
+            />
+
+            <motion.p
+              initial={{ opacity: 0, y: 12, letterSpacing: "0.04em" }}
+              animate={{ opacity: 1, y: 0, letterSpacing: "0em" }}
+              transition={{ duration: 1.4, delay: 0.6, ease: [0.22, 1, 0.36, 1] }}
+              className={`mt-8 font-display text-balance text-2xl leading-relaxed sm:text-4xl sm:leading-[1.3] ${toneAccent.text}`}
+            >
+              <span className={`mr-1 text-3xl sm:text-5xl ${toneAccent.label}`}>“</span>
+              {active.text}
+              <span className={`ml-1 text-3xl sm:text-5xl ${toneAccent.label}`}>”</span>
+            </motion.p>
+
             {active.attribution && (
               <motion.p
                 initial={{ opacity: 0 }}
-                animate={{ opacity: 0.7 }}
-                transition={{ delay: 0.4, duration: 1 }}
-                className="mt-2 text-[10px] uppercase tracking-[0.35em] text-white/60"
+                animate={{ opacity: 0.75 }}
+                transition={{ delay: 1.2, duration: 0.8 }}
+                className="mt-6 text-[11px] uppercase tracking-[0.4em] text-white/60"
               >
                 — {active.attribution}
               </motion.p>
             )}
-          </div>
+
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 0.5 }}
+              transition={{ delay: 2, duration: 0.8 }}
+              className="mt-10 text-[10px] uppercase tracking-[0.4em] text-white/40"
+            >
+              Nhấn để tiếp tục
+            </motion.p>
+          </motion.div>
         </motion.div>
       )}
     </AnimatePresence>
