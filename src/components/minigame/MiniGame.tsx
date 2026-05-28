@@ -890,7 +890,6 @@ function ResultPanel({
         <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-[10px] uppercase tracking-[0.25em] text-white/70">
           <Sparkles className="h-3 w-3" /> Thẻ tri thức
         </div>
-        </div>
         <h3 className="font-display text-2xl text-white">
           {stage.rewards.loreTitle}
         </h3>
