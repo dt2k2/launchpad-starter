@@ -10,7 +10,7 @@
  * - Class perspective picker
  * - Multiple endings
  */
-import { useReducer, useEffect, useMemo, useState, useCallback } from "react";
+import { useReducer, useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import {
   STAGES,
@@ -21,6 +21,7 @@ import {
   type SimStage,
   type Decision,
   type DecisionOption,
+  type PerspectiveId,
 } from "@/data/historicalSim";
 import {
   reducer,
@@ -30,17 +31,13 @@ import {
   type SimState,
 } from "./simStore";
 import {
-  Activity,
   AlertTriangle,
   Cpu,
-  Hammer,
   Library,
   RotateCcw,
-  ShieldAlert,
   Sparkles,
   Trophy,
   X,
-  Zap,
   Lock,
   Check,
   ChevronRight,
