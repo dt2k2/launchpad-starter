@@ -59,13 +59,14 @@ export function StressOverlay({ contradiction, reduced }: Props) {
       style={style}
     >
       {/* warm/red vignette */}
-      <div className="stress-vignette absolute inset-0" />
-      {/* scanlines */}
-      <div className="stress-scanlines absolute inset-0" />
       {/* hue shift via backdrop */}
       <div
         className="absolute inset-0 transition-[backdrop-filter] duration-700"
         style={{
+          backdropFilter: `hue-rotate(var(--stress-hue))`,
+        }}
+      />
+
           backdropFilter: `hue-rotate(var(--stress-hue)) contrast(${1 + 0.05 * Number(style["--stress-crack" as keyof React.CSSProperties])})`,
         }}
       />
