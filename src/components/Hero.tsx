@@ -76,6 +76,7 @@ export function Hero({ onStart }: { onStart: () => void }) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 1.2 }}
           className="mt-12 flex flex-col items-center gap-6"
+        >
           <div className="flex flex-wrap items-center justify-center gap-3">
             <button
               onClick={onStart}
@@ -92,7 +93,6 @@ export function Hero({ onStart }: { onStart: () => void }) {
             </Link>
           </div>
 
-          </button>
           <div className="flex flex-col items-center gap-2 text-white/40">
             <span className="text-[10px] uppercase tracking-[0.4em]">scroll</span>
             <motion.div
