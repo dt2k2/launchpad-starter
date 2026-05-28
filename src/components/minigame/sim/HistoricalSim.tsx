@@ -402,19 +402,46 @@ function StageIntro({ stage, onStart }: { stage: SimStage; onStart: () => void }
       initial={{ opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -16 }}
-      transition={{ duration: 0.5 }}
-      className="mx-auto max-w-3xl pt-6 text-center"
+      transition={{ duration: 0.6 }}
+      className="mx-auto max-w-3xl pt-10 pb-24 text-center sm:pt-16"
     >
-      <p className={`text-xs uppercase tracking-[0.4em] ${stage.theme.accent}`}>
+      <motion.p
+        initial={{ opacity: 0, letterSpacing: "0.1em" }}
+        animate={{ opacity: 1, letterSpacing: "0.4em" }}
+        transition={{ duration: 1 }}
+        className={`text-[11px] uppercase tracking-[0.4em] ${stage.theme.accent}`}
+      >
         Ải {stage.order} · {stage.era}
-      </p>
-      <h1 className="mt-3 font-display text-5xl text-balance text-white sm:text-6xl">
-        {stage.title}
-      </h1>
-      <p className="mt-2 text-lg italic text-white/70">{stage.subtitle}</p>
-      <p className="mx-auto mt-6 max-w-xl text-white/75">{stage.intro}</p>
+      </motion.p>
 
-      <div className="mt-8 grid gap-3 text-left sm:grid-cols-2">
+      <motion.h1
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.7, delay: 0.15 }}
+        className="mt-4 font-display text-5xl text-balance text-white drop-shadow-[0_4px_24px_rgba(0,0,0,0.6)] sm:text-6xl"
+      >
+        {stage.title}
+      </motion.h1>
+
+      <motion.p
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.7, delay: 0.35 }}
+        className="mt-3 text-base italic text-white/60 sm:text-lg"
+      >
+        {stage.subtitle}
+      </motion.p>
+
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.7, delay: 0.5 }}
+        className={`mx-auto mt-8 max-w-2xl rounded-2xl border ${stage.theme.ring} bg-stone-950/70 px-6 py-5 backdrop-blur-md sm:px-8 sm:py-6`}
+      >
+        <p className="text-base leading-relaxed text-white/85 sm:text-lg">{stage.intro}</p>
+      </motion.div>
+
+      <div className="mt-6 grid gap-3 text-left sm:grid-cols-2">
         <InfoCard title="Lực lượng sản xuất" items={stage.productionForces} />
         <InfoCard title="Quan hệ sản xuất" items={stage.relationsOfProduction} />
       </div>
@@ -428,10 +455,6 @@ function StageIntro({ stage, onStart }: { stage: SimStage; onStart: () => void }
         className="mt-8 inline-flex items-center gap-3 rounded-full bg-white px-8 py-4 text-sm font-medium uppercase tracking-[0.25em] text-stone-950 transition-transform hover:scale-[1.02]"
       >
         <Sparkles className="h-4 w-4" /> Bước vào thời kỳ
-      </button>
-    </motion.section>
-  );
-}
 
 function InfoCard({ title, items }: { title: string; items: string[] }) {
   return (
