@@ -154,20 +154,6 @@ import { NARRATOR_LINES, STRESS } from "./cinematic/cinematicConfig";
       >
 
 
-  const shake = state.metrics.contradiction >= 70 && !reduceMotion;
-
-  return (
-    <div
-      data-era={stage.id}
-      className={`relative min-h-screen overflow-hidden bg-gradient-to-b ${stage.theme.bg} text-stone-100 transition-colors duration-700`}
-    >
-      <WorldBackdrop stage={stage} reduceMotion={!!reduceMotion} />
-
-      <motion.div
-        animate={shake ? { x: [0, -2, 3, -2, 0] } : { x: 0 }}
-        transition={shake ? { duration: 0.35, repeat: Infinity } : { duration: 0.4 }}
-        className="relative z-10"
-      >
         <TopBar
           state={state}
           stage={stage}
