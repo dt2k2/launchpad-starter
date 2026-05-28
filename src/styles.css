@@ -4,6 +4,8 @@
 
 @custom-variant dark (&:is(.dark *));
 
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
+
 /*
  * Design system definition.
  *
@@ -63,23 +65,23 @@
 
 :root {
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.129 0.042 264.695);
+  --background: oklch(0.14 0.012 60);
+  --foreground: oklch(0.96 0.012 80);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.129 0.042 264.695);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.129 0.042 264.695);
-  --primary: oklch(0.208 0.042 265.755);
-  --primary-foreground: oklch(0.984 0.003 247.858);
+  --primary: oklch(0.72 0.16 55);
+  --primary-foreground: oklch(0.14 0.012 60);
   --secondary: oklch(0.968 0.007 247.896);
   --secondary-foreground: oklch(0.208 0.042 265.755);
-  --muted: oklch(0.968 0.007 247.896);
-  --muted-foreground: oklch(0.554 0.046 257.417);
+  --muted: oklch(0.22 0.012 60);
+  --muted-foreground: oklch(0.7 0.02 70);
   --accent: oklch(0.968 0.007 247.896);
   --accent-foreground: oklch(0.208 0.042 265.755);
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.984 0.003 247.858);
-  --border: oklch(0.929 0.013 255.508);
+  --border: oklch(0.28 0.015 60);
   --input: oklch(0.929 0.013 255.508);
   --ring: oklch(0.704 0.04 256.788);
   --chart-1: oklch(0.646 0.222 41.116);
@@ -140,5 +142,97 @@
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
+    font-family: "Inter", system-ui, sans-serif;
+    font-feature-settings: "ss01", "cv11";
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .font-display {
+    font-family: "Cormorant Garamond", "Times New Roman", serif;
+    font-feature-settings: "liga", "dlig";
+    letter-spacing: -0.02em;
+  }
+
+  .font-mono {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+  }
+}
+
+/* Era palettes — each era owns a set of CSS variables.
+   Apply via data-era="primitive|slave|feudal|capitalist|socialist" */
+[data-era="primitive"] {
+  --era-bg: oklch(0.16 0.022 55);
+  --era-fg: oklch(0.94 0.04 75);
+  --era-accent: oklch(0.72 0.14 50);
+  --era-glow: oklch(0.78 0.16 60 / 0.4);
+  --era-name: "Cộng sản nguyên thủy";
+}
+[data-era="slave"] {
+  --era-bg: oklch(0.18 0.04 40);
+  --era-fg: oklch(0.95 0.04 60);
+  --era-accent: oklch(0.68 0.18 40);
+  --era-glow: oklch(0.7 0.2 35 / 0.45);
+}
+[data-era="feudal"] {
+  --era-bg: oklch(0.17 0.05 25);
+  --era-fg: oklch(0.95 0.06 80);
+  --era-accent: oklch(0.65 0.18 20);
+  --era-glow: oklch(0.72 0.2 25 / 0.5);
+}
+[data-era="capitalist"] {
+  --era-bg: oklch(0.16 0.012 240);
+  --era-fg: oklch(0.95 0.02 230);
+  --era-accent: oklch(0.78 0.14 70);
+  --era-glow: oklch(0.78 0.14 70 / 0.4);
+}
+[data-era="socialist"] {
+  --era-bg: oklch(0.18 0.04 240);
+  --era-fg: oklch(0.97 0.02 230);
+  --era-accent: oklch(0.72 0.16 250);
+  --era-glow: oklch(0.78 0.18 250 / 0.45);
+}
+
+.era-surface {
+  background: var(--era-bg);
+  color: var(--era-fg);
+}
+.era-accent-text { color: var(--era-accent); }
+.era-accent-bg { background: var(--era-accent); }
+
+/* Grain texture overlay */
+.grain::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.08;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.6 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+}
+
+/* Vertical timeline rail */
+.rail-gradient {
+  background: linear-gradient(180deg,
+    transparent 0%,
+    var(--era-accent, oklch(0.72 0.16 55)) 8%,
+    var(--era-accent, oklch(0.72 0.16 55)) 92%,
+    transparent 100%);
+}
+
+@keyframes era-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 var(--era-glow); }
+  50% { box-shadow: 0 0 40px 8px var(--era-glow); }
+}
+.animate-era-pulse { animation: era-pulse 3.2s ease-in-out infinite; }
+
+@keyframes fracture {
+  0% { transform: translate(0,0) rotate(0); opacity: 1; }
+  100% { transform: translate(var(--tx,20px), var(--ty,-20px)) rotate(var(--r,8deg)); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
   }
 }
