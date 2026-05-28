@@ -47,7 +47,7 @@ export function Hero({ onStart }: { onStart: () => void }) {
           transition={{ duration: 1.2 }}
           className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-xs uppercase tracking-[0.3em] text-amber-200/80 backdrop-blur"
         >
-          <Compass className="h-3.5 w-3.5" /> An Interactive Essay
+          <Compass className="h-3.5 w-3.5" /> Bài luận tương tác
         </motion.div>
 
         <motion.h1
@@ -94,7 +94,7 @@ export function Hero({ onStart }: { onStart: () => void }) {
           </div>
 
           <div className="flex flex-col items-center gap-2 text-white/40">
-            <span className="text-[10px] uppercase tracking-[0.4em]">scroll</span>
+            <span className="text-[10px] uppercase tracking-[0.4em]">cuộn xuống</span>
             <motion.div
               animate={{ y: [0, 8, 0] }}
               transition={{ duration: 1.8, repeat: Infinity }}

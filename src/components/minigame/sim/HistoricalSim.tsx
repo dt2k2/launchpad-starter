@@ -293,7 +293,7 @@ function TopBar({
         </span>
         <div className="leading-tight">
           <p className="text-[10px] uppercase tracking-[0.35em] text-white/40">
-            Historical Simulation
+            Mô phỏng lịch sử
           </p>
           <p className="font-display text-lg text-white/90">
             Ải {stage.order}/5 · {stage.title}
@@ -308,16 +308,16 @@ function TopBar({
 
       <div className="flex items-center gap-1.5">
         <SettingsToggle settings={settings} onChange={onChangeSettings} />
-        <IconBtn label="Tech tree" onClick={onOpenTech}>
+        <IconBtn label="Cây công nghệ" onClick={onOpenTech}>
           <Cpu className="h-4 w-4" />
-          <span className="hidden text-xs sm:inline">Tech</span>
+          <span className="hidden text-xs sm:inline">Công nghệ</span>
           <span className="ml-1 rounded-full bg-white/10 px-1.5 text-[10px] font-mono">
             {state.unlockedTech.length}
           </span>
         </IconBtn>
-        <IconBtn label="Knowledge hub" onClick={onOpenInsights}>
+        <IconBtn label="Kho tri thức" onClick={onOpenInsights}>
           <Library className="h-4 w-4" />
-          <span className="hidden text-xs sm:inline">Insights</span>
+          <span className="hidden text-xs sm:inline">Tri thức</span>
           <span className="ml-1 rounded-full bg-white/10 px-1.5 text-[10px] font-mono">
             {state.insights.length}
           </span>
@@ -705,7 +705,7 @@ function MetricsHUD({
       <div className="pointer-events-auto mx-auto max-w-5xl rounded-2xl border border-white/10 bg-stone-950/80 p-3 shadow-2xl backdrop-blur-xl sm:p-4">
         <div className="mb-2 flex items-center justify-between">
           <p className="text-[10px] uppercase tracking-[0.35em] text-white/50">
-            Society Status · {stage.title}
+            Trạng thái xã hội · {stage.title}
           </p>
           {danger && (
             <span className="inline-flex items-center gap-1 text-[10px] text-rose-300">
@@ -767,7 +767,7 @@ function Finale({
     >
       <Trophy className="mx-auto h-10 w-10 text-amber-300" />
       <p className="mt-4 text-xs uppercase tracking-[0.5em] text-white/50">
-        Ending · {ending.vibe}
+        Kết thúc · {ending.vibe === "linear" ? "Tiến triển tuyến tính" : ending.vibe === "rupture" ? "Đứt gãy" : ending.vibe === "future" ? "Tương lai" : "Trì trệ"}
       </p>
       <h1 className="mt-3 font-display text-5xl text-balance text-white sm:text-6xl">
         {ending.title}
@@ -793,10 +793,10 @@ function Finale({
 
       <div className="mt-6 flex flex-wrap items-center justify-center gap-3 text-xs text-white/60">
         <span className="rounded-full border border-white/15 bg-white/5 px-3 py-1">
-          Tech mở: {state.unlockedTech.length}/{TECH_TREE.length}
+          Công nghệ đã mở: {state.unlockedTech.length}/{TECH_TREE.length}
         </span>
         <span className="rounded-full border border-white/15 bg-white/5 px-3 py-1">
-          Insights: {state.insights.length}
+          Tri thức: {state.insights.length}
         </span>
         <span className="rounded-full border border-white/15 bg-white/5 px-3 py-1">
           Cách mạng bùng nổ: {state.revolutionsBurned}
@@ -933,7 +933,11 @@ function InsightsDrawer({
             <div className="mb-6 flex items-center justify-between">
               <div className="flex items-center gap-2 text-white">
                 <Library className="h-4 w-4" />
-                <h2 className="font-display text-2xl">Knowledge Hub</h2>
+                <h2 className="font-display text-2xl">Kho tri thức</h2>
+              </div>
+              <div className="flex items-center gap-2 text-white">
+                <Library className="h-4 w-4" />
+                <h2 className="font-display text-2xl">Kho tri thức</h2>
               </div>
               <button onClick={onClose} aria-label="Đóng" className="text-white/60 hover:text-white">
                 <X className="h-5 w-5" />
@@ -941,7 +945,7 @@ function InsightsDrawer({
             </div>
             {insights.length === 0 ? (
               <p className="text-sm text-white/50">
-                Chưa có insight nào. Hãy chọn các quyết định mang tính bước ngoặt
+                Chưa có tri thức nào. Hãy chọn các quyết định mang tính bước ngoặt
                 để mở khoá tri thức lịch sử.
               </p>
             ) : (

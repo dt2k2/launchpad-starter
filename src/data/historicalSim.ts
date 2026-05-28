@@ -33,31 +33,31 @@ export const METRIC_META: Record<
 > = {
   production: {
     label: "Lực lượng sản xuất",
-    short: "Production",
+    short: "Sản xuất",
     hueClass: "from-amber-400 to-orange-500",
     description: "Năng suất lao động, công cụ, kỹ thuật của xã hội.",
   },
   stability: {
     label: "Ổn định giai cấp",
-    short: "Stability",
+    short: "Ổn định",
     hueClass: "from-emerald-400 to-teal-500",
     description: "Mức độ chấp nhận trật tự sản xuất hiện hành.",
   },
   tech: {
     label: "Công nghệ",
-    short: "Tech",
+    short: "Công nghệ",
     hueClass: "from-sky-400 to-indigo-500",
-    description: "Tri thức kỹ thuật tích luỹ — mở khoá tech tree.",
+    description: "Tri thức kỹ thuật tích luỹ — mở khoá cây công nghệ.",
   },
   contradiction: {
     label: "Mâu thuẫn",
-    short: "Contradiction",
+    short: "Mâu thuẫn",
     hueClass: "from-rose-400 to-red-600",
     description: "Khoảng cách giữa lực lượng sản xuất và quan hệ sản xuất.",
   },
   revolution: {
     label: "Áp lực cách mạng",
-    short: "Revolution",
+    short: "Cách mạng",
     hueClass: "from-fuchsia-500 to-rose-500",
     description: "Khi vượt ngưỡng → cách mạng xã hội nổ ra.",
   },
