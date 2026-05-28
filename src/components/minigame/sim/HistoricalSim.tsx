@@ -10,7 +10,7 @@
  * - Class perspective picker
  * - Multiple endings
  */
-import { useReducer, useEffect, useMemo, useState } from "react";
+import { useReducer, useEffect, useMemo, useState, useRef } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import {
   STAGES,
@@ -42,16 +42,30 @@ import {
   Check,
   ChevronRight,
 } from "lucide-react";
+import { AmbientEngine } from "./cinematic/AmbientEngine";
+import { StressOverlay } from "./cinematic/StressOverlay";
+import { Narrator, type NarratorPayload } from "./cinematic/Narrator";
+import { RevolutionCinematic } from "./cinematic/RevolutionCinematic";
+import { ReplayTimeline } from "./cinematic/ReplayTimeline";
+import {
+  SettingsToggle,
+  useCinematicSettings,
+} from "./cinematic/SettingsToggle";
+import { NARRATOR_LINES, STRESS } from "./cinematic/cinematicConfig";
 
 /* =========================================================
    Root
    ========================================================= */
 export function HistoricalSim() {
   const [state, dispatch] = useReducer(reducer, undefined, initialState);
+
   const stage = STAGES[state.stageIdx];
   const reduceMotion = useReducedMotion();
   const [techOpen, setTechOpen] = useState(false);
   const [insightsOpen, setInsightsOpen] = useState(false);
+  const [settings, setSettings] = useCinematicSettings();
+  const [narratorLine, setNarratorLine] = useState<NarratorPayload | null>(null);
+  const lastTensionEra = useRef<string | null>(null);
 
   // Keyboard: Esc closes drawers
   useEffect(() => {
@@ -65,27 +79,94 @@ export function HistoricalSim() {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
-  const shake = state.metrics.contradiction >= 70 && !reduceMotion;
+  // Narrator: fire on entering a stage
+  useEffect(() => {
+    if (state.phase === "intro") {
+      const line = NARRATOR_LINES[stage.id]?.enter;
+      if (line) {
+        setNarratorLine({
+          id: `enter-${stage.id}`,
+          text: line.text,
+          tone: "calm",
+          holdMs: 4500,
+        });
+      }
+      lastTensionEra.current = null;
+    }
+  }, [state.phase, stage.id]);
+
+  // Narrator: fire on revolution
+  useEffect(() => {
+    if (state.phase === "revolution") {
+      const line = NARRATOR_LINES[stage.id]?.revolution;
+      if (line) {
+        setNarratorLine({
+          id: `rev-${stage.id}-${state.stagesCompleted}`,
+          text: line.text,
+          tone: "rupture",
+          holdMs: 4800,
+        });
+      }
+    }
+  }, [state.phase, stage.id, state.stagesCompleted]);
+
+  // Narrator: tension when contradiction crosses unease threshold (once per era)
+  useEffect(() => {
+    if (
+      state.metrics.contradiction >= STRESS.unease &&
+      lastTensionEra.current !== stage.id &&
+      state.phase === "playing"
+    ) {
+      const line = NARRATOR_LINES[stage.id]?.tension;
+      if (line) {
+        setNarratorLine({
+          id: `tension-${stage.id}`,
+          text: line.text,
+          tone: "tense",
+          holdMs: 4000,
+        });
+        lastTensionEra.current = stage.id;
+      }
+    }
+  }, [state.metrics.contradiction, stage.id, state.phase]);
+
+  const shake = state.metrics.contradiction >= 70 && !reduceMotion && !settings.reducedFx;
 
   return (
     <div
       data-era={stage.id}
       className={`relative min-h-screen overflow-hidden bg-gradient-to-b ${stage.theme.bg} text-stone-100 transition-colors duration-700`}
     >
-      <WorldBackdrop stage={stage} reduceMotion={!!reduceMotion} />
+      <AmbientEngine
+        era={stage.id}
+        contradiction={state.metrics.contradiction}
+        muted={settings.muted}
+      />
+      <StressOverlay
+        contradiction={state.metrics.contradiction}
+        reduced={settings.reducedFx}
+      />
+      <Narrator line={narratorLine} onDone={() => setNarratorLine(null)} />
+
+      <WorldBackdrop stage={stage} reduceMotion={!!reduceMotion || settings.reducedFx} />
 
       <motion.div
         animate={shake ? { x: [0, -2, 3, -2, 0] } : { x: 0 }}
         transition={shake ? { duration: 0.35, repeat: Infinity } : { duration: 0.4 }}
         className="relative z-10"
       >
+
+
         <TopBar
           state={state}
           stage={stage}
+          settings={settings}
+          onChangeSettings={setSettings}
           onOpenTech={() => setTechOpen(true)}
           onOpenInsights={() => setInsightsOpen(true)}
           onRestart={() => dispatch({ type: "restart" })}
         />
+
 
         <main className="mx-auto max-w-5xl px-4 pb-40 pt-6 sm:px-6">
           <AnimatePresence mode="wait">
@@ -120,13 +201,14 @@ export function HistoricalSim() {
               />
             )}
             {state.phase === "revolution" && (
-              <RevolutionPanel
+              <RevolutionCinematic
                 key={`rev-${stage.id}`}
                 stage={stage}
                 metrics={state.metrics}
                 onDone={() => dispatch({ type: "ackRevolution" })}
               />
             )}
+
             {state.phase === "finale" && (
               <Finale
                 key="finale"
@@ -186,12 +268,18 @@ function WorldBackdrop({ stage, reduceMotion }: { stage: SimStage; reduceMotion:
 function TopBar({
   state,
   stage,
+  settings,
+  onChangeSettings,
   onOpenTech,
   onOpenInsights,
   onRestart,
 }: {
   state: SimState;
   stage: SimStage;
+  settings: import("./cinematic/SettingsToggle").CinematicSettings;
+  onChangeSettings: (
+    patch: Partial<import("./cinematic/SettingsToggle").CinematicSettings>,
+  ) => void;
   onOpenTech: () => void;
   onOpenInsights: () => void;
   onRestart: () => void;
@@ -219,6 +307,7 @@ function TopBar({
       </div>
 
       <div className="flex items-center gap-1.5">
+        <SettingsToggle settings={settings} onChange={onChangeSettings} />
         <IconBtn label="Tech tree" onClick={onOpenTech}>
           <Cpu className="h-4 w-4" />
           <span className="hidden text-xs sm:inline">Tech</span>
@@ -240,6 +329,7 @@ function TopBar({
     </header>
   );
 }
+
 
 function IconBtn({
   children,
@@ -626,68 +716,8 @@ function MetricBar({ k, value }: { k: MetricKey; value: number }) {
   );
 }
 
-/* =========================================================
-   Revolution cinematic
-   ========================================================= */
-function RevolutionPanel({
-  stage,
-  metrics,
-  onDone,
-}: {
-  stage: SimStage;
-  metrics: Record<MetricKey, number>;
-  onDone: () => void;
-}) {
-  const burst = metrics.revolution >= stage.revolutionThreshold;
-  useEffect(() => {
-    const t = setTimeout(onDone, 3800);
-    return () => clearTimeout(t);
-  }, [onDone]);
-  return (
-    <motion.section
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.4 }}
-      className="mx-auto max-w-3xl pt-8 text-center"
-    >
-      <motion.div
-        initial={{ scale: 0.7, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ duration: 0.8 }}
-        className="relative mx-auto h-28 w-28"
-      >
-        <div className="absolute inset-0 animate-era-pulse rounded-full border border-white/40" />
-        <div className="absolute inset-0 flex items-center justify-center text-5xl text-white">
-          {burst ? "⚡" : "✦"}
-        </div>
-      </motion.div>
+/* (Legacy RevolutionPanel removed — replaced by RevolutionCinematic.) */
 
-      <p className="mt-8 text-xs uppercase tracking-[0.5em] text-white/50">
-        {burst ? "Cách mạng bùng nổ" : "Chuyển hình thái"}
-      </p>
-      <h2 className="mt-3 font-display text-4xl text-balance text-white sm:text-5xl">
-        {stage.transitionTitle}
-      </h2>
-      <motion.p
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.6, duration: 0.6 }}
-        className="mx-auto mt-4 max-w-xl text-white/75 italic"
-      >
-        "{stage.transitionLine}"
-      </motion.p>
-      <motion.p
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.2 }}
-        className="mt-8 text-sm text-white/50"
-      >
-        Lực lượng sản xuất đã vượt khỏi quan hệ sản xuất cũ…
-      </motion.p>
-    </motion.section>
-  );
-}
 
 /* =========================================================
    Finale
@@ -754,9 +784,12 @@ function Finale({
       >
         <RotateCcw className="h-4 w-4" /> Chơi lại với góc nhìn khác
       </button>
+
+      <ReplayTimeline state={state} />
     </motion.section>
   );
 }
+
 
 /* =========================================================
    Tech tree drawer
