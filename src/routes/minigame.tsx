@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { MiniGame } from "@/components/minigame/MiniGame";
+import { HistoricalSim } from "@/components/minigame/sim/HistoricalSim";
 import { ArrowLeft } from "lucide-react";
 
 export const Route = createFileRoute("/minigame")({
@@ -34,7 +34,7 @@ function MiniGamePage() {
       >
         <ArrowLeft className="h-3.5 w-3.5" /> Bản đồ
       </Link>
-      <MiniGame />
+      <HistoricalSim />
     </div>
   );
 }
