@@ -160,10 +160,13 @@ export function HistoricalSim() {
         <TopBar
           state={state}
           stage={stage}
+          settings={settings}
+          onChangeSettings={setSettings}
           onOpenTech={() => setTechOpen(true)}
           onOpenInsights={() => setInsightsOpen(true)}
           onRestart={() => dispatch({ type: "restart" })}
         />
+
 
         <main className="mx-auto max-w-5xl px-4 pb-40 pt-6 sm:px-6">
           <AnimatePresence mode="wait">
