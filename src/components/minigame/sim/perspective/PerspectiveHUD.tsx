@@ -78,11 +78,18 @@ export function PerspectiveHUD({ state }: { state: SimState }) {
             );
           })}
         </div>
+        </div>
+
+        <div className="mt-3">
+          <p className="mb-1 text-[9px] uppercase tracking-[0.3em] text-[var(--p-muted)]">
+            Áp lực hệ thống
+          </p>
+          <PressureGauges p={state.pressures} />
+        </div>
+
         <p className="mt-2 text-[10px] italic text-[var(--p-muted)]">
           {objective.hint}
         </p>
-      </div>
-    </div>
   );
 }
 
