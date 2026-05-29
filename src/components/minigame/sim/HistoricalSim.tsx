@@ -250,8 +250,9 @@ export function HistoricalSim() {
       />
     </div>
     </PerspectiveProvider>
-
+  );
 }
+
 
 /* =========================================================
    Backdrop — đổi theo era
