@@ -232,10 +232,15 @@ export function reducer(state: SimState, action: SimAction): SimState {
       return { ...state, perspective: action.id, phase: "intro" };
 
     case "startStage": {
-      const next = { ...state, phase: "playing" as const };
+      const withComp = withCompanion(state, { kind: "stage_start" });
+      const next = { ...withComp, phase: "playing" as const };
       const { lockedOptionIds, lockReasons } = recomputeLocks(next);
       return { ...next, lockedOptionIds, lockReasons };
     }
+
+    case "ackCompanion":
+      return { ...state, companionLine: null };
+
 
     case "decide": {
       const stage = STAGES[state.stageIdx];
