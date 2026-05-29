@@ -1,13 +1,15 @@
 /**
  * PerspectiveHUD — perspective-aware HUD replacing/wrapping the metrics bar.
- * Shows: emblem · objective · score · contextual warning · watched metrics highlighted.
+ * Shows: emblem · objective · score · contextual warning · watched metrics
+ * highlighted · contradiction tier badge · 6 systemic pressure gauges.
  */
 import { motion } from "framer-motion";
 import { AlertTriangle } from "lucide-react";
 import { METRIC_META, type MetricKey } from "@/data/historicalSim";
 import type { SimState } from "../simStore";
 import { usePerspective } from "./PerspectiveProvider";
-
+import { PressureGauges } from "../pressure/PressureGauges";
+import { ContradictionTierBadge } from "../pressure/ContradictionTierBadge";
 const ALL_METRICS: MetricKey[] = [
   "production",
   "stability",
