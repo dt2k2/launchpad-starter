@@ -163,6 +163,15 @@ function recomputeLocks(state: SimState): { lockedOptionIds: string[]; lockReaso
   const decision = stage?.decisions[state.decisionIdx];
   const tier = resolveTier(state.metrics.contradiction);
   const { lockedIds, reasons } = computeLockedOptionIds(decision, tier);
+  // Add reformLocked: ban reform-tagged options after a suppress outcome
+  if (state.reformLocked && decision) {
+    for (const opt of decision.options) {
+      if (opt.tag === "reform" && !lockedIds.includes(opt.id)) {
+        lockedIds.push(opt.id);
+        reasons[opt.id] = "Cánh cửa cải cách đã bị niêm phong sau đợt đàn áp.";
+      }
+    }
+  }
   return { lockedOptionIds: lockedIds, lockReasons: reasons };
 }
 
