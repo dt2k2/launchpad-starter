@@ -189,7 +189,41 @@ export function initialState(): SimState {
     lockedOptionIds: [],
     lockReasons: {},
     ruptureStreak: 0,
+    memory: [],
+    stagePath: [],
+    stageFreezeCount: 0,
+    reformLocked: false,
+    lastTransition: null,
+    endingId: null,
+    companionSaid: [],
+    companionLine: null,
   };
+}
+
+/** Helpers for triggering companion lines from inside the reducer. */
+function withCompanion(state: SimState, trigger: CompanionTrigger): SimState {
+  const said = new Set(state.companionSaid);
+  const line = pickCompanionLine(state.perspective, trigger, said);
+  if (!line) return state;
+  return {
+    ...state,
+    companionLine: line,
+    companionSaid: said.has(line.id) ? state.companionSaid : [...state.companionSaid, line.id],
+  };
+}
+
+/** Emit memory tags based on a choice's tag + current pressures. */
+function memoryFromChoice(
+  state: SimState,
+  tag: OptionTag,
+  stageId: string,
+): MemoryTagId | null {
+  if (tag === "repression" && state.pressures.repression > 55) return "mass_repression";
+  if (tag === "reform") return "successful_reform";
+  if (tag === "uprising" && state.pressures.organization > 55) return "general_strike";
+  if (tag === "uprising") return "underground_network";
+  if (tag === "concession" && state.metrics.stability < 40) return "betrayed_promise";
+  return null;
 }
 
 export function reducer(state: SimState, action: SimAction): SimState {
