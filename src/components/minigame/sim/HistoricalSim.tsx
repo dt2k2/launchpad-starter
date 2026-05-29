@@ -144,6 +144,7 @@ export function HistoricalSim() {
   const shake = state.metrics.contradiction >= 70 && !reduceMotion && !settings.reducedFx;
 
   return (
+    <PerspectiveProvider perspective={state.perspective}>
     <div
       data-era={stage.id}
       className={`relative min-h-screen overflow-hidden bg-gradient-to-b ${stage.theme.bg} text-stone-100 transition-colors duration-700`}
@@ -230,9 +231,9 @@ export function HistoricalSim() {
           </AnimatePresence>
         </main>
 
-        {/* HUD bán cố định */}
+        {/* Perspective-aware HUD */}
         {state.phase !== "perspective" && state.phase !== "finale" && (
-          <MetricsHUD metrics={state.metrics} stage={stage} />
+          <PerspectiveHUD state={state} />
         )}
       </motion.div>
 
@@ -248,7 +249,8 @@ export function HistoricalSim() {
         insights={state.insights}
       />
     </div>
-  );
+    </PerspectiveProvider>
+
 }
 
 /* =========================================================
