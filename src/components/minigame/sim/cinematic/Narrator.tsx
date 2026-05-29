@@ -12,7 +12,7 @@ export interface NarratorPayload {
   text: string;
   attribution?: string;
   holdMs?: number;
-  tone?: "calm" | "tense" | "rupture";
+  tone?: "calm" | "tense" | "rupture" | "uneasy" | "strained" | "urgent" | "fractured";
 }
 
 interface Props {
