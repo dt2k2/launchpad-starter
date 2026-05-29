@@ -79,11 +79,7 @@ export function rollContradictionEvent(
 ): ContradictionEvent | null {
   if (tier.eventChance <= 0) return null;
   if (rng() > tier.eventChance) return null;
-
   const eligible = CONTRADICTION_EVENTS.filter((ev) => {
-    if (tierIndex(ctx.metrics.contradiction >= ev.minTier as never ? "calm" : "calm")) {
-      // placeholder, real check below
-    }
     if ((ctx.eventCooldowns[ev.id] ?? 0) > 0) return false;
     if (tierIndex(tier.id) < tierIndex(ev.minTier)) return false;
     if (
@@ -93,6 +89,7 @@ export function rollContradictionEvent(
       return false;
     }
     return true;
+  });
   });
   if (!eligible.length) return null;
 
