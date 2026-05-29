@@ -191,6 +191,11 @@ export function HistoricalSim() {
       />
       <Narrator line={narratorLine} onDone={() => setNarratorLine(null)} />
       <EmergencyBanner state={state} />
+      <CompanionVoice
+        line={state.companionLine}
+        perspective={state.perspective}
+        onDismiss={() => dispatch({ type: "ackCompanion" })}
+      />
 
       <WorldBackdrop stage={stage} reduceMotion={!!reduceMotion || settings.reducedFx} />
 
@@ -254,7 +259,7 @@ export function HistoricalSim() {
             )}
 
             {state.phase === "finale" && (
-              <Finale
+              <EndingScreen
                 key="finale"
                 state={state}
                 onRestart={() => dispatch({ type: "restart" })}
