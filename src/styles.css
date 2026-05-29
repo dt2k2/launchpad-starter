@@ -290,6 +290,46 @@
   75% { transform: translate(-0.5px, 0.5px); }
 }
 
+/* ---------- Narrator tone distortion (driven by contradiction tier) ---------- */
+.narrator-uneasy {
+  animation: narrator-wobble 4s ease-in-out infinite;
+}
+@keyframes narrator-wobble {
+  0%, 100% { letter-spacing: 0em; }
+  50% { letter-spacing: 0.012em; }
+}
+.narrator-strained {
+  text-shadow:
+    1px 0 rgba(244, 63, 94, 0.35),
+    -1px 0 rgba(56, 189, 248, 0.25);
+  animation: narrator-strain 2.4s ease-in-out infinite;
+}
+@keyframes narrator-strain {
+  0%, 100% { text-shadow: 1px 0 rgba(244,63,94,0.35), -1px 0 rgba(56,189,248,0.25); }
+  50% { text-shadow: 2px 0 rgba(244,63,94,0.55), -2px 0 rgba(56,189,248,0.4); }
+}
+.narrator-urgent {
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  animation: narrator-pulse 1.4s ease-in-out infinite;
+}
+@keyframes narrator-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.78; }
+}
+.narrator-glitch {
+  animation: narrator-glitch 1.2s steps(2) infinite;
+  text-shadow:
+    2px 0 rgba(244, 63, 94, 0.7),
+    -2px 0 rgba(56, 189, 248, 0.55);
+}
+@keyframes narrator-glitch {
+  0%, 100% { transform: translate(0, 0); }
+  25% { transform: translate(-1px, 0.5px); }
+  50% { transform: translate(1px, -0.5px); }
+  75% { transform: translate(-0.5px, 1px); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
