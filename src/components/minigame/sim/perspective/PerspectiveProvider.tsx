@@ -63,8 +63,6 @@ export function PerspectiveProvider({
 
 /**
  * VoiceText — renders text run through the perspective voice resolver.
- * Use anywhere the original component would print a raw narrator/prompt/consequence.
- */
 export function VoiceText({
   event,
   decision,
@@ -72,7 +70,6 @@ export function VoiceText({
   fallback,
   stageTitle,
   className = "",
-  as: Tag = "span",
 }: {
   event: VoiceEvent;
   decision?: Decision;
@@ -80,9 +77,8 @@ export function VoiceText({
   fallback?: string;
   stageTitle?: string;
   className?: string;
-  as?: keyof JSX.IntrinsicElements;
 }) {
   const { perspective } = usePerspective();
   const text = resolveVoice(perspective, event, { decision, option, fallback, stageTitle });
-  return <Tag className={className}>{text}</Tag>;
+  return <span className={className}>{text}</span>;
 }
