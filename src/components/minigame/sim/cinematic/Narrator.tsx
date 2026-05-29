@@ -49,30 +49,33 @@ export function Narrator({ line, onDone }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [active]);
 
-  const toneAccent =
-    active?.tone === "rupture"
+  const tone = active?.tone;
+  const isRupture = tone === "rupture" || tone === "fractured";
+  const isTense =
+    tone === "tense" || tone === "uneasy" || tone === "strained" || tone === "urgent";
+  const toneAccent = isRupture
+    ? {
+        ring: "border-rose-300/40",
+        glow: "shadow-[0_0_120px_-10px_rgba(244,63,94,0.55)]",
+        text: "text-rose-50 narrator-glitch",
+        rule: "from-transparent via-rose-300/60 to-transparent",
+        label: "text-rose-200/80",
+      }
+    : isTense
       ? {
-          ring: "border-rose-300/40",
-          glow: "shadow-[0_0_120px_-10px_rgba(244,63,94,0.55)]",
-          text: "text-rose-50",
-          rule: "from-transparent via-rose-300/60 to-transparent",
-          label: "text-rose-200/80",
+          ring: "border-amber-300/40",
+          glow: "shadow-[0_0_120px_-10px_rgba(245,158,11,0.45)]",
+          text: `text-amber-50 ${tone === "urgent" ? "narrator-urgent" : tone === "strained" ? "narrator-strained" : "narrator-uneasy"}`,
+          rule: "from-transparent via-amber-300/60 to-transparent",
+          label: "text-amber-200/80",
         }
-      : active?.tone === "tense"
-        ? {
-            ring: "border-amber-300/40",
-            glow: "shadow-[0_0_120px_-10px_rgba(245,158,11,0.45)]",
-            text: "text-amber-50",
-            rule: "from-transparent via-amber-300/60 to-transparent",
-            label: "text-amber-200/80",
-          }
-        : {
-            ring: "border-white/25",
-            glow: "shadow-[0_0_120px_-10px_rgba(255,255,255,0.18)]",
-            text: "text-white",
-            rule: "from-transparent via-white/40 to-transparent",
-            label: "text-white/70",
-          };
+      : {
+          ring: "border-white/25",
+          glow: "shadow-[0_0_120px_-10px_rgba(255,255,255,0.18)]",
+          text: "text-white",
+          rule: "from-transparent via-white/40 to-transparent",
+          label: "text-white/70",
+        };
 
   return (
     <AnimatePresence mode="wait">
