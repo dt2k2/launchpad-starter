@@ -63,7 +63,9 @@ export function PerspectiveProvider({
 
 /**
  * VoiceText — renders text run through the perspective voice resolver.
+ */
 export function VoiceText({
+
   event,
   decision,
   option,
