@@ -33,6 +33,15 @@ import {
   type TierId,
   type ContradictionEvent,
 } from "@/data/contradiction";
+import {
+  decayMemory,
+  pushMemory,
+  type MemoryTag,
+  type MemoryTagId,
+} from "@/data/memory";
+import { resolveTransition } from "@/data/transition/resolver";
+import type { PathOutcome } from "@/data/transition/outcomes";
+import { pickCompanionLine, type CompanionLine, type CompanionTrigger } from "@/data/companion/lines";
 
 export type SimPhase =
   | "perspective"
@@ -79,6 +88,18 @@ export interface SimState {
   lockedOptionIds: string[];
   lockReasons: Record<string, string>;
   ruptureStreak: number;
+
+  /* ───── History pressure layer (NEW) ───── */
+  memory: MemoryTag[];
+  stagePath: PathOutcome[];     // outcome of each completed stage
+  stageFreezeCount: number;     // freezes in the current stage (anti-loop)
+  reformLocked: boolean;        // true after suppress — reform tag banned
+  lastTransition: PathOutcome | null;
+  endingId: string | null;
+
+  /* ───── Companion presence (NEW) ───── */
+  companionSaid: string[];      // ids of lines already said
+  companionLine: CompanionLine | null;
 }
 
 export type SimAction =
@@ -87,6 +108,7 @@ export type SimAction =
   | { type: "decide"; option: DecisionOption }
   | { type: "ackConsequence" }
   | { type: "ackRevolution" }
+  | { type: "ackCompanion" }
   | { type: "restart" };
 
 export const ALL_METRICS: MetricKey[] = [
@@ -141,6 +163,15 @@ function recomputeLocks(state: SimState): { lockedOptionIds: string[]; lockReaso
   const decision = stage?.decisions[state.decisionIdx];
   const tier = resolveTier(state.metrics.contradiction);
   const { lockedIds, reasons } = computeLockedOptionIds(decision, tier);
+  // Add reformLocked: ban reform-tagged options after a suppress outcome
+  if (state.reformLocked && decision) {
+    for (const opt of decision.options) {
+      if (opt.tag === "reform" && !lockedIds.includes(opt.id)) {
+        lockedIds.push(opt.id);
+        reasons[opt.id] = "Cánh cửa cải cách đã bị niêm phong sau đợt đàn áp.";
+      }
+    }
+  }
   return { lockedOptionIds: lockedIds, lockReasons: reasons };
 }
 
@@ -167,7 +198,41 @@ export function initialState(): SimState {
     lockedOptionIds: [],
     lockReasons: {},
     ruptureStreak: 0,
+    memory: [],
+    stagePath: [],
+    stageFreezeCount: 0,
+    reformLocked: false,
+    lastTransition: null,
+    endingId: null,
+    companionSaid: [],
+    companionLine: null,
   };
+}
+
+/** Helpers for triggering companion lines from inside the reducer. */
+function withCompanion(state: SimState, trigger: CompanionTrigger): SimState {
+  const said = new Set(state.companionSaid);
+  const line = pickCompanionLine(state.perspective, trigger, said);
+  if (!line) return state;
+  return {
+    ...state,
+    companionLine: line,
+    companionSaid: said.has(line.id) ? state.companionSaid : [...state.companionSaid, line.id],
+  };
+}
+
+/** Emit memory tags based on a choice's tag + current pressures. */
+function memoryFromChoice(
+  state: SimState,
+  tag: OptionTag,
+  stageId: string,
+): MemoryTagId | null {
+  if (tag === "repression" && state.pressures.repression > 55) return "mass_repression";
+  if (tag === "reform") return "successful_reform";
+  if (tag === "uprising" && state.pressures.organization > 55) return "general_strike";
+  if (tag === "uprising") return "underground_network";
+  if (tag === "concession" && state.metrics.stability < 40) return "betrayed_promise";
+  return null;
 }
 
 export function reducer(state: SimState, action: SimAction): SimState {
@@ -176,10 +241,15 @@ export function reducer(state: SimState, action: SimAction): SimState {
       return { ...state, perspective: action.id, phase: "intro" };
 
     case "startStage": {
-      const next = { ...state, phase: "playing" as const };
+      const withComp = withCompanion(state, { kind: "stage_start" });
+      const next = { ...withComp, phase: "playing" as const };
       const { lockedOptionIds, lockReasons } = recomputeLocks(next);
       return { ...next, lockedOptionIds, lockReasons };
     }
+
+    case "ackCompanion":
+      return { ...state, companionLine: null };
+
 
     case "decide": {
       const stage = STAGES[state.stageIdx];
@@ -285,8 +355,15 @@ export function reducer(state: SimState, action: SimAction): SimState {
         return acc;
       }, {});
 
-      return {
+      // Historical memory: emit tag if this choice + state warrant it
+      const memTagId = memoryFromChoice({ ...state, pressures: pressuresAfterEvent, metrics: metricsAfterEvent }, tag, stage.id);
+      const memory = memTagId
+        ? pushMemory(state.memory, { id: memTagId, stage: stage.id, perspective: state.perspective })
+        : state.memory;
+
+      let result: SimState = {
         ...state,
+        memory,
         metrics: metricsAfterEvent,
         unlockedTech: [...state.unlockedTech, ...newTech],
         insights:
@@ -318,6 +395,12 @@ export function reducer(state: SimState, action: SimAction): SimState {
         ruptureStreak,
         phase: "consequence",
       };
+
+      // Fire companion line on tier crossing into Unstable+
+      const wasHigh = state.contradictionTier === "unstable" || state.contradictionTier === "emergency" || state.contradictionTier === "rupture";
+      const isHigh  = finalTier.id === "unstable" || finalTier.id === "emergency" || finalTier.id === "rupture";
+      if (!wasHigh && isHigh) result = withCompanion(result, { kind: "high_pressure" });
+      return result;
     }
 
     case "ackConsequence": {
@@ -332,49 +415,159 @@ export function reducer(state: SimState, action: SimAction): SimState {
         .map((e) => ({ ...e, decisionTtl: e.decisionTtl - 1 }))
         .filter((e) => e.decisionTtl > 0);
 
-      // Forced revolution: 2 decisions stuck in rupture tier
-      const forceRevolution = state.ruptureStreak >= 2;
-
-      const revoTriggered =
-        forceRevolution ||
-        state.metrics.revolution >= stage.revolutionThreshold ||
-        (state.metrics.contradiction >= stage.contradictionTrigger &&
-          state.decisionIdx + 1 >= stage.decisions.length);
-
       const nextIdx = state.decisionIdx + 1;
       const stageDone = nextIdx >= stage.decisions.length;
+      const forceRevolution = state.ruptureStreak >= 2;
 
-      if (revoTriggered || stageDone) {
-        const isLast = state.stageIdx >= STAGES.length - 1;
-        return {
+      // Mid-stage: just go to next decision (no transition engine yet)
+      if (!stageDone && !forceRevolution) {
+        const next: SimState = {
           ...state,
           eventCooldowns,
           activeEvents,
-          phase: isLast ? "finale" : "revolution",
-          revolutionsBurned:
-            state.revolutionsBurned +
-            (state.metrics.revolution >= stage.revolutionThreshold || forceRevolution ? 1 : 0),
-          stagesCompleted: state.stagesCompleted + 1,
+          contradictionTier: tier.id,
+          phase: "playing",
           decisionIdx: nextIdx,
           lastChoice: null,
-          ruptureStreak: 0,
         };
+        const { lockedOptionIds, lockReasons } = recomputeLocks(next);
+        return { ...next, lockedOptionIds, lockReasons };
       }
 
-      const next: SimState = {
+      // Stage end → consult transition engine
+      const decision = resolveTransition(state);
+      let outcome = decision.outcome;
+      if (forceRevolution) outcome = "rupture";
+
+      // Companion + memory hooks per outcome
+      const memTag: MemoryTagId | null =
+        outcome === "rupture"         ? "rupture_legacy" :
+        outcome === "failed_uprising" ? "failed_revolt" :
+        outcome === "collapse"        ? "collapse_scar" :
+        outcome === "suppress"        ? "mass_repression" :
+        outcome === "freeze"          ? "stagnation_decade" :
+        null;
+      const memory = memTag
+        ? pushMemory(state.memory, { id: memTag, stage: stage.id, perspective: state.perspective })
+        : state.memory;
+
+      const base: SimState = {
         ...state,
         eventCooldowns,
         activeEvents,
-        contradictionTier: tier.id,
-        phase: "playing",
-        decisionIdx: nextIdx,
+        memory,
+        lastTransition: outcome,
+        stagePath: [...state.stagePath, outcome],
         lastChoice: null,
+        ruptureStreak: 0,
       };
-      const { lockedOptionIds, lockReasons } = recomputeLocks(next);
-      return { ...next, lockedOptionIds, lockReasons };
+      const withOutComp = withCompanion(base, { kind: "outcome", outcome } as any);
+
+      const isLast = state.stageIdx >= STAGES.length - 1;
+
+      // RUPTURE → revolution cinematic, ackRevolution will advance
+      if (outcome === "rupture") {
+        return {
+          ...withOutComp,
+          phase: isLast ? "finale" : "revolution",
+          revolutionsBurned: state.revolutionsBurned + 1,
+          stagesCompleted: state.stagesCompleted + 1,
+          decisionIdx: nextIdx,
+        };
+      }
+
+      // FREEZE / FAILED UPRISING → repeat current stage
+      if (outcome === "freeze" || outcome === "failed_uprising") {
+        const penalty: Partial<Record<MetricKey, number>> =
+          outcome === "failed_uprising"
+            ? { stability: -8, contradiction: 6, revolution: -20 }
+            : { production: -8, tech: -3, contradiction: -4 };
+        const newMetrics = applyMetrics(state.metrics, penalty);
+        const next: SimState = {
+          ...withOutComp,
+          metrics: newMetrics,
+          stageFreezeCount: outcome === "freeze" ? state.stageFreezeCount + 1 : state.stageFreezeCount,
+          decisionIdx: 0,
+          phase: "intro",
+          contradictionTier: resolveTier(newMetrics.contradiction).id,
+          stagesCompleted: state.stagesCompleted,
+        };
+        return next;
+      }
+
+      // COLLAPSE → heavy penalty + jump to next stage (or finale)
+      if (outcome === "collapse") {
+        if (isLast) return { ...withOutComp, phase: "finale", stagesCompleted: state.stagesCompleted + 1 };
+        const nextStage = STAGES[state.stageIdx + 1];
+        const carriedBase = baseMetricsFor(nextStage);
+        const collapsed = {
+          ...carriedBase,
+          stability: Math.max(15, carriedBase.stability - 25),
+          production: Math.max(5, carriedBase.production - 20),
+          tech: Math.max(0, carriedBase.tech - 10),
+        };
+        return {
+          ...withOutComp,
+          stageIdx: state.stageIdx + 1,
+          stageFreezeCount: 0,
+          decisionIdx: 0,
+          metrics: collapsed,
+          contradictionTier: resolveTier(collapsed.contradiction).id,
+          pressures: EMPTY_PRESSURES,
+          stagesCompleted: state.stagesCompleted + 1,
+          phase: "intro",
+        };
+      }
+
+      // SUPPRESS → advance, lock reforms for rest of run
+      if (outcome === "suppress") {
+        if (isLast) return { ...withOutComp, phase: "finale", reformLocked: true, stagesCompleted: state.stagesCompleted + 1 };
+        const nextStage = STAGES[state.stageIdx + 1];
+        const carriedBase = baseMetricsFor(nextStage);
+        const carried = { ...carriedBase, stability: Math.min(85, carriedBase.stability + 15) };
+        return {
+          ...withOutComp,
+          stageIdx: state.stageIdx + 1,
+          stageFreezeCount: 0,
+          decisionIdx: 0,
+          metrics: carried,
+          contradictionTier: resolveTier(carried.contradiction).id,
+          pressures: EMPTY_PRESSURES,
+          reformLocked: true,
+          stagesCompleted: state.stagesCompleted + 1,
+          phase: "intro",
+        };
+      }
+
+      // EVOLVE → standard advance (no revolution cinematic)
+      if (isLast) {
+        return { ...withOutComp, phase: "finale", stagesCompleted: state.stagesCompleted + 1 };
+      }
+      const nextStage = STAGES[state.stageIdx + 1];
+      const carriedBase = baseMetricsFor(nextStage);
+      const techBonus = Math.min(
+        20,
+        state.unlockedTech
+          .map((id) => TECH_TREE.find((t) => t.id === id))
+          .filter(Boolean)
+          .reduce((acc, t) => acc + (t!.effect.tech ?? 0), 0) / 8,
+      );
+      const carried = { ...carriedBase, tech: clamp(carriedBase.tech + techBonus) };
+      return {
+        ...withOutComp,
+        stageIdx: state.stageIdx + 1,
+        stageFreezeCount: 0,
+        decisionIdx: 0,
+        metrics: carried,
+        contradictionTier: resolveTier(carried.contradiction).id,
+        pressures: EMPTY_PRESSURES,
+        stagesCompleted: state.stagesCompleted + 1,
+        phase: "intro",
+      };
     }
 
     case "ackRevolution": {
+      // Rupture branch — advance to next era after the cinematic.
       const nextStageIdx = state.stageIdx + 1;
       if (nextStageIdx >= STAGES.length) {
         return { ...state, phase: "finale" };
@@ -388,13 +581,12 @@ export function reducer(state: SimState, action: SimAction): SimState {
           .filter(Boolean)
           .reduce((acc, t) => acc + (t!.effect.tech ?? 0), 0) / 8,
       );
-      const carried = {
-        ...carriedBase,
-        tech: clamp(carriedBase.tech + techBonus),
-      };
+      const carried = { ...carriedBase, tech: clamp(carriedBase.tech + techBonus) };
+      const memory = decayMemory(state.memory);
       return {
         ...state,
         stageIdx: nextStageIdx,
+        stageFreezeCount: 0,
         decisionIdx: 0,
         metrics: carried,
         contradictionTier: resolveTier(carried.contradiction).id,
@@ -403,9 +595,11 @@ export function reducer(state: SimState, action: SimAction): SimState {
         lockedOptionIds: [],
         lockReasons: {},
         ruptureStreak: 0,
+        memory,
         phase: "intro",
       };
     }
+
 
     case "restart":
       return initialState();

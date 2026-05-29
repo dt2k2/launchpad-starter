@@ -64,6 +64,8 @@ import {
 } from "@/data/perspective/perspectiveConfig";
 import { resolveTier } from "@/data/contradiction";
 import { EmergencyBanner } from "./pressure/EmergencyBanner";
+import { CompanionVoice } from "./companion/CompanionVoice";
+import { EndingScreen } from "./ending/EndingScreen";
 
 
 /* =========================================================
@@ -120,6 +122,9 @@ export function HistoricalSim() {
           holdMs: 4800,
         });
       }
+    }
+  }, [state.phase, stage.id, state.stagesCompleted]);
+
   // Narrator: tension when contradiction crosses unease threshold (once per era)
   useEffect(() => {
     if (
@@ -140,8 +145,7 @@ export function HistoricalSim() {
     }
   }, [state.metrics.contradiction, stage.id, state.phase]);
 
-  // Narrator: contradiction event triggered → surface its line in the
-  // active perspective's voice using the tier's narrator tone.
+  // Narrator: contradiction event triggered
   useEffect(() => {
     const ev = state.lastChoice?.triggeredEvent;
     if (!ev || state.phase !== "consequence") return;
@@ -166,8 +170,7 @@ export function HistoricalSim() {
     state.stagesCompleted,
     state.metrics.contradiction,
   ]);
-    }
-  }, [state.metrics.contradiction, stage.id, state.phase]);
+
 
   const shake = state.metrics.contradiction >= 70 && !reduceMotion && !settings.reducedFx;
 
@@ -188,6 +191,11 @@ export function HistoricalSim() {
       />
       <Narrator line={narratorLine} onDone={() => setNarratorLine(null)} />
       <EmergencyBanner state={state} />
+      <CompanionVoice
+        line={state.companionLine}
+        perspective={state.perspective}
+        onDismiss={() => dispatch({ type: "ackCompanion" })}
+      />
 
       <WorldBackdrop stage={stage} reduceMotion={!!reduceMotion || settings.reducedFx} />
 
@@ -251,7 +259,7 @@ export function HistoricalSim() {
             )}
 
             {state.phase === "finale" && (
-              <Finale
+              <EndingScreen
                 key="finale"
                 state={state}
                 onRestart={() => dispatch({ type: "restart" })}
