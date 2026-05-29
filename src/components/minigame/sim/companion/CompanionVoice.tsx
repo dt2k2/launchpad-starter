@@ -35,7 +35,8 @@ export function CompanionVoice({
           animate={reduce ? { opacity: 1 } : { opacity: 1, y: 0, x: 0 }}
           exit={reduce ? { opacity: 0 } : { opacity: 0, y: 16 }}
           transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-          className="pointer-events-auto fixed bottom-44 left-4 z-30 max-w-xs rounded-[var(--p-radius,8px)] border border-[var(--p-border,rgba(255,255,255,0.15))] bg-stone-950/90 px-4 py-3 shadow-[var(--p-shadow,0_20px_40px_-20px_rgba(0,0,0,0.6))] backdrop-blur-md sm:left-6"
+          className="pointer-events-auto fixed right-4 top-24 z-30 max-w-xs rounded-[var(--p-radius,8px)] border border-[var(--p-border,rgba(255,255,255,0.15))] bg-stone-950/90 px-4 py-3 shadow-[var(--p-shadow,0_20px_40px_-20px_rgba(0,0,0,0.6))] backdrop-blur-md sm:right-6 sm:top-28"
+
         >
           <div className="flex items-start gap-2">
             <span className="mt-0.5 text-lg" aria-hidden>
