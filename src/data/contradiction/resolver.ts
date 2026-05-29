@@ -90,7 +90,6 @@ export function rollContradictionEvent(
     }
     return true;
   });
-  });
   if (!eligible.length) return null;
 
   const total = eligible.reduce((s, e) => s + e.weight, 0);
