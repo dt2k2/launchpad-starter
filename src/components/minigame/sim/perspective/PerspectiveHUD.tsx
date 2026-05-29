@@ -40,11 +40,16 @@ export function PerspectiveHUD({ state }: { state: SimState }) {
               {objective.primary}
             </p>
           </div>
-          <div className={`rounded-[var(--p-radius)] px-3 py-1 ${theme.classes.chip}`}>
-            <p className="text-[9px] uppercase tracking-widest opacity-70">Điểm</p>
-            <p className="font-mono text-lg leading-none">{score}</p>
+          <div className="flex items-center gap-2">
+            <ContradictionTierBadge contradiction={state.metrics.contradiction} />
+            <div className={`rounded-[var(--p-radius)] px-3 py-1 ${theme.classes.chip}`}>
+              <p className="text-[9px] uppercase tracking-widest opacity-70">Điểm</p>
+              <p className="font-mono text-lg leading-none">{score}</p>
+            </div>
           </div>
         </div>
+
+        {warning && (
 
         {warning && (
           <motion.div
