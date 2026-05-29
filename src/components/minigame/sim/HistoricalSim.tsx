@@ -158,10 +158,10 @@ export function HistoricalSim() {
       />
       <StressOverlay
         contradiction={state.metrics.contradiction}
+        reduced={settings.reducedFx}
+      />
       <Narrator line={narratorLine} onDone={() => setNarratorLine(null)} />
       <EmergencyBanner state={state} />
-
-      <WorldBackdrop stage={stage} reduceMotion={!!reduceMotion || settings.reducedFx} />
 
       <WorldBackdrop stage={stage} reduceMotion={!!reduceMotion || settings.reducedFx} />
 
