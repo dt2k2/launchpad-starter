@@ -50,8 +50,6 @@ export function PerspectiveHUD({ state }: { state: SimState }) {
         </div>
 
         {warning && (
-
-        {warning && (
           <motion.div
             key={warning}
             initial={{ opacity: 0, y: -4 }}
