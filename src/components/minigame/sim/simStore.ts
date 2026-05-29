@@ -33,6 +33,15 @@ import {
   type TierId,
   type ContradictionEvent,
 } from "@/data/contradiction";
+import {
+  decayMemory,
+  pushMemory,
+  type MemoryTag,
+  type MemoryTagId,
+} from "@/data/memory";
+import { resolveTransition } from "@/data/transition/resolver";
+import type { PathOutcome } from "@/data/transition/outcomes";
+import { pickCompanionLine, type CompanionLine, type CompanionTrigger } from "@/data/companion/lines";
 
 export type SimPhase =
   | "perspective"
