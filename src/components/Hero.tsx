@@ -2,7 +2,6 @@ import { motion } from "framer-motion";
 import { ArrowDown, Compass, Gamepad2 } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 
-
 export function Hero({ onStart }: { onStart: () => void }) {
   return (
     <section className="relative min-h-screen overflow-hidden grain" data-era="primitive">
@@ -47,7 +46,7 @@ export function Hero({ onStart }: { onStart: () => void }) {
           transition={{ duration: 1.2 }}
           className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-xs uppercase tracking-[0.3em] text-amber-200/80 backdrop-blur"
         >
-          <Compass className="h-3.5 w-3.5" /> Bài luận tương tác
+          <Compass className="h-3.5 w-3.5" /> Interactive Timeline
         </motion.div>
 
         <motion.h1
@@ -67,8 +66,8 @@ export function Hero({ onStart }: { onStart: () => void }) {
           transition={{ duration: 1.2, delay: 0.9 }}
           className="mt-8 max-w-2xl text-base leading-relaxed text-white/70 sm:text-lg"
         >
-          Một hành trình cuộn dọc qua năm phương thức sản xuất đã định hình loài người —
-          từ những hòn đá ghè đầu tiên đến các trung tâm dữ liệu của ngày mai.
+          Một hành trình cuộn dọc qua năm phương thức sản xuất đã định hình loài người — từ những hòn đá ghè đầu tiên
+          đến các trung tâm dữ liệu của ngày mai.
         </motion.p>
 
         <motion.div
