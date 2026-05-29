@@ -120,6 +120,9 @@ export function HistoricalSim() {
           holdMs: 4800,
         });
       }
+    }
+  }, [state.phase, stage.id, state.stagesCompleted]);
+
   // Narrator: tension when contradiction crosses unease threshold (once per era)
   useEffect(() => {
     if (
@@ -140,8 +143,7 @@ export function HistoricalSim() {
     }
   }, [state.metrics.contradiction, stage.id, state.phase]);
 
-  // Narrator: contradiction event triggered → surface its line in the
-  // active perspective's voice using the tier's narrator tone.
+  // Narrator: contradiction event triggered
   useEffect(() => {
     const ev = state.lastChoice?.triggeredEvent;
     if (!ev || state.phase !== "consequence") return;
@@ -166,8 +168,7 @@ export function HistoricalSim() {
     state.stagesCompleted,
     state.metrics.contradiction,
   ]);
-    }
-  }, [state.metrics.contradiction, stage.id, state.phase]);
+
 
   const shake = state.metrics.contradiction >= 70 && !reduceMotion && !settings.reducedFx;
 
