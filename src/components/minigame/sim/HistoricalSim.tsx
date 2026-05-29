@@ -1010,7 +1010,6 @@ function InsightsDrawer({
               </p>
             )}
 
-            )}
           </motion.aside>
         </>
       )}
