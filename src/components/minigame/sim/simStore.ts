@@ -88,6 +88,18 @@ export interface SimState {
   lockedOptionIds: string[];
   lockReasons: Record<string, string>;
   ruptureStreak: number;
+
+  /* ───── History pressure layer (NEW) ───── */
+  memory: MemoryTag[];
+  stagePath: PathOutcome[];     // outcome of each completed stage
+  stageFreezeCount: number;     // freezes in the current stage (anti-loop)
+  reformLocked: boolean;        // true after suppress — reform tag banned
+  lastTransition: PathOutcome | null;
+  endingId: string | null;
+
+  /* ───── Companion presence (NEW) ───── */
+  companionSaid: string[];      // ids of lines already said
+  companionLine: CompanionLine | null;
 }
 
 export type SimAction =
@@ -96,6 +108,7 @@ export type SimAction =
   | { type: "decide"; option: DecisionOption }
   | { type: "ackConsequence" }
   | { type: "ackRevolution" }
+  | { type: "ackCompanion" }
   | { type: "restart" };
 
 export const ALL_METRICS: MetricKey[] = [
