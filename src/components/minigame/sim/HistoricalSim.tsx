@@ -60,8 +60,9 @@ import {
   ENDING_NARRATIONS,
   resolveOptions,
   isOptionEmphasized,
-  isInsightVisible,
 } from "@/data/perspective/perspectiveConfig";
+import { resolveTier } from "@/data/contradiction";
+import { EmergencyBanner } from "./pressure/EmergencyBanner";
 
 
 /* =========================================================
