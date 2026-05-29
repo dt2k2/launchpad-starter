@@ -601,7 +601,7 @@ function DecisionPanel({
   );
 }
 
-}
+
 
 /* =========================================================
    Consequence (cause → effect)
