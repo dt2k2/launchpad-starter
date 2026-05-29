@@ -62,6 +62,8 @@ import {
   isOptionEmphasized,
   isInsightVisible,
 } from "@/data/perspective/perspectiveConfig";
+import { resolveTier } from "@/data/contradiction";
+import { EmergencyBanner } from "./pressure/EmergencyBanner";
 
 
 /* =========================================================
@@ -118,9 +120,6 @@ export function HistoricalSim() {
           holdMs: 4800,
         });
       }
-    }
-  }, [state.phase, stage.id, state.stagesCompleted]);
-
   // Narrator: tension when contradiction crosses unease threshold (once per era)
   useEffect(() => {
     if (
@@ -138,6 +137,35 @@ export function HistoricalSim() {
         });
         lastTensionEra.current = stage.id;
       }
+    }
+  }, [state.metrics.contradiction, stage.id, state.phase]);
+
+  // Narrator: contradiction event triggered → surface its line in the
+  // active perspective's voice using the tier's narrator tone.
+  useEffect(() => {
+    const ev = state.lastChoice?.triggeredEvent;
+    if (!ev || state.phase !== "consequence") return;
+    const tier = resolveTier(state.metrics.contradiction);
+    const toneMap = {
+      neutral: "calm",
+      uneasy: "uneasy",
+      strained: "strained",
+      urgent: "urgent",
+      fractured: "fractured",
+    } as const;
+    setNarratorLine({
+      id: `evt-${ev.id}-${state.stagesCompleted}-${state.decisionIdx}`,
+      text: `${ev.title} — ${ev.narrator}`,
+      tone: toneMap[tier.narratorTone],
+      holdMs: 4600,
+    });
+  }, [
+    state.lastChoice?.triggeredEvent?.id,
+    state.phase,
+    state.decisionIdx,
+    state.stagesCompleted,
+    state.metrics.contradiction,
+  ]);
     }
   }, [state.metrics.contradiction, stage.id, state.phase]);
 
@@ -159,6 +187,7 @@ export function HistoricalSim() {
         reduced={settings.reducedFx}
       />
       <Narrator line={narratorLine} onDone={() => setNarratorLine(null)} />
+      <EmergencyBanner state={state} />
 
       <WorldBackdrop stage={stage} reduceMotion={!!reduceMotion || settings.reducedFx} />
 
@@ -536,19 +565,31 @@ function DecisionPanel({
         <div className="mt-6 grid gap-3">
           {options.map((opt) => {
             const emphasized = isOptionEmphasized(opt.id, state.perspective);
+            const locked = state.lockedOptionIds.includes(opt.id);
+            const lockReason = state.lockReasons[opt.id];
             return (
             <button
               key={opt.id}
-              onClick={() => onChoose(opt)}
-              className={`group flex flex-col rounded-[var(--p-radius)] border p-4 text-left transition hover:bg-white/[0.07] ${
-                emphasized
-                  ? "border-[var(--p-accent)] bg-[var(--p-accent-soft)] ring-1 ring-[var(--p-accent)]/40"
-                  : "border-white/10 bg-white/[0.03] hover:border-white/30"
+              type="button"
+              disabled={locked}
+              title={locked ? lockReason : undefined}
+              onClick={() => { if (!locked) onChoose(opt); }}
+              className={`group flex flex-col rounded-[var(--p-radius)] border p-4 text-left transition ${
+                locked
+                  ? "cursor-not-allowed border-white/10 bg-white/[0.02] opacity-50"
+                  : emphasized
+                    ? "border-[var(--p-accent)] bg-[var(--p-accent-soft)] ring-1 ring-[var(--p-accent)]/40 hover:bg-white/[0.07]"
+                    : "border-white/10 bg-white/[0.03] hover:border-white/30 hover:bg-white/[0.07]"
               }`}
             >
               <div className="flex items-start justify-between gap-3">
                 <p className="font-medium text-white">
-                  {emphasized && (
+                  {locked && (
+                    <span className="mr-2 inline-flex items-center gap-1 text-[10px] uppercase tracking-widest text-rose-300">
+                      <Lock className="h-3 w-3" /> Bị khoá
+                    </span>
+                  )}
+                  {emphasized && !locked && (
                     <span className={`mr-2 text-[10px] uppercase tracking-widest text-[var(--p-accent)]`}>
                       ◆ Đúng vai
                     </span>
@@ -558,6 +599,9 @@ function DecisionPanel({
                 <ChevronRight className="h-4 w-4 shrink-0 text-white/30 transition group-hover:translate-x-0.5 group-hover:text-white/80" />
               </div>
               <p className="mt-1 text-sm text-white/60">{opt.flavor}</p>
+              {locked && lockReason && (
+                <p className="mt-2 text-[11px] italic text-rose-300/80">⛔ {lockReason}</p>
+              )}
               <div className="mt-3 flex flex-wrap gap-1.5">
                 {ALL_METRICS.filter((k) => (opt.effect[k] ?? 0) !== 0).map((k) => {
                   const v = opt.effect[k]!;

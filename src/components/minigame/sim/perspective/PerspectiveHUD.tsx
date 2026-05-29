@@ -1,13 +1,15 @@
 /**
  * PerspectiveHUD — perspective-aware HUD replacing/wrapping the metrics bar.
- * Shows: emblem · objective · score · contextual warning · watched metrics highlighted.
+ * Shows: emblem · objective · score · contextual warning · watched metrics
+ * highlighted · contradiction tier badge · 6 systemic pressure gauges.
  */
 import { motion } from "framer-motion";
 import { AlertTriangle } from "lucide-react";
 import { METRIC_META, type MetricKey } from "@/data/historicalSim";
 import type { SimState } from "../simStore";
 import { usePerspective } from "./PerspectiveProvider";
-
+import { PressureGauges } from "../pressure/PressureGauges";
+import { ContradictionTierBadge } from "../pressure/ContradictionTierBadge";
 const ALL_METRICS: MetricKey[] = [
   "production",
   "stability",
@@ -38,9 +40,12 @@ export function PerspectiveHUD({ state }: { state: SimState }) {
               {objective.primary}
             </p>
           </div>
-          <div className={`rounded-[var(--p-radius)] px-3 py-1 ${theme.classes.chip}`}>
-            <p className="text-[9px] uppercase tracking-widest opacity-70">Điểm</p>
-            <p className="font-mono text-lg leading-none">{score}</p>
+          <div className="flex items-center gap-2">
+            <ContradictionTierBadge contradiction={state.metrics.contradiction} />
+            <div className={`rounded-[var(--p-radius)] px-3 py-1 ${theme.classes.chip}`}>
+              <p className="text-[9px] uppercase tracking-widest opacity-70">Điểm</p>
+              <p className="font-mono text-lg leading-none">{score}</p>
+            </div>
           </div>
         </div>
 
@@ -73,6 +78,14 @@ export function PerspectiveHUD({ state }: { state: SimState }) {
             );
           })}
         </div>
+
+        <div className="mt-3">
+          <p className="mb-1 text-[9px] uppercase tracking-[0.3em] text-[var(--p-muted)]">
+            Áp lực hệ thống
+          </p>
+          <PressureGauges p={state.pressures} />
+        </div>
+
         <p className="mt-2 text-[10px] italic text-[var(--p-muted)]">
           {objective.hint}
         </p>

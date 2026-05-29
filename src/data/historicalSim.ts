@@ -157,6 +157,15 @@ export const TECH_TREE: TechNode[] = [
    Decisions & Events
    ========================================================= */
 
+export type OptionTag =
+  | "reform"
+  | "concession"
+  | "repression"
+  | "uprising"
+  | "reactionary"
+  | "emergency"
+  | "neutral";
+
 export interface DecisionOption {
   id: string;
   label: string;
@@ -171,6 +180,8 @@ export interface DecisionOption {
   insight?: string;
   /** Nếu true → đây là lựa chọn "tiến bộ" theo logic lịch sử */
   progressive?: boolean;
+  /** Phân loại để contradiction engine lock/unlock theo tier */
+  tag?: OptionTag;
 }
 
 export interface Decision {

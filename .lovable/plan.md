@@ -1,265 +1,253 @@
-# Refactor: Perspective System — Ruler / Worker / Historian
+# Refactor: Contradiction → Real Gameplay Pressure System
 
-Mục tiêu: làm cho 3 góc nhìn cảm thấy như 3 trải nghiệm lịch sử khác nhau, không phải 3 stat-modifier. **Không** đập lại kiến trúc — chỉ mở rộng các hệ thống đang có (decision, narrator, HUD, ending, insight).
-
----
-
-## 1. Chiến lược refactor (data-driven, additive)
-
-- Giữ nguyên: `simStore`, contradiction/revolution trigger, tech tree, replay timeline, cinematic, ending classifier infrastructure.
-- Thêm 1 module config trung tâm: `src/data/perspective/` → tách thành nhiều file nhỏ, được consume bởi các component đã có.
-- Mọi sự khác biệt (voice, theme, objective, ending, insight filter, option gating) đều **đọc từ data** thay vì hardcode trong JSX.
-- Khi player chọn perspective → một `PerspectiveContext` cung cấp `theme + voice resolver + objective + insight filter` cho toàn bộ cây con.
+Mục tiêu: contradiction không còn chỉ là "stress overlay" — nó trở thành **áp lực hệ thống** thực sự, có ngưỡng, có sự kiện, có hậu quả lên option/metric/UI/narrator. **Không** đập kiến trúc; mở rộng `simStore` + thêm 1 cụm data + vài UI hook.
 
 ---
 
-## 2. Cấu trúc thư mục mới
+## 1. Engine design (data-driven, 3 lớp)
 
 ```text
-src/data/perspective/
-  index.ts                      // re-export + getPerspectiveConfig(id)
-  perspectiveThemes.ts          // tokens cho mỗi perspective
-  perspectiveVoices.ts          // voice mặc định + helper resolveVoice()
-  perspectiveObjectives.ts      // success rules + HUD warning thresholds
-  perspectiveEndingNarrations.ts// template ending theo (endingId, perspective)
-  perspectiveInsightFilters.ts  // tag → visibility map
-  perspectiveOptionGates.ts     // optionId → perspective[] (visibility/exclusive)
-
-src/components/minigame/sim/perspective/
-  PerspectiveProvider.tsx       // context + CSS var injection
-  PerspectiveHUD.tsx            // emblem, objective, warning
-  PerspectiveVoiceRenderer.tsx  // <VoiceText decision={..} event="prompt"/>
-  PerspectiveTransition.tsx     // overlay khi switch / khi vào ải
-  InsightFilterEngine.ts        // pure fn: filterInsights(list, perspective)
+┌─ Pressure Layer ──────────────┐   derived mỗi tick từ metrics + log
+│ classTension, repression,     │
+│ legitimacyLoss, organization, │
+│ productionInstability,         │
+│ ruptureRisk                    │
+└──────────────┬─────────────────┘
+               │ feeds
+┌──────────────▼─────────────────┐
+│  Threshold Resolver            │   contradiction → tier
+│  CALM/TENSION/UNSTABLE/        │
+│  EMERGENCY/RUPTURE             │
+└──────────────┬─────────────────┘
+               │ drives
+┌──────────────▼─────────────────┐
+│  Effect Resolver               │
+│   • lockedOptionIds            │
+│   • metricDecayPerTick         │
+│   • optionRiskFactor           │
+│   • narratorTone               │
+│   • uiDistortion (0..1)        │
+└──────────────┬─────────────────┘
+               │ may trigger
+┌──────────────▼─────────────────┐
+│  Event Engine                  │
+│  injects ContradictionEvent    │
+│  before next decision          │
+└────────────────────────────────┘
 ```
 
-Cập nhật:
-- `src/data/historicalSim.ts`: mở rộng `DecisionOption` với optional `tags`, `gatedTo`; mở rộng `Insight` với `tags`; voice schema giữ tương thích ngược.
-- `simStore.ts`: thêm `perspectiveScore` (3 con số riêng theo objective).
-- `HistoricalSim.tsx`: bọc trong `<PerspectiveProvider>`, thay HUD bằng `<PerspectiveHUD>`, dùng `<VoiceText>` thay vì đọc `decision.voice[]` trực tiếp, dùng `filterOptions()` và `filterInsights()`.
-- `Narrator.tsx`: nhận `perspective` → đổi font/tone class từ theme.
-- Ending screen: dùng `renderEnding(endingId, perspective, state)`.
+Tất cả derived — pressures là functions of state, không thêm dữ liệu cần persist (trừ `activeEvents`, `eventCooldowns`).
 
 ---
 
-## 3. Data schema
+## 2. Files
+
+**Mới — `src/data/contradiction/`**
+- `thresholds.ts` — `TIERS` config (cutoff, narratorTone, uiDistortion, decay, lockTags…)
+- `pressures.ts` — `derivePressures(state)` → 6 con số 0..100
+- `events.ts` — `CONTRADICTION_EVENTS` array (strike_wave, famine, treasury_collapse, elite_fracture, military_unrest, underground_org, propaganda_surge)
+- `resolver.ts` — `resolveContradictionEffects(state)` → `{tier, lockedOptionIds, decay, narratorTone, distortion, eventCandidates}`
+- `index.ts` — re-export
+
+**Mới — `src/components/minigame/sim/pressure/`**
+- `PressureGauges.tsx` — 6 mini bar trong HUD
+- `ContradictionTierBadge.tsx` — pill hiển thị tier hiện tại
+
+**Sửa:**
+- `src/data/historicalSim.ts` — thêm optional `tag?: "reform"|"concession"|"repression"|"uprising"|"reactionary"|"neutral"` trên `DecisionOption`; thêm optional `pressureImpact?` cho event tuning
+- `src/components/minigame/sim/simStore.ts` — state mới (xem §3), gọi resolver mỗi `decide`/`ackConsequence`, inject contradiction events
+- `src/components/minigame/sim/HistoricalSim.tsx` — render lock state + tooltip lý do, render banner sự kiện, truyền `distortion`/`tone` cho Narrator + StressOverlay
+- `src/components/minigame/sim/perspective/PerspectiveHUD.tsx` — embed `<PressureGauges>` + `<ContradictionTierBadge>`
+- `src/components/minigame/sim/cinematic/StressOverlay.tsx` — `intensity` đọc từ tier thay vì raw contradiction
+- `src/components/minigame/sim/cinematic/Narrator.tsx` — class `glitch` khi tier ≥ UNSTABLE
+
+Không động: routing, perspective config, ending classifier, replay timeline, cinematic.
+
+---
+
+## 3. Schema mở rộng
 
 ```ts
-// perspectiveThemes.ts
-export interface PerspectiveTheme {
-  id: PerspectiveId;
-  emblem: string;            // glyph or short symbol
+// simStore.ts — SimState thêm:
+contradictionTier: "calm"|"tension"|"unstable"|"emergency"|"rupture";
+pressures: {
+  classTension: number;
+  repression: number;
+  legitimacyLoss: number;
+  organization: number;
+  productionInstability: number;
+  ruptureRisk: number;
+};
+activeEvents: ActiveEvent[];           // event đã trigger, hiển thị banner
+eventCooldowns: Record<string, number>;// id → số decision còn cooldown
+lockedOptionIds: string[];             // tính lại mỗi step
+```
+
+```ts
+// contradiction/thresholds.ts
+export type TierId = "calm"|"tension"|"unstable"|"emergency"|"rupture";
+export interface Tier {
+  id: TierId;
+  min: number;                      // contradiction ≥
   label: string;
-  // CSS custom properties — injected to root via PerspectiveProvider
-  tokens: {
-    "--p-accent": string;        // oklch
-    "--p-accent-soft": string;
-    "--p-bg": string;
-    "--p-surface": string;
-    "--p-border": string;
-    "--p-text": string;
-    "--p-muted": string;
-    "--p-danger": string;
-    "--p-grain-url": string;     // svg/png data-uri
-    "--p-radius": string;        // rigid vs rough vs soft
-    "--p-shadow": string;
-    "--p-font-display": string;
-    "--p-font-body": string;
-  };
-  hudClass: string;            // tailwind preset combining tokens
-  buttonClass: string;
-  progressClass: string;
-  narratorClass: string;       // tone-of-voice typography
+  narratorTone: "neutral"|"uneasy"|"strained"|"urgent"|"fractured";
+  uiDistortion: number;             // 0..1 → StressOverlay + Narrator glitch
+  stabilityDecay: number;           // áp dụng cuối mỗi decision
+  productionDecay: number;
+  optionRiskFactor: number;         // 0..1, càng cao càng dễ "fail" effect
+  lockTags: OptionTag[];            // option có tag này bị khoá ở tier này
+  emergencyOnly: boolean;           // chỉ option có tag "emergency" còn dùng được
 }
-
-// perspectiveVoices.ts
-type VoiceEvent =
-  | "decisionPrompt"
-  | "optionLabel"
-  | "consequence"
-  | "stageEnter"
-  | "stageTension"
-  | "revolution"
-  | "warning"
-  | "objectiveHint";
-
-// Default narrator persona per event when decision-specific voice missing
-export const DEFAULT_VOICE: Record<PerspectiveId, Record<VoiceEvent, (ctx: VoiceCtx) => string>>;
-
-// Override per decision: decision.voiceOverrides?[perspective]?[event]
-
-// perspectiveObjectives.ts
-export interface PerspectiveObjective {
-  primary: string;                  // shown in HUD ("Giữ trật tự")
-  successRule: (s: SimState) => number; // 0..1 score
-  warning: (s: SimState) => string | null; // contextual HUD warning
-  metricsWatched: MetricKey[];      // highlighted in HUD
-}
-
-// perspectiveEndingNarrations.ts
-type EndingId = ReturnType<typeof classifyEnding>["id"];
-export const ENDING_NARRATIONS: Record<EndingId, Record<PerspectiveId, {
-  title: string; body: string; epitaph: string;
-}>>;
-
-// perspectiveInsightFilters.ts
-export type InsightTag =
-  | "labor" | "exploitation" | "solidarity" | "classStruggle"
-  | "governance" | "order" | "stability" | "legitimacy"
-  | "structural" | "causal" | "comparative";
-
-export const INSIGHT_VISIBILITY: Record<PerspectiveId, {
-  primary: InsightTag[];   // always visible
-  hidden: InsightTag[];    // never visible (class blindness)
-  // everything else: visible but with muted styling
-}>;
-
-// perspectiveOptionGates.ts
-export const OPTION_GATES: Record<string /*optionId*/, {
-  visibleTo: PerspectiveId[];          // hard gate
-  emphasizeFor?: PerspectiveId[];      // soft highlight
-  tooltipBy?: Partial<Record<PerspectiveId, string>>;
-}>;
+export const TIERS: Tier[] = [
+  { id:"calm",      min:0,  narratorTone:"neutral",  uiDistortion:0,    stabilityDecay:0, productionDecay:0, optionRiskFactor:0,   lockTags:[],              emergencyOnly:false, label:"Bình lặng" },
+  { id:"tension",   min:50, narratorTone:"uneasy",   uiDistortion:0.15, stabilityDecay:1, productionDecay:0, optionRiskFactor:0.05,lockTags:[],              emergencyOnly:false, label:"Căng thẳng" },
+  { id:"unstable",  min:70, narratorTone:"strained", uiDistortion:0.4,  stabilityDecay:3, productionDecay:2, optionRiskFactor:0.15,lockTags:["reform"],      emergencyOnly:false, label:"Bất ổn" },
+  { id:"emergency", min:85, narratorTone:"urgent",   uiDistortion:0.7,  stabilityDecay:5, productionDecay:5, optionRiskFactor:0.3, lockTags:["reform","concession"], emergencyOnly:false, label:"Khẩn cấp" },
+  { id:"rupture",   min:95, narratorTone:"fractured",uiDistortion:1.0,  stabilityDecay:8, productionDecay:8, optionRiskFactor:0.5, lockTags:["reform","concession","neutral"], emergencyOnly:true, label:"Vỡ trận" },
+];
 ```
-
----
-
-## 4. Theme tokens (sample)
-
-```text
-Ruler  : accent oklch(.78 .14 85) gold, bg oklch(.10 .02 60) ink-black,
-         border 1px solid gold, radius 2px, font-display Cormorant,
-         seal grain (svg crest watermark), narrator: decree small-caps.
-Worker : accent oklch(.62 .19 30) rust, bg oklch(.14 .03 30) iron,
-         border 2px dashed rust, radius 0, font-display Archivo Black,
-         heavy noise grain, narrator: urgent uppercase + ragged.
-Histor.: accent oklch(.55 .03 250) ink-blue, bg oklch(.94 .02 90) paper,
-         border 1px solid ink, radius 6px, font-display Libre Baskerville,
-         paper-grain svg, narrator: justified serif with margin notes.
-```
-
-Injected via `PerspectiveProvider` setting CSS vars on a wrapper `<div>` — every existing component that uses `bg-[var(--p-surface)]` etc. picks them up automatically. We migrate the HUD/decision card/option button to these vars in one pass.
-
----
-
-## 5. Voice rendering system
-
-```tsx
-// PerspectiveVoiceRenderer.tsx
-export function VoiceText({ decision, option, event, ctx }: Props) {
-  const { perspective } = usePerspective();
-  const override = decision?.voiceOverrides?.[perspective]?.[event];
-  if (override) return <span className="voice">{render(override, ctx)}</span>;
-  const fn = DEFAULT_VOICE[perspective][event];
-  return <span className="voice">{fn({ decision, option, ...ctx })}</span>;
-}
-```
-
-Every prompt/option/consequence/narrator string in `HistoricalSim.tsx` and `Narrator.tsx` is replaced by `<VoiceText … />`. Authors only have to write overrides for moments worth customizing — default voice always exists, so the same event automatically *feels* different per perspective even with zero overrides.
-
----
-
-## 6. Perspective scoring
 
 ```ts
-// simStore.ts addition
-perspectiveScore: { ruler: number; worker: number; historian: number }
-// Recomputed after every decision via PERSPECTIVE_OBJECTIVES[id].successRule(state)
+// contradiction/events.ts
+export interface ContradictionEvent {
+  id: string;
+  title: string;
+  minTier: TierId;                  // tier tối thiểu để eligible
+  weight: number;                   // weighted random
+  cooldown: number;                 // số decision trước khi có thể trigger lại
+  condition?: (s: SimState) => boolean;
+  narrator: Partial<Record<PerspectiveId, string>>;
+  effect: MetricDelta;              // áp dụng ngay khi trigger
+  pressureImpact?: Partial<SimState["pressures"]>; // additive
+  forcedDecision?: Decision;        // nếu có → chèn vào hàng đợi
+}
 ```
 
-Rules:
-- **Ruler**: `0.5*stability + 0.3*(100-revolution) + 0.2*production − 0.4*revolutionsBurned*10`
-- **Worker**: `0.4*revolutionsBurned*25 + 0.3*progressiveCount*15 + 0.3*contradiction − 0.3*stability`
-- **Historian**: `insightsUnlocked/totalInsights * 70 + unlockedTech/totalTech * 30`
-
-Final ending picks `endingId` from existing classifier **but** narration template is selected per perspective, and a perspective-specific epitaph line is appended using `perspectiveScore`.
-
----
-
-## 7. HUD logic
-
-`PerspectiveHUD`:
-- emblem + label top-left, accent color from theme
-- objective line ("Giữ trật tự — duy trì stability ≥ 60")
-- watched metrics highlighted, others muted
-- contextual warning từ `objective.warning(state)`:
-  - Ruler: "⚠ Trật tự đang lung lay" khi stability < 40
-  - Worker: "⚠ Bóc lột tăng cao" khi contradiction > 60 & stability > 60
-  - Historian: "⚠ Mâu thuẫn kết cấu sâu" khi contradiction > 70
-
-Decision option list: lọc qua `OPTION_GATES`; gated options chỉ render cho perspective phù hợp, emphasized options có ring accent.
+Pressure derivation (deterministic):
+```ts
+classTension          = clamp(contradiction*0.6 + (100-stability)*0.3 + revolution*0.1)
+repression            = clamp(sum(option.tag==="repression")*15 - sum(option.tag==="concession")*10)
+legitimacyLoss        = clamp(100 - stability + contradiction*0.2 - progressiveCount*4)
+organization          = clamp(sum(option.tag==="uprising")*12 + revolution*0.4 + (perspective==="worker"?10:0))
+productionInstability = clamp(contradiction*0.4 + (100-production)*0.3)
+ruptureRisk           = clamp(contradiction*0.45 + classTension*0.25 + legitimacyLoss*0.15 + organization*0.2 - repression*0.15)
+```
 
 ---
 
-## 8. Sample — Stage `slave`, decision "Đối phó nô lệ bỏ trốn"
+## 4. New gameplay effects (cụ thể)
+
+| Tier | Tác động |
+|---|---|
+| **TENSION (50+)** | narrator chuyển `uneasy`; HUD ring đỏ pulse nhẹ; có 25% chance trigger 1 event nhẹ (strike_wave, propaganda_surge) sau decision |
+| **UNSTABLE (70+)** | option tag `reform` bị khoá (tooltip: "Quá muộn để cải lương — mâu thuẫn đã vượt cải cách"); stability -3/decision; narrator distort nhẹ; event trigger chance 50% |
+| **EMERGENCY (85+)** | thêm khoá `concession`; stability -5, production -5/decision; option risk factor 30% (effect bị giảm random 0–30%); banner đỏ "Trạng thái Khẩn cấp"; ép trigger 1 event mỗi decision nếu có sẵn |
+| **RUPTURE (95+)** | chỉ option `uprising`/`repression`/`emergency` khả dụng; mỗi decision đẩy `revolution` +15; cinematic glitch tối đa; nếu kéo dài 2 decision → force `revolution` phase |
+
+`optionRiskFactor`: khi apply effect, các metric **tích cực** (stability, production, tech) bị nhân với `(1 - risk*random())`; metric tiêu cực (contradiction, revolution) không bị giảm — nghĩa là "ván cờ ngày càng khó cứu".
+
+---
+
+## 5. Sample event implementation
 
 ```ts
-// voice overrides
-{
-  voiceOverrides: {
-    ruler: {
-      decisionPrompt: "Sổ điền trang ghi: 47 nô lệ trốn quý này. Chiếu chỉ?",
-      consequence:    "Lệnh đã ban. Trật tự được tái lập — tạm thời.",
+// contradiction/events.ts (trích)
+export const CONTRADICTION_EVENTS: ContradictionEvent[] = [
+  {
+    id: "strike_wave",
+    title: "Làn sóng bãi công",
+    minTier: "tension",
+    weight: 3,
+    cooldown: 2,
+    narrator: {
+      ruler:  "Các xưởng im tiếng máy. Báo cáo nói 'tạm dừng kỹ thuật' — ta biết đó là dối trá.",
+      worker: "Anh em buông búa cùng lúc. Lần đầu, nhà máy im lặng vì *chúng ta* im lặng.",
+      historian: "Khi giá trị thặng dư bị từ chối tạo ra — nền sản xuất lộ rõ ai thực sự vận hành nó.",
     },
-    worker: {
-      decisionPrompt: "Anh em vừa trốn đêm qua bị bắt lại. Ta làm gì?",
-      consequence:    "Roi vọt hôm nay. Ngày mai vẫn phải sống.",
-    },
-    historian: {
-      decisionPrompt: "Khủng hoảng tái sản xuất sức lao động trong chế độ nô lệ.",
-      consequence:    "Hệ thống lệ thuộc bạo lực để duy trì — chi phí tăng dần.",
-    },
+    effect: { production: -8, contradiction: +4, stability: -5 },
+    pressureImpact: { organization: +12, classTension: +8 },
   },
+  {
+    id: "treasury_collapse",
+    title: "Ngân khố cạn",
+    minTier: "emergency",
+    weight: 2,
+    cooldown: 4,
+    condition: (s) => s.metrics.production < 50,
+    narrator: {
+      ruler:  "Két sắt rỗng. Lính đánh thuê đòi lương bằng bạc, không bằng lời hứa.",
+      worker: "Họ tăng thuế lần thứ ba quý này. Bánh mì đắt gấp đôi.",
+      historian: "Khủng hoảng tài khoá luôn báo trước khủng hoảng chính trị.",
+    },
+    effect: { production: -10, stability: -12, contradiction: +6 },
+    pressureImpact: { legitimacyLoss: +15, productionInstability: +20 },
+  },
+  // famine, elite_fragmentation, military_unrest, underground_organizing, propaganda_surge…
+];
+```
+
+Event picker (trong resolver):
+```ts
+function pickEvent(state, tier): ContradictionEvent | null {
+  const pool = CONTRADICTION_EVENTS.filter(e =>
+    TIER_ORDER.indexOf(tier) >= TIER_ORDER.indexOf(e.minTier) &&
+    (state.eventCooldowns[e.id] ?? 0) === 0 &&
+    (e.condition?.(state) ?? true)
+  );
+  // weighted random; emergency tier → force trigger; tension tier → 25% gate
+  ...
 }
-// options
-[
-  { id:"crush", label:"Đàn áp công khai",
-    gatedTo:["ruler"], effect:{stability:+8,contradiction:+10}},
-  { id:"flee_network", label:"Tổ chức mạng lưới bỏ trốn",
-    gatedTo:["worker"], effect:{revolution:+6,stability:-4}, tags:["solidarity"]},
-  { id:"document", label:"Ghi chép tần suất bỏ trốn",
-    gatedTo:["historian"], effect:{tech:+2}, insight:"reproductionCrisis"},
-  { id:"reform_quota", label:"Giảm hạn ngạch lao dịch",
-    // visible to all — neutral
-    effect:{stability:+4,production:-3,contradiction:-4}},
-]
 ```
 
 ---
 
-## 9. Ending narration examples (ending = "RevolutionTriumphant" ở ải capitalist)
+## 6. Reducer integration (minimal touch)
 
-- **Ruler**: "Dinh thự ngươi cháy. Sổ sách bị đốt. Một trật tự ngươi gọi là *vĩnh cửu* sụp trong ba tuần. Lịch sử không hỏi ngươi có đồng ý."
-- **Worker**: "Cờ bay trên nóc xưởng. Lần đầu trong đời, ngươi ký tên mình — không phải để xin việc, mà để biểu quyết. Cuộc đấu tranh chưa xong; nhưng đêm nay ngươi ngủ trong căn phòng của chính mình."
-- **Historian**: "Lực lượng sản xuất xã hội hoá đã phá vỡ vỏ tư hữu cuối cùng. Ghi chú: thời gian từ khủng hoảng đến chuyển hoá ngắn hơn dự báo Marx 1867 khoảng 11 năm. Cần xét lại biến số tổ chức."
+`case "decide"`:
+1. apply option effect (như cũ) — nhưng pass qua `applyRisk(effect, tier.optionRiskFactor)`
+2. derivePressures(next) → `tier = resolveTier(next.metrics.contradiction)`
+3. apply `tier.stabilityDecay` / `productionDecay`
+4. compute `lockedOptionIds` cho decision kế tiếp
+5. roll event → nếu trigger: push vào `activeEvents`, apply `effect+pressureImpact`, set cooldown; nếu có `forcedDecision` → chèn trước decision kế tiếp (giữ `decisionIdx` logic bằng cách extend stage decision queue runtime)
 
-(File `perspectiveEndingNarrations.ts` chứa template cho mỗi ending × 3 perspective.)
+`case "ackConsequence"`: decrement `eventCooldowns`, clear consumed `activeEvents`.
 
----
-
-## 10. Acceptance criteria
-
-- [ ] Chọn perspective khác → màu, font, grain, border, button shape đổi ngay (CSS vars).
-- [ ] Mọi decision prompt/option/consequence chạy qua `<VoiceText>`; có default voice cho 3 perspective ⇒ không còn câu chung.
-- [ ] HUD hiển thị: emblem, objective, watched metrics, contextual warning đúng perspective.
-- [ ] Ít nhất 1 option gated per perspective trong **mỗi** stage (5 ải × 3 = 15 option mới).
-- [ ] Insight bị filter: Ruler không thấy `exploitation/solidarity`; Worker không thấy `legitimacy/governance`; Historian thấy tất cả + commentary.
-- [ ] Ending screen render template từ `ENDING_NARRATIONS[endingId][perspective]` + epitaph dùng `perspectiveScore`.
-- [ ] `perspectiveScore` được tính và hiển thị ở finale ("Bạn đã giữ trật tự 72/100").
-- [ ] Replay timeline + cinematic + revolution trigger **không thay đổi behavior**.
-- [ ] Build pass, không regression ở flow chính.
+Existing revolution trigger giữ nguyên — chỉ thêm: nếu `tier === "rupture"` 2 decision liên tiếp → force `phase = "revolution"`.
 
 ---
 
-## 11. Thứ tự triển khai (1 PR, nhiều commit nội bộ)
+## 7. UI integration (presentation only)
 
-1. Thêm `src/data/perspective/*` + types (compile-safe, chưa wire).
-2. `PerspectiveProvider` + inject CSS vars; migrate HUD wrapper.
-3. `VoiceText` + thay thế chỗ đọc voice trong `HistoricalSim` + `Narrator`.
-4. `PerspectiveHUD` thay HUD cũ; thêm objective + warning.
-5. Option gating + insight filter (data + UI).
-6. Ending narration templates + epitaph + perspectiveScore.
-7. Theme polish (grain svg, font import, button variants).
-8. QA 3 lượt playthrough (1 perspective mỗi lượt).
+- **HUD**: PerspectiveHUD render thêm `<ContradictionTierBadge tier={...} />` + `<PressureGauges p={pressures} />` (6 bar mỏng, xám khi 0).
+- **DecisionPanel** (`HistoricalSim.tsx`): option có id ∈ `lockedOptionIds` → render với `opacity-40`, lock icon, tooltip lý do (`tier.label + "khoá tag X"`).
+- **EventBanner**: trên decision card, hiển thị `activeEvents[0].title + narrator[perspective]`, accent đỏ.
+- **StressOverlay**: `intensity = tier.uiDistortion` (đổi từ raw contradiction).
+- **Narrator**: nếu `tier.narratorTone !== "neutral"` → add class `narrator-${tone}` (CSS: uneasy = slight letter-spacing wobble; strained = subtle RGB split; urgent = bold uppercase pulse; fractured = full glitch).
+- **EmergencyBanner**: khi `tier ∈ {emergency,rupture}` → sticky banner top với pulse đỏ + countdown decisions đến rupture.
 
-Estimated diff: ~10 file mới + ~4 file sửa, không động `simStore` ngoài việc thêm field score.
+---
+
+## 8. Acceptance checklist
+
+- [ ] 6 pressures derived, hiển thị HUD, cập nhật realtime sau mỗi decision
+- [ ] Tier badge thay đổi đúng theo contradiction (test 5 ngưỡng)
+- [ ] Ở UNSTABLE: ít nhất 1 option bị khoá có tooltip lý do
+- [ ] Ở EMERGENCY: stability/production decay quan sát được; banner đỏ hiện
+- [ ] Ở RUPTURE: chỉ còn emergency options; sau 2 decision → revolution
+- [ ] Optionrisk factor giảm metric tích cực ở tier cao (test bằng cùng option ở CALM vs EMERGENCY)
+- [ ] Ít nhất 7 contradiction events, cooldown hoạt động, không spam
+- [ ] Narrator tone class đổi theo tier; visible distortion
+- [ ] StressOverlay intensity drive bởi tier, không phải raw value
+- [ ] Build pass, perspective/cinematic/replay không regression
+- [ ] Có ít nhất 1 playthrough thấy 3+ contradiction events khác nhau
+
+---
+
+## 9. Triển khai (1 PR)
+
+1. `src/data/contradiction/*` (types + thresholds + pressures + events + resolver) — compile-only
+2. simStore: state field mới + applyRisk + decay + tier compute (chưa wire UI)
+3. Event injection + cooldown
+4. UI hooks: HUD gauges, tier badge, locked option render, event banner
+5. Narrator tone + StressOverlay tier source
+6. QA 3 playthrough perspective

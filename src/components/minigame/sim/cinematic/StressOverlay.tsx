@@ -13,6 +13,7 @@
  */
 import { useMemo } from "react";
 import { useReducedMotion } from "framer-motion";
+import { resolveTier } from "@/data/contradiction";
 
 interface Props {
   contradiction: number; // 0..100
@@ -25,11 +26,14 @@ export function StressOverlay({ contradiction, reduced }: Props) {
 
   const style = useMemo(() => {
     const c = Math.max(0, Math.min(100, contradiction));
-    // normalized intensity 0..1, kicks in above 40
-    const vignette = Math.max(0, (c - 40) / 60); // 0..1
-    const scan = Math.max(0, (c - 60) / 40);
-    const crack = Math.max(0, (c - 80) / 20);
-    const hue = Math.max(0, (c - 70) / 30) * 12; // up to 12deg
+    // Drive overlay from contradiction tier so the visual matches the
+    // gameplay state, not just the raw value.
+    const tier = resolveTier(c);
+    const base = tier.uiDistortion; // 0..1
+    const vignette = base;
+    const scan = base >= 0.4 ? Math.min(1, (base - 0.3) * 1.6) : 0;
+    const crack = base >= 0.7 ? Math.min(1, (base - 0.6) * 2.2) : 0;
+    const hue = base * 14; // up to ~14deg
     return {
       "--stress-vignette": vignette.toFixed(3),
       "--stress-scan": scan.toFixed(3),
@@ -39,14 +43,14 @@ export function StressOverlay({ contradiction, reduced }: Props) {
   }, [contradiction]);
 
   if (off) {
-    // Still render the vignette (no motion), gentler ceiling
-    const v = Math.max(0, (contradiction - 50) / 60);
+    const tier = resolveTier(contradiction);
+    const v = tier.uiDistortion * 0.6;
     return (
       <div
         aria-hidden
         className="pointer-events-none fixed inset-0 z-[15]"
         style={{
-          background: `radial-gradient(ellipse at center, transparent 55%, rgba(120,10,10,${(v * 0.35).toFixed(2)}) 100%)`,
+          background: `radial-gradient(ellipse at center, transparent 55%, rgba(120,10,10,${v.toFixed(2)}) 100%)`,
         }}
       />
     );
