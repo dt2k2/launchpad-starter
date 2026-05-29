@@ -640,7 +640,6 @@ function DecisionPanel({
             );
           })}
         </div>
-        </div>
       </div>
     </motion.section>
   );
