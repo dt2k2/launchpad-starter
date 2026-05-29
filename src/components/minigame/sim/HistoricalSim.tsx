@@ -64,6 +64,8 @@ import {
 } from "@/data/perspective/perspectiveConfig";
 import { resolveTier } from "@/data/contradiction";
 import { EmergencyBanner } from "./pressure/EmergencyBanner";
+import { CompanionVoice } from "./companion/CompanionVoice";
+import { EndingScreen } from "./ending/EndingScreen";
 
 
 /* =========================================================
