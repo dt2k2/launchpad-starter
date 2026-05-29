@@ -954,6 +954,9 @@ function InsightsDrawer({
   onClose: () => void;
   insights: SimState["insights"];
 }) {
+  const { perspective, theme } = usePerspective();
+  const visible = insights.filter((i) => isInsightVisible(i, perspective));
+  const hiddenCount = insights.length - visible.length;
   return (
     <AnimatePresence>
       {open && (
@@ -975,32 +978,38 @@ function InsightsDrawer({
             <div className="mb-6 flex items-center justify-between">
               <div className="flex items-center gap-2 text-white">
                 <Library className="h-4 w-4" />
-                <h2 className="font-display text-2xl">Kho tri thức</h2>
+                <h2 className="font-display text-2xl">Kho tri thức · {theme.shortLabel}</h2>
               </div>
               <button onClick={onClose} aria-label="Đóng" className="text-white/60 hover:text-white">
                 <X className="h-5 w-5" />
               </button>
             </div>
-            {insights.length === 0 ? (
+            {visible.length === 0 ? (
               <p className="text-sm text-white/50">
-                Chưa có tri thức nào. Hãy chọn các quyết định mang tính bước ngoặt
-                để mở khoá tri thức lịch sử.
+                Chưa có tri thức nào ở góc nhìn của ngươi.
               </p>
             ) : (
               <div className="space-y-4">
-                {insights.map((ins) => (
+                {visible.map((ins) => (
                   <article
                     key={ins.id}
-                    className="rounded-xl border border-white/10 bg-white/[0.03] p-4"
+                    className={`rounded-[var(--p-radius)] border p-4 ${theme.classes.surfaceSoft}`}
                   >
-                    <p className="text-[10px] uppercase tracking-[0.3em] text-white/40">
+                    <p className="text-[10px] uppercase tracking-[0.3em] text-[var(--p-muted)]">
                       {STAGES.find((s) => s.id === ins.era)?.title}
                     </p>
-                    <h3 className="mt-1 font-display text-xl text-white">{ins.title}</h3>
-                    <p className="mt-2 text-sm text-white/75">{ins.body}</p>
+                    <h3 className={`mt-1 font-display text-xl ${theme.classes.accentText}`}>{ins.title}</h3>
+                    <p className="mt-2 text-sm">{ins.body}</p>
                   </article>
                 ))}
               </div>
+            )}
+            {hiddenCount > 0 && (
+              <p className="mt-6 rounded-[var(--p-radius)] border border-dashed border-white/15 p-3 text-xs italic text-white/40">
+                ✕ {hiddenCount} tri thức bị che — nằm ngoài giới hạn ý thức giai cấp của ngươi.
+              </p>
+            )}
+
             )}
           </motion.aside>
         </>
