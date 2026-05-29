@@ -782,6 +782,10 @@ function Finale({
   onRestart: () => void;
 }) {
   const ending = useMemo(() => finalize(state), [state]);
+  const narration = ENDING_NARRATIONS[ending.vibe][state.perspective];
+  const theme = PERSPECTIVE_THEMES[state.perspective];
+  const objective = PERSPECTIVE_OBJECTIVES[state.perspective];
+  const score = Math.round(objective.score(state));
   return (
     <motion.section
       initial={{ opacity: 0, y: 20 }}
@@ -789,18 +793,32 @@ function Finale({
       transition={{ duration: 0.6 }}
       className="mx-auto max-w-3xl pt-8 text-center"
     >
-      <Trophy className="mx-auto h-10 w-10 text-amber-300" />
+      <Trophy className={`mx-auto h-10 w-10 ${theme.classes.accentText}`} />
       <p className="mt-4 text-xs uppercase tracking-[0.5em] text-white/50">
-        Kết thúc · {ending.vibe === "linear" ? "Tiến triển tuyến tính" : ending.vibe === "rupture" ? "Đứt gãy" : ending.vibe === "future" ? "Tương lai" : "Trì trệ"}
+        {theme.label} · Kết thúc · {ending.vibe === "linear" ? "Tuyến tính" : ending.vibe === "rupture" ? "Đứt gãy" : ending.vibe === "future" ? "Tương lai" : "Trì trệ"}
       </p>
       <h1 className="mt-3 font-display text-5xl text-balance text-white sm:text-6xl">
-        {ending.title}
+        {narration.title}
       </h1>
       <p className="mt-3 text-lg italic text-white/70">{ending.subtitle}</p>
-      <p className="mx-auto mt-6 max-w-xl text-white/80">{ending.body}</p>
-      <p className="mx-auto mt-6 max-w-xl border-t border-white/10 pt-6 text-sm italic text-white/60">
-        {ending.reflection}
+      <p className="mx-auto mt-6 max-w-xl text-white/85">{narration.body}</p>
+      <p className={`mx-auto mt-6 max-w-xl border-t border-white/10 pt-6 text-sm italic ${theme.classes.accentText}`}>
+        — {narration.epitaph}
       </p>
+
+      <div className={`mx-auto mt-6 inline-flex items-center gap-3 rounded-[var(--p-radius)] border px-5 py-3 ${theme.classes.surface}`}>
+        <span className="text-2xl">{theme.emblem}</span>
+        <div className="text-left">
+          <p className="text-[10px] uppercase tracking-widest text-[var(--p-muted)]">
+            Điểm theo mục tiêu của ngươi
+          </p>
+          <p className="font-mono text-3xl text-[var(--p-accent)]">{score}/100</p>
+          <p className="text-[11px] italic text-[var(--p-muted)]">{objective.primary}</p>
+        </div>
+      </div>
+
+      <p className="mx-auto mt-6 max-w-xl text-xs text-white/50">{ending.reflection}</p>
+
 
       <div className="mt-8 grid gap-2 text-left sm:grid-cols-5">
         {ALL_METRICS.map((k) => (
