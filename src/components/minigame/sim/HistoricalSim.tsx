@@ -52,6 +52,17 @@ import {
   useCinematicSettings,
 } from "./cinematic/SettingsToggle";
 import { NARRATOR_LINES, STRESS } from "./cinematic/cinematicConfig";
+import { PerspectiveProvider, VoiceText, usePerspective } from "./perspective/PerspectiveProvider";
+import { PerspectiveHUD } from "./perspective/PerspectiveHUD";
+import {
+  PERSPECTIVE_THEMES,
+  PERSPECTIVE_OBJECTIVES,
+  ENDING_NARRATIONS,
+  resolveOptions,
+  isOptionEmphasized,
+  isInsightVisible,
+} from "@/data/perspective/perspectiveConfig";
+
 
 /* =========================================================
    Root
