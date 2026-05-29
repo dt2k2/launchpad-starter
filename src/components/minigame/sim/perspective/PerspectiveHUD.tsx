@@ -1,0 +1,125 @@
+/**
+ * PerspectiveHUD — perspective-aware HUD replacing/wrapping the metrics bar.
+ * Shows: emblem · objective · score · contextual warning · watched metrics highlighted.
+ */
+import { motion } from "framer-motion";
+import { AlertTriangle } from "lucide-react";
+import { METRIC_META, type MetricKey } from "@/data/historicalSim";
+import type { SimState } from "../simStore";
+import { usePerspective } from "./PerspectiveProvider";
+
+const ALL_METRICS: MetricKey[] = [
+  "production",
+  "stability",
+  "tech",
+  "contradiction",
+  "revolution",
+];
+
+export function PerspectiveHUD({ state }: { state: SimState }) {
+  const { theme, objective } = usePerspective();
+  const warning = objective.warning(state);
+  const score = Math.round(objective.score(state));
+  return (
+    <div className="pointer-events-none fixed bottom-0 left-0 right-0 z-20 px-3 pb-3 sm:px-6 sm:pb-5">
+      <div
+        className={`pointer-events-auto mx-auto max-w-5xl rounded-[var(--p-radius)] border p-3 backdrop-blur-xl sm:p-4 ${theme.classes.surface}`}
+      >
+        {/* Header row: emblem + objective + score */}
+        <div className="mb-2 flex flex-wrap items-center gap-3">
+          <span className={`text-xl ${theme.classes.accentText}`} aria-hidden>
+            {theme.emblem}
+          </span>
+          <div className="flex-1 leading-tight">
+            <p className="text-[10px] uppercase tracking-[0.3em] text-[var(--p-muted)]">
+              {theme.label} · Mục tiêu
+            </p>
+            <p className={`text-sm font-medium ${theme.classes.accentText}`}>
+              {objective.primary}
+            </p>
+          </div>
+          <div className={`rounded-[var(--p-radius)] px-3 py-1 ${theme.classes.chip}`}>
+            <p className="text-[9px] uppercase tracking-widest opacity-70">Điểm</p>
+            <p className="font-mono text-lg leading-none">{score}</p>
+          </div>
+        </div>
+
+        {warning && (
+          <motion.div
+            key={warning}
+            initial={{ opacity: 0, y: -4 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-2 inline-flex items-center gap-1.5 rounded-[var(--p-radius)] border border-[var(--p-danger)]/50 bg-[var(--p-danger)]/15 px-2.5 py-1 text-xs text-[var(--p-danger)]"
+          >
+            <AlertTriangle className="h-3 w-3" />
+            {warning}
+          </motion.div>
+        )}
+
+        {/* Metrics: watched ones highlighted */}
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
+          {ALL_METRICS.map((k) => {
+            const watched = objective.metricsWatched.includes(k);
+            return (
+              <MetricCell
+                key={k}
+                k={k}
+                value={state.metrics[k]}
+                watched={watched}
+                progressTrack={theme.classes.progressTrack}
+                progressFill={theme.classes.progressFill}
+                accent={theme.classes.accentText}
+              />
+            );
+          })}
+        </div>
+        <p className="mt-2 text-[10px] italic text-[var(--p-muted)]">
+          {objective.hint}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function MetricCell({
+  k,
+  value,
+  watched,
+  progressTrack,
+  progressFill,
+  accent,
+}: {
+  k: MetricKey;
+  value: number;
+  watched: boolean;
+  progressTrack: string;
+  progressFill: string;
+  accent: string;
+}) {
+  const meta = METRIC_META[k];
+  return (
+    <div
+      className={`rounded-[var(--p-radius)] border px-3 py-2 ${
+        watched
+          ? "border-[var(--p-accent)]/60 bg-[var(--p-accent-soft)]"
+          : "border-[var(--p-border)] opacity-70"
+      }`}
+    >
+      <div className="flex items-center justify-between text-[10px] uppercase tracking-[0.2em]">
+        <span className={watched ? accent : "text-[var(--p-muted)]"}>
+          {meta.short}
+        </span>
+        <span className="font-mono">{Math.round(value)}</span>
+      </div>
+      <div className={`mt-1.5 h-1.5 w-full overflow-hidden rounded-full ${progressTrack}`}>
+        <motion.div
+          key={value}
+          initial={{ width: 0 }}
+          animate={{ width: `${value}%` }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          className={`h-full rounded-full ${watched ? progressFill : "bg-[var(--p-muted)]"}`}
+        />
+      </div>
+    </div>
+  );
+}

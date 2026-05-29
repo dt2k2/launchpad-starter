@@ -52,6 +52,17 @@ import {
   useCinematicSettings,
 } from "./cinematic/SettingsToggle";
 import { NARRATOR_LINES, STRESS } from "./cinematic/cinematicConfig";
+import { PerspectiveProvider, VoiceText, usePerspective } from "./perspective/PerspectiveProvider";
+import { PerspectiveHUD } from "./perspective/PerspectiveHUD";
+import {
+  PERSPECTIVE_THEMES,
+  PERSPECTIVE_OBJECTIVES,
+  ENDING_NARRATIONS,
+  resolveOptions,
+  isOptionEmphasized,
+  isInsightVisible,
+} from "@/data/perspective/perspectiveConfig";
+
 
 /* =========================================================
    Root
@@ -133,6 +144,7 @@ export function HistoricalSim() {
   const shake = state.metrics.contradiction >= 70 && !reduceMotion && !settings.reducedFx;
 
   return (
+    <PerspectiveProvider perspective={state.perspective}>
     <div
       data-era={stage.id}
       className={`relative min-h-screen overflow-hidden bg-gradient-to-b ${stage.theme.bg} text-stone-100 transition-colors duration-700`}
@@ -219,9 +231,9 @@ export function HistoricalSim() {
           </AnimatePresence>
         </main>
 
-        {/* HUD bán cố định */}
+        {/* Perspective-aware HUD */}
         {state.phase !== "perspective" && state.phase !== "finale" && (
-          <MetricsHUD metrics={state.metrics} stage={stage} />
+          <PerspectiveHUD state={state} />
         )}
       </motion.div>
 
@@ -237,8 +249,10 @@ export function HistoricalSim() {
         insights={state.insights}
       />
     </div>
+    </PerspectiveProvider>
   );
 }
+
 
 /* =========================================================
    Backdrop — đổi theo era
@@ -492,7 +506,7 @@ function DecisionPanel({
   onChoose: (o: DecisionOption) => void;
 }) {
   if (!decision) return null;
-  const voice = decision.voice?.[state.perspective];
+  const options = resolveOptions(decision, state.perspective);
   return (
     <motion.section
       initial={{ opacity: 0, y: 30 }}
@@ -510,29 +524,37 @@ function DecisionPanel({
       </div>
 
       <div
-        className={`rounded-2xl border ${stage.theme.ring} bg-stone-950/60 p-6 backdrop-blur-md sm:p-8`}
+        className={`rounded-[var(--p-radius)] border border-[var(--p-border)] bg-stone-950/60 p-6 backdrop-blur-md sm:p-8`}
       >
-        <p className="text-[10px] uppercase tracking-[0.35em] text-white/50">
+        <p className="text-[10px] uppercase tracking-[0.35em] text-[var(--p-muted)]">
           {decision.title}
         </p>
         <h2 className="mt-2 font-display text-2xl text-balance text-white sm:text-3xl">
-          {decision.prompt}
+          <VoiceText event="decisionPrompt" decision={decision} fallback={decision.prompt} />
         </h2>
-        {voice && (
-          <p className="mt-3 border-l-2 border-white/20 pl-3 text-sm italic text-white/70">
-            "{voice}"
-          </p>
-        )}
 
         <div className="mt-6 grid gap-3">
-          {decision.options.map((opt) => (
+          {options.map((opt) => {
+            const emphasized = isOptionEmphasized(opt.id, state.perspective);
+            return (
             <button
               key={opt.id}
               onClick={() => onChoose(opt)}
-              className="group flex flex-col rounded-xl border border-white/10 bg-white/[0.03] p-4 text-left transition hover:border-white/30 hover:bg-white/[0.07]"
+              className={`group flex flex-col rounded-[var(--p-radius)] border p-4 text-left transition hover:bg-white/[0.07] ${
+                emphasized
+                  ? "border-[var(--p-accent)] bg-[var(--p-accent-soft)] ring-1 ring-[var(--p-accent)]/40"
+                  : "border-white/10 bg-white/[0.03] hover:border-white/30"
+              }`}
             >
               <div className="flex items-start justify-between gap-3">
-                <p className="font-medium text-white">{opt.label}</p>
+                <p className="font-medium text-white">
+                  {emphasized && (
+                    <span className={`mr-2 text-[10px] uppercase tracking-widest text-[var(--p-accent)]`}>
+                      ◆ Đúng vai
+                    </span>
+                  )}
+                  {opt.label}
+                </p>
                 <ChevronRight className="h-4 w-4 shrink-0 text-white/30 transition group-hover:translate-x-0.5 group-hover:text-white/80" />
               </div>
               <p className="mt-1 text-sm text-white/60">{opt.flavor}</p>
@@ -541,7 +563,6 @@ function DecisionPanel({
                   const v = opt.effect[k]!;
                   const pos = v > 0;
                   const isBad = k === "contradiction" || k === "revolution";
-                  // Neutral display: just signed delta + label
                   return (
                     <span
                       key={k}
@@ -572,12 +593,15 @@ function DecisionPanel({
                 })}
               </div>
             </button>
-          ))}
+            );
+          })}
         </div>
       </div>
     </motion.section>
   );
 }
+
+
 
 /* =========================================================
    Consequence (cause → effect)
@@ -758,6 +782,10 @@ function Finale({
   onRestart: () => void;
 }) {
   const ending = useMemo(() => finalize(state), [state]);
+  const narration = ENDING_NARRATIONS[ending.vibe][state.perspective];
+  const theme = PERSPECTIVE_THEMES[state.perspective];
+  const objective = PERSPECTIVE_OBJECTIVES[state.perspective];
+  const score = Math.round(objective.score(state));
   return (
     <motion.section
       initial={{ opacity: 0, y: 20 }}
@@ -765,18 +793,32 @@ function Finale({
       transition={{ duration: 0.6 }}
       className="mx-auto max-w-3xl pt-8 text-center"
     >
-      <Trophy className="mx-auto h-10 w-10 text-amber-300" />
+      <Trophy className={`mx-auto h-10 w-10 ${theme.classes.accentText}`} />
       <p className="mt-4 text-xs uppercase tracking-[0.5em] text-white/50">
-        Kết thúc · {ending.vibe === "linear" ? "Tiến triển tuyến tính" : ending.vibe === "rupture" ? "Đứt gãy" : ending.vibe === "future" ? "Tương lai" : "Trì trệ"}
+        {theme.label} · Kết thúc · {ending.vibe === "linear" ? "Tuyến tính" : ending.vibe === "rupture" ? "Đứt gãy" : ending.vibe === "future" ? "Tương lai" : "Trì trệ"}
       </p>
       <h1 className="mt-3 font-display text-5xl text-balance text-white sm:text-6xl">
-        {ending.title}
+        {narration.title}
       </h1>
       <p className="mt-3 text-lg italic text-white/70">{ending.subtitle}</p>
-      <p className="mx-auto mt-6 max-w-xl text-white/80">{ending.body}</p>
-      <p className="mx-auto mt-6 max-w-xl border-t border-white/10 pt-6 text-sm italic text-white/60">
-        {ending.reflection}
+      <p className="mx-auto mt-6 max-w-xl text-white/85">{narration.body}</p>
+      <p className={`mx-auto mt-6 max-w-xl border-t border-white/10 pt-6 text-sm italic ${theme.classes.accentText}`}>
+        — {narration.epitaph}
       </p>
+
+      <div className={`mx-auto mt-6 inline-flex items-center gap-3 rounded-[var(--p-radius)] border px-5 py-3 ${theme.classes.surface}`}>
+        <span className="text-2xl">{theme.emblem}</span>
+        <div className="text-left">
+          <p className="text-[10px] uppercase tracking-widest text-[var(--p-muted)]">
+            Điểm theo mục tiêu của ngươi
+          </p>
+          <p className="font-mono text-3xl text-[var(--p-accent)]">{score}/100</p>
+          <p className="text-[11px] italic text-[var(--p-muted)]">{objective.primary}</p>
+        </div>
+      </div>
+
+      <p className="mx-auto mt-6 max-w-xl text-xs text-white/50">{ending.reflection}</p>
+
 
       <div className="mt-8 grid gap-2 text-left sm:grid-cols-5">
         {ALL_METRICS.map((k) => (
@@ -912,6 +954,9 @@ function InsightsDrawer({
   onClose: () => void;
   insights: SimState["insights"];
 }) {
+  const { perspective, theme } = usePerspective();
+  const visible = insights.filter((i) => isInsightVisible(i, perspective));
+  const hiddenCount = insights.length - visible.length;
   return (
     <AnimatePresence>
       {open && (
@@ -933,33 +978,38 @@ function InsightsDrawer({
             <div className="mb-6 flex items-center justify-between">
               <div className="flex items-center gap-2 text-white">
                 <Library className="h-4 w-4" />
-                <h2 className="font-display text-2xl">Kho tri thức</h2>
+                <h2 className="font-display text-2xl">Kho tri thức · {theme.shortLabel}</h2>
               </div>
               <button onClick={onClose} aria-label="Đóng" className="text-white/60 hover:text-white">
                 <X className="h-5 w-5" />
               </button>
             </div>
-            {insights.length === 0 ? (
+            {visible.length === 0 ? (
               <p className="text-sm text-white/50">
-                Chưa có tri thức nào. Hãy chọn các quyết định mang tính bước ngoặt
-                để mở khoá tri thức lịch sử.
+                Chưa có tri thức nào ở góc nhìn của ngươi.
               </p>
             ) : (
               <div className="space-y-4">
-                {insights.map((ins) => (
+                {visible.map((ins) => (
                   <article
                     key={ins.id}
-                    className="rounded-xl border border-white/10 bg-white/[0.03] p-4"
+                    className={`rounded-[var(--p-radius)] border p-4 ${theme.classes.surfaceSoft}`}
                   >
-                    <p className="text-[10px] uppercase tracking-[0.3em] text-white/40">
+                    <p className="text-[10px] uppercase tracking-[0.3em] text-[var(--p-muted)]">
                       {STAGES.find((s) => s.id === ins.era)?.title}
                     </p>
-                    <h3 className="mt-1 font-display text-xl text-white">{ins.title}</h3>
-                    <p className="mt-2 text-sm text-white/75">{ins.body}</p>
+                    <h3 className={`mt-1 font-display text-xl ${theme.classes.accentText}`}>{ins.title}</h3>
+                    <p className="mt-2 text-sm">{ins.body}</p>
                   </article>
                 ))}
               </div>
             )}
+            {hiddenCount > 0 && (
+              <p className="mt-6 rounded-[var(--p-radius)] border border-dashed border-white/15 p-3 text-xs italic text-white/40">
+                ✕ {hiddenCount} tri thức bị che — nằm ngoài giới hạn ý thức giai cấp của ngươi.
+              </p>
+            )}
+
           </motion.aside>
         </>
       )}

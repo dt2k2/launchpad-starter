@@ -210,6 +210,24 @@
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.6 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
 }
 
+/* Perspective grain — uses --p-grain CSS var set by PerspectiveProvider */
+.perspective-grain { position: relative; }
+.perspective-grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: var(--p-grain);
+  background-repeat: repeat;
+  opacity: 0.18;
+  mix-blend-mode: overlay;
+  z-index: 0;
+}
+.perspective-grain-heavy::after { opacity: 0.32; }
+.perspective-grain-paper::after { mix-blend-mode: multiply; opacity: 0.45; }
+.perspective-root > * { position: relative; z-index: 1; }
+
+
 /* Vertical timeline rail */
 .rail-gradient {
   background: linear-gradient(180deg,
