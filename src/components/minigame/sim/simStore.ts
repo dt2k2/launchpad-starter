@@ -140,7 +140,8 @@ function recomputeLocks(state: SimState): { lockedOptionIds: string[]; lockReaso
   const stage = STAGES[state.stageIdx];
   const decision = stage?.decisions[state.decisionIdx];
   const tier = resolveTier(state.metrics.contradiction);
-  return computeLockedOptionIds(decision, tier);
+  const { lockedIds, reasons } = computeLockedOptionIds(decision, tier);
+  return { lockedOptionIds: lockedIds, lockReasons: reasons };
 }
 
 export function initialState(): SimState {
