@@ -506,7 +506,7 @@ function DecisionPanel({
   onChoose: (o: DecisionOption) => void;
 }) {
   if (!decision) return null;
-  const voice = decision.voice?.[state.perspective];
+  const options = resolveOptions(decision, state.perspective);
   return (
     <motion.section
       initial={{ opacity: 0, y: 30 }}
@@ -524,29 +524,37 @@ function DecisionPanel({
       </div>
 
       <div
-        className={`rounded-2xl border ${stage.theme.ring} bg-stone-950/60 p-6 backdrop-blur-md sm:p-8`}
+        className={`rounded-[var(--p-radius)] border border-[var(--p-border)] bg-stone-950/60 p-6 backdrop-blur-md sm:p-8`}
       >
-        <p className="text-[10px] uppercase tracking-[0.35em] text-white/50">
+        <p className="text-[10px] uppercase tracking-[0.35em] text-[var(--p-muted)]">
           {decision.title}
         </p>
         <h2 className="mt-2 font-display text-2xl text-balance text-white sm:text-3xl">
-          {decision.prompt}
+          <VoiceText event="decisionPrompt" decision={decision} fallback={decision.prompt} />
         </h2>
-        {voice && (
-          <p className="mt-3 border-l-2 border-white/20 pl-3 text-sm italic text-white/70">
-            "{voice}"
-          </p>
-        )}
 
         <div className="mt-6 grid gap-3">
-          {decision.options.map((opt) => (
+          {options.map((opt) => {
+            const emphasized = isOptionEmphasized(opt.id, state.perspective);
+            return (
             <button
               key={opt.id}
               onClick={() => onChoose(opt)}
-              className="group flex flex-col rounded-xl border border-white/10 bg-white/[0.03] p-4 text-left transition hover:border-white/30 hover:bg-white/[0.07]"
+              className={`group flex flex-col rounded-[var(--p-radius)] border p-4 text-left transition hover:bg-white/[0.07] ${
+                emphasized
+                  ? "border-[var(--p-accent)] bg-[var(--p-accent-soft)] ring-1 ring-[var(--p-accent)]/40"
+                  : "border-white/10 bg-white/[0.03] hover:border-white/30"
+              }`}
             >
               <div className="flex items-start justify-between gap-3">
-                <p className="font-medium text-white">{opt.label}</p>
+                <p className="font-medium text-white">
+                  {emphasized && (
+                    <span className={`mr-2 text-[10px] uppercase tracking-widest text-[var(--p-accent)]`}>
+                      ◆ Đúng vai
+                    </span>
+                  )}
+                  {opt.label}
+                </p>
                 <ChevronRight className="h-4 w-4 shrink-0 text-white/30 transition group-hover:translate-x-0.5 group-hover:text-white/80" />
               </div>
               <p className="mt-1 text-sm text-white/60">{opt.flavor}</p>
@@ -555,7 +563,6 @@ function DecisionPanel({
                   const v = opt.effect[k]!;
                   const pos = v > 0;
                   const isBad = k === "contradiction" || k === "revolution";
-                  // Neutral display: just signed delta + label
                   return (
                     <span
                       key={k}
@@ -586,11 +593,14 @@ function DecisionPanel({
                 })}
               </div>
             </button>
-          ))}
+            );
+          })}
         </div>
       </div>
     </motion.section>
   );
+}
+
 }
 
 /* =========================================================
