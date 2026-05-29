@@ -217,7 +217,7 @@ export function HistoricalSim() {
         />
 
 
-        <main className="mx-auto max-w-5xl px-4 pb-40 pt-6 sm:px-6">
+        <main className="mx-auto max-w-5xl px-4 pb-[360px] pt-6 sm:px-6 sm:pb-[380px]">
           <AnimatePresence mode="wait">
             {state.phase === "perspective" && (
               <PerspectivePicker

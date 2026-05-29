@@ -21,8 +21,9 @@ export function EmergencyBanner({ state }: { state: SimState }) {
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: -40, opacity: 0 }}
           transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-          className="pointer-events-none fixed inset-x-0 top-0 z-40 px-3 pt-3 sm:px-6 sm:pt-4"
+          className="pointer-events-none fixed inset-x-0 top-20 z-40 px-3 sm:top-24 sm:px-6"
         >
+
           <div
             className={`pointer-events-auto mx-auto flex max-w-5xl items-center gap-3 rounded-xl border px-4 py-2.5 text-sm backdrop-blur-md ${
               tier.id === "rupture"
