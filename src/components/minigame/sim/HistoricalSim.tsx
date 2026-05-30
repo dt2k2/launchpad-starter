@@ -52,6 +52,8 @@ import {
   useCinematicSettings,
 } from "./cinematic/SettingsToggle";
 import { NARRATOR_LINES, STRESS } from "./cinematic/cinematicConfig";
+import { STAGE_BG, STAGE_AUDIO } from "@/assets/stageMedia";
+import type { EraId } from "@/data/eras";
 import { PerspectiveProvider, VoiceText, usePerspective } from "./perspective/PerspectiveProvider";
 import { PerspectiveHUD } from "./perspective/PerspectiveHUD";
 import {
@@ -185,6 +187,7 @@ export function HistoricalSim() {
         contradiction={state.metrics.contradiction}
         muted={settings.muted}
       />
+      <StageAudio eraId={stage.id} muted={settings.muted} />
       <StressOverlay
         contradiction={state.metrics.contradiction}
         reduced={settings.reducedFx}
@@ -295,8 +298,23 @@ export function HistoricalSim() {
    Backdrop — đổi theo era
    ========================================================= */
 function WorldBackdrop({ stage, reduceMotion }: { stage: SimStage; reduceMotion: boolean }) {
+  const bg = STAGE_BG[stage.id];
   return (
     <div className="pointer-events-none absolute inset-0 -z-0 overflow-hidden">
+      <AnimatePresence mode="wait">
+        <motion.img
+          key={stage.id}
+          src={bg}
+          alt=""
+          aria-hidden
+          initial={{ opacity: 0, scale: 1.04 }}
+          animate={{ opacity: 0.55, scale: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+      </AnimatePresence>
+      <div className="absolute inset-0 bg-gradient-to-b from-stone-950/75 via-stone-950/55 to-stone-950/90" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(255,255,255,0.07),transparent_60%)]" />
       <div className="absolute inset-0 grain" />
       {!reduceMotion &&
@@ -311,6 +329,71 @@ function WorldBackdrop({ stage, reduceMotion }: { stage: SimStage; reduceMotion:
         ))}
     </div>
   );
+}
+
+/* =========================================================
+   Stage audio — crossfaded ambient music per stage
+   ========================================================= */
+function StageAudio({ eraId, muted }: { eraId: EraId; muted: boolean }) {
+  const ref = useRef<HTMLAudioElement | null>(null);
+  const src = STAGE_AUDIO[eraId];
+
+  // crossfade on era change
+  useEffect(() => {
+    const a = ref.current;
+    if (!a) return;
+    a.volume = 0;
+    a.src = src;
+    a.loop = true;
+    const tryPlay = () => a.play().catch(() => {});
+    tryPlay();
+    const start = () => {
+      tryPlay();
+      window.removeEventListener("pointerdown", start);
+      window.removeEventListener("keydown", start);
+    };
+    window.addEventListener("pointerdown", start, { once: true });
+    window.addEventListener("keydown", start, { once: true });
+    // fade in
+    const target = muted ? 0 : 0.35;
+    let v = 0;
+    const id = window.setInterval(() => {
+      v = Math.min(target, v + 0.025);
+      a.volume = v;
+      if (v >= target) window.clearInterval(id);
+    }, 60);
+    return () => {
+      window.clearInterval(id);
+      window.removeEventListener("pointerdown", start);
+      window.removeEventListener("keydown", start);
+      // fade out previous
+      let vv = a.volume;
+      const idOut = window.setInterval(() => {
+        vv = Math.max(0, vv - 0.05);
+        a.volume = vv;
+        if (vv <= 0) {
+          window.clearInterval(idOut);
+          a.pause();
+        }
+      }, 40);
+    };
+  }, [src]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // react to mute
+  useEffect(() => {
+    const a = ref.current;
+    if (!a) return;
+    const target = muted ? 0 : 0.35;
+    let v = a.volume;
+    const id = window.setInterval(() => {
+      v = muted ? Math.max(0, v - 0.05) : Math.min(target, v + 0.05);
+      a.volume = v;
+      if ((muted && v <= 0) || (!muted && v >= target)) window.clearInterval(id);
+    }, 40);
+    return () => window.clearInterval(id);
+  }, [muted]);
+
+  return <audio ref={ref} preload="auto" aria-hidden />;
 }
 
 /* =========================================================
