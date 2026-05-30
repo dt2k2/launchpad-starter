@@ -3,6 +3,7 @@ import { useRef } from "react";
 import type { Era } from "@/data/eras";
 import { ContradictionMeter } from "./ContradictionMeter";
 import { ArrowRight, Hammer, Users, Zap } from "lucide-react";
+import { ERA_BG } from "@/assets/stageMedia";
 
 export function EraChapter({
   era,
