@@ -212,7 +212,8 @@ export function initialState(): SimState {
 /** Helpers for triggering companion lines from inside the reducer. */
 function withCompanion(state: SimState, trigger: CompanionTrigger): SimState {
   const said = new Set(state.companionSaid);
-  const line = pickCompanionLine(state.perspective, trigger, said);
+  const eraId = STAGES[state.stageIdx]?.id;
+  const line = pickCompanionLine(state.perspective, trigger, said, eraId);
   if (!line) return state;
   return {
     ...state,
@@ -220,6 +221,7 @@ function withCompanion(state: SimState, trigger: CompanionTrigger): SimState {
     companionSaid: said.has(line.id) ? state.companionSaid : [...state.companionSaid, line.id],
   };
 }
+
 
 /** Emit memory tags based on a choice's tag + current pressures. */
 function memoryFromChoice(
