@@ -212,7 +212,8 @@ export function initialState(): SimState {
 /** Helpers for triggering companion lines from inside the reducer. */
 function withCompanion(state: SimState, trigger: CompanionTrigger): SimState {
   const said = new Set(state.companionSaid);
-  const line = pickCompanionLine(state.perspective, trigger, said);
+  const eraId = STAGES[state.stageIdx]?.id;
+  const line = pickCompanionLine(state.perspective, trigger, said, eraId);
   if (!line) return state;
   return {
     ...state,
@@ -220,6 +221,7 @@ function withCompanion(state: SimState, trigger: CompanionTrigger): SimState {
     companionSaid: said.has(line.id) ? state.companionSaid : [...state.companionSaid, line.id],
   };
 }
+
 
 /** Emit memory tags based on a choice's tag + current pressures. */
 function memoryFromChoice(
@@ -539,31 +541,17 @@ export function reducer(state: SimState, action: SimAction): SimState {
         };
       }
 
-      // EVOLVE → standard advance (no revolution cinematic)
+      // EVOLVE → run cinematic, then ackRevolution advances to next era
       if (isLast) {
         return { ...withOutComp, phase: "finale", stagesCompleted: state.stagesCompleted + 1 };
       }
-      const nextStage = STAGES[state.stageIdx + 1];
-      const carriedBase = baseMetricsFor(nextStage);
-      const techBonus = Math.min(
-        20,
-        state.unlockedTech
-          .map((id) => TECH_TREE.find((t) => t.id === id))
-          .filter(Boolean)
-          .reduce((acc, t) => acc + (t!.effect.tech ?? 0), 0) / 8,
-      );
-      const carried = { ...carriedBase, tech: clamp(carriedBase.tech + techBonus) };
       return {
         ...withOutComp,
-        stageIdx: state.stageIdx + 1,
-        stageFreezeCount: 0,
-        decisionIdx: 0,
-        metrics: carried,
-        contradictionTier: resolveTier(carried.contradiction).id,
-        pressures: EMPTY_PRESSURES,
+        phase: "revolution",
         stagesCompleted: state.stagesCompleted + 1,
-        phase: "intro",
+        decisionIdx: nextIdx,
       };
+
     }
 
     case "ackRevolution": {
