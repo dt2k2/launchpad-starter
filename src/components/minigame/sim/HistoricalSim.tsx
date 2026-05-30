@@ -52,6 +52,8 @@ import {
   useCinematicSettings,
 } from "./cinematic/SettingsToggle";
 import { NARRATOR_LINES, STRESS } from "./cinematic/cinematicConfig";
+import { STAGE_BG, STAGE_AUDIO } from "@/assets/stageMedia";
+import type { EraId } from "@/data/eras";
 import { PerspectiveProvider, VoiceText, usePerspective } from "./perspective/PerspectiveProvider";
 import { PerspectiveHUD } from "./perspective/PerspectiveHUD";
 import {
