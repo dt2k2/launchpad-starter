@@ -29,6 +29,14 @@ export function EraChapter({
       className="era-surface relative min-h-screen w-full overflow-hidden grain"
     >
       <div className="absolute inset-0 -z-10">
+        <img
+          src={ERA_BG[era.id]}
+          alt=""
+          aria-hidden
+          loading="lazy"
+          className="absolute inset-0 h-full w-full object-cover opacity-40"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-stone-950/70 via-stone-950/55 to-stone-950/85" />
         <div
           className="absolute inset-0"
           style={{
