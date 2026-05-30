@@ -187,6 +187,7 @@ export function HistoricalSim() {
         contradiction={state.metrics.contradiction}
         muted={settings.muted}
       />
+      <StageAudio eraId={stage.id} muted={settings.muted} />
       <StressOverlay
         contradiction={state.metrics.contradiction}
         reduced={settings.reducedFx}
