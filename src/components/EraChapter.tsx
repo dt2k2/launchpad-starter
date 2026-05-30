@@ -26,17 +26,19 @@ export function EraChapter({
     <section
       ref={ref}
       data-era={era.id}
-      className="era-surface relative min-h-screen w-full overflow-hidden grain"
+      className="relative min-h-screen w-full overflow-hidden grain"
+      style={{ color: "var(--era-fg)" }}
     >
-      <div className="absolute inset-0 -z-10">
+      <div className="absolute inset-0 z-0">
+        <div className="absolute inset-0" style={{ background: "var(--era-bg)" }} />
         <img
           src={ERA_BG[era.id]}
           alt=""
           aria-hidden
           loading="lazy"
-          className="absolute inset-0 h-full w-full object-cover opacity-40"
+          className="absolute inset-0 h-full w-full object-cover opacity-60 mix-blend-luminosity"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-stone-950/70 via-stone-950/55 to-stone-950/85" />
+        <div className="absolute inset-0 bg-gradient-to-b from-stone-950/55 via-stone-950/40 to-stone-950/80" />
         <div
           className="absolute inset-0"
           style={{
@@ -46,7 +48,8 @@ export function EraChapter({
         />
       </div>
 
-      <div className="relative mx-auto grid min-h-screen max-w-6xl grid-cols-1 items-center gap-12 px-6 py-24 md:grid-cols-12 md:py-32">
+      <div className="relative z-10 mx-auto grid min-h-screen max-w-6xl grid-cols-1 items-center gap-12 px-6 py-24 md:grid-cols-12 md:py-32">
+
         {/* Left: era marker */}
         <motion.div style={{ y, opacity }} className="md:col-span-5">
           <div className="mb-6 flex items-center gap-3 text-xs uppercase tracking-[0.35em] opacity-70">
