@@ -197,7 +197,7 @@ export function HistoricalSim() {
         contradiction={state.metrics.contradiction}
         reduced={settings.reducedFx}
       />
-      <Narrator line={narratorLine} onDone={() => setNarratorLine(null)} />
+      <Narrator line={narratorLine} muted={settings.muted} onDone={() => setNarratorLine(null)} />
       <EmergencyBanner state={state} />
       <CompanionVoice
         line={state.companionLine}
