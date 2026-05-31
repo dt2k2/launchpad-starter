@@ -216,7 +216,7 @@ export function initialState(): SimState {
     stageIdx: 0,
     decisionIdx: 0,
     metrics,
-    unlockedTech: [],
+    unlockedTech: grantBaselineTech(0, []),
     insights: [],
     log: [],
     lastChoice: null,
