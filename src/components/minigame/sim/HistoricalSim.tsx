@@ -434,6 +434,7 @@ function TopBar({
   onChangeSettings,
   onOpenTech,
   onOpenInsights,
+  onOpenHelp,
   onRestart,
 }: {
   state: SimState;
@@ -444,8 +445,10 @@ function TopBar({
   ) => void;
   onOpenTech: () => void;
   onOpenInsights: () => void;
+  onOpenHelp: () => void;
   onRestart: () => void;
 }) {
+
   const persp = PERSPECTIVES.find((p) => p.id === state.perspective)!;
   return (
     <header className="mx-auto flex max-w-5xl items-center justify-between gap-3 px-4 pt-6 sm:px-6">
