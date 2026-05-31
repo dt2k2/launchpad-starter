@@ -33,6 +33,7 @@ import {
 import {
   AlertTriangle,
   Cpu,
+  HelpCircle,
   Library,
   RotateCcw,
   Sparkles,
@@ -42,6 +43,7 @@ import {
   Check,
   ChevronRight,
 } from "lucide-react";
+
 import { AmbientEngine } from "./cinematic/AmbientEngine";
 import { StressOverlay } from "./cinematic/StressOverlay";
 import { Narrator, type NarratorPayload } from "./cinematic/Narrator";
@@ -52,7 +54,8 @@ import {
   useCinematicSettings,
 } from "./cinematic/SettingsToggle";
 import { NARRATOR_LINES, STRESS } from "./cinematic/cinematicConfig";
-import { STAGE_BG, STAGE_AUDIO } from "@/assets/stageMedia";
+import { STAGE_BG, STAGE_AUDIO, NARRATOR_AUDIO } from "@/assets/stageMedia";
+
 import type { EraId } from "@/data/eras";
 import { PerspectiveProvider, VoiceText, usePerspective } from "./perspective/PerspectiveProvider";
 import { PerspectiveHUD } from "./perspective/PerspectiveHUD";
@@ -68,6 +71,8 @@ import { resolveTier } from "@/data/contradiction";
 import { EmergencyBanner } from "./pressure/EmergencyBanner";
 import { CompanionVoice } from "./companion/CompanionVoice";
 import { EndingScreen } from "./ending/EndingScreen";
+import { HelpDrawer } from "./HelpDrawer";
+
 
 
 /* =========================================================
@@ -80,6 +85,8 @@ export function HistoricalSim() {
   const reduceMotion = useReducedMotion();
   const [techOpen, setTechOpen] = useState(false);
   const [insightsOpen, setInsightsOpen] = useState(false);
+  const [helpOpen, setHelpOpen] = useState(false);
+
   const [settings, setSettings] = useCinematicSettings();
   const [narratorLine, setNarratorLine] = useState<NarratorPayload | null>(null);
   const lastTensionEra = useRef<string | null>(null);
@@ -90,7 +97,9 @@ export function HistoricalSim() {
       if (e.key === "Escape") {
         setTechOpen(false);
         setInsightsOpen(false);
+        setHelpOpen(false);
       }
+
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -105,7 +114,8 @@ export function HistoricalSim() {
           id: `enter-${stage.id}`,
           text: line.text,
           tone: "calm",
-          holdMs: 4500,
+          holdMs: 7000,
+          audioSrc: NARRATOR_AUDIO[stage.id]?.enter,
         });
       }
       lastTensionEra.current = null;
@@ -121,7 +131,8 @@ export function HistoricalSim() {
           id: `rev-${stage.id}-${state.stagesCompleted}`,
           text: line.text,
           tone: "rupture",
-          holdMs: 4800,
+          holdMs: 7200,
+          audioSrc: NARRATOR_AUDIO[stage.id]?.revolution,
         });
       }
     }
@@ -140,12 +151,14 @@ export function HistoricalSim() {
           id: `tension-${stage.id}`,
           text: line.text,
           tone: "tense",
-          holdMs: 4000,
+          holdMs: 6500,
+          audioSrc: NARRATOR_AUDIO[stage.id]?.tension,
         });
         lastTensionEra.current = stage.id;
       }
     }
   }, [state.metrics.contradiction, stage.id, state.phase]);
+
 
   // Narrator: contradiction event triggered
   useEffect(() => {
@@ -192,7 +205,7 @@ export function HistoricalSim() {
         contradiction={state.metrics.contradiction}
         reduced={settings.reducedFx}
       />
-      <Narrator line={narratorLine} onDone={() => setNarratorLine(null)} />
+      <Narrator line={narratorLine} muted={settings.muted} onDone={() => setNarratorLine(null)} />
       <EmergencyBanner state={state} />
       <CompanionVoice
         line={state.companionLine}
@@ -216,8 +229,10 @@ export function HistoricalSim() {
           onChangeSettings={setSettings}
           onOpenTech={() => setTechOpen(true)}
           onOpenInsights={() => setInsightsOpen(true)}
+          onOpenHelp={() => setHelpOpen(true)}
           onRestart={() => dispatch({ type: "restart" })}
         />
+
 
 
         <main className="mx-auto max-w-5xl px-4 pb-[360px] pt-6 sm:px-6 sm:pb-[380px]">
@@ -271,10 +286,11 @@ export function HistoricalSim() {
           </AnimatePresence>
         </main>
 
-        {/* Perspective-aware HUD */}
-        {state.phase !== "perspective" && state.phase !== "finale" && (
-          <PerspectiveHUD state={state} />
-        )}
+        {/* Perspective-aware HUD — hidden during revolution cinematic to avoid overlap */}
+        {state.phase !== "perspective" &&
+          state.phase !== "finale" &&
+          state.phase !== "revolution" && <PerspectiveHUD state={state} />}
+
       </motion.div>
 
       <TechDrawer
@@ -288,6 +304,8 @@ export function HistoricalSim() {
         onClose={() => setInsightsOpen(false)}
         insights={state.insights}
       />
+      <HelpDrawer open={helpOpen} onClose={() => setHelpOpen(false)} />
+
     </div>
     </PerspectiveProvider>
   );
@@ -336,65 +354,75 @@ function WorldBackdrop({ stage, reduceMotion }: { stage: SimStage; reduceMotion:
    ========================================================= */
 function StageAudio({ eraId, muted }: { eraId: EraId; muted: boolean }) {
   const ref = useRef<HTMLAudioElement | null>(null);
+  const fadeRef = useRef<number | null>(null);
   const src = STAGE_AUDIO[eraId];
+  const TARGET = 0.28;
 
-  // crossfade on era change
+  const fadeTo = (target: number, ms = 900) => {
+    const a = ref.current;
+    if (!a) return;
+    if (fadeRef.current) {
+      window.clearInterval(fadeRef.current);
+      fadeRef.current = null;
+    }
+    const steps = Math.max(8, Math.round(ms / 50));
+    const start = a.volume;
+    const delta = (target - start) / steps;
+    let i = 0;
+    fadeRef.current = window.setInterval(() => {
+      i++;
+      const next = Math.max(0, Math.min(1, start + delta * i));
+      a.volume = next;
+      if (i >= steps) {
+        a.volume = target;
+        if (fadeRef.current) window.clearInterval(fadeRef.current);
+        fadeRef.current = null;
+      }
+    }, 50) as unknown as number;
+  };
+
+  // Era change: fade out, swap src, fade in.
   useEffect(() => {
     const a = ref.current;
     if (!a) return;
-    a.volume = 0;
-    a.src = src;
-    a.loop = true;
-    const tryPlay = () => a.play().catch(() => {});
-    tryPlay();
-    const start = () => {
-      tryPlay();
-      window.removeEventListener("pointerdown", start);
-      window.removeEventListener("keydown", start);
+    let cancelled = false;
+    const swap = () => {
+      if (cancelled) return;
+      a.src = src;
+      a.loop = true;
+      a.volume = 0;
+      a.play().catch(() => {});
+      fadeTo(muted ? 0 : TARGET, 1200);
     };
-    window.addEventListener("pointerdown", start, { once: true });
-    window.addEventListener("keydown", start, { once: true });
-    // fade in
-    const target = muted ? 0 : 0.35;
-    let v = 0;
-    const id = window.setInterval(() => {
-      v = Math.min(target, v + 0.025);
-      a.volume = v;
-      if (v >= target) window.clearInterval(id);
-    }, 60);
+    if (a.src && !a.paused) {
+      fadeTo(0, 600);
+      window.setTimeout(swap, 650);
+    } else {
+      swap();
+    }
+    // unlock on first interaction (autoplay policy)
+    const unlock = () => {
+      a.play().catch(() => {});
+      window.removeEventListener("pointerdown", unlock);
+      window.removeEventListener("keydown", unlock);
+    };
+    window.addEventListener("pointerdown", unlock, { once: true });
+    window.addEventListener("keydown", unlock, { once: true });
     return () => {
-      window.clearInterval(id);
-      window.removeEventListener("pointerdown", start);
-      window.removeEventListener("keydown", start);
-      // fade out previous
-      let vv = a.volume;
-      const idOut = window.setInterval(() => {
-        vv = Math.max(0, vv - 0.05);
-        a.volume = vv;
-        if (vv <= 0) {
-          window.clearInterval(idOut);
-          a.pause();
-        }
-      }, 40);
+      cancelled = true;
+      window.removeEventListener("pointerdown", unlock);
+      window.removeEventListener("keydown", unlock);
     };
   }, [src]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // react to mute
+  // React to mute toggle
   useEffect(() => {
-    const a = ref.current;
-    if (!a) return;
-    const target = muted ? 0 : 0.35;
-    let v = a.volume;
-    const id = window.setInterval(() => {
-      v = muted ? Math.max(0, v - 0.05) : Math.min(target, v + 0.05);
-      a.volume = v;
-      if ((muted && v <= 0) || (!muted && v >= target)) window.clearInterval(id);
-    }, 40);
-    return () => window.clearInterval(id);
+    fadeTo(muted ? 0 : TARGET, 500);
   }, [muted]);
 
   return <audio ref={ref} preload="auto" aria-hidden />;
 }
+
 
 /* =========================================================
    Top bar
@@ -406,6 +434,7 @@ function TopBar({
   onChangeSettings,
   onOpenTech,
   onOpenInsights,
+  onOpenHelp,
   onRestart,
 }: {
   state: SimState;
@@ -416,8 +445,10 @@ function TopBar({
   ) => void;
   onOpenTech: () => void;
   onOpenInsights: () => void;
+  onOpenHelp: () => void;
   onRestart: () => void;
 }) {
+
   const persp = PERSPECTIVES.find((p) => p.id === state.perspective)!;
   return (
     <header className="mx-auto flex max-w-5xl items-center justify-between gap-3 px-4 pt-6 sm:px-6">
@@ -456,9 +487,14 @@ function TopBar({
             {state.insights.length}
           </span>
         </IconBtn>
+        <IconBtn label="Hướng dẫn" onClick={onOpenHelp}>
+          <HelpCircle className="h-4 w-4" />
+          <span className="hidden text-xs sm:inline">Hướng dẫn</span>
+        </IconBtn>
         <IconBtn label="Bắt đầu lại" onClick={onRestart}>
           <RotateCcw className="h-4 w-4" />
         </IconBtn>
+
       </div>
     </header>
   );

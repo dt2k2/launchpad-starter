@@ -5,7 +5,7 @@
  * Auto-dismisses after `holdMs`, or on click/keypress.
  */
 import { AnimatePresence, motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export interface NarratorPayload {
   id: string;
@@ -13,28 +13,56 @@ export interface NarratorPayload {
   attribution?: string;
   holdMs?: number;
   tone?: "calm" | "tense" | "rupture" | "uneasy" | "strained" | "urgent" | "fractured";
+  /** Optional voiceover MP3 to play with the line */
+  audioSrc?: string;
 }
 
 interface Props {
   line: NarratorPayload | null;
   onDone?: () => void;
+  muted?: boolean;
 }
 
-export function Narrator({ line, onDone }: Props) {
+export function Narrator({ line, onDone, muted = false }: Props) {
   const [active, setActive] = useState<NarratorPayload | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     if (!line) return;
     setActive(line);
-    const hold = line.holdMs ?? 4500;
+
+    // Voiceover — clamp display to audio duration if available
+    let hold = line.holdMs ?? 4500;
+    const a = audioRef.current;
+    if (a && line.audioSrc && !muted) {
+      a.src = line.audioSrc;
+      a.volume = 0.85;
+      a.currentTime = 0;
+      a.play().catch(() => {});
+    } else if (a) {
+      a.pause();
+    }
+
     const t = setTimeout(() => {
       setActive(null);
       onDone?.();
     }, hold);
-    return () => clearTimeout(t);
-  }, [line, onDone]);
+    return () => {
+      clearTimeout(t);
+      const aa = audioRef.current;
+      if (aa) {
+        aa.pause();
+        aa.removeAttribute("src");
+      }
+    };
+  }, [line, onDone, muted]);
 
   const dismiss = () => {
+    const a = audioRef.current;
+    if (a) {
+      a.pause();
+      a.removeAttribute("src");
+    }
     setActive(null);
     onDone?.();
   };
@@ -48,6 +76,7 @@ export function Narrator({ line, onDone }: Props) {
     return () => window.removeEventListener("keydown", onKey);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [active]);
+
 
   const tone = active?.tone;
   const isRupture = tone === "rupture" || tone === "fractured";
@@ -78,8 +107,10 @@ export function Narrator({ line, onDone }: Props) {
         };
 
   return (
+    <>
     <AnimatePresence mode="wait">
       {active && (
+
         <motion.div
           key={active.id}
           initial={{ opacity: 0 }}
@@ -168,5 +199,9 @@ export function Narrator({ line, onDone }: Props) {
         </motion.div>
       )}
     </AnimatePresence>
+    <audio ref={audioRef} preload="auto" aria-hidden />
+    </>
   );
+
+
 }

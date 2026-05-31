@@ -1,5 +1,7 @@
 /**
  * PressureGauges — 6 systemic-pressure mini-bars rendered inside the HUD.
+ * Theme-aware: uses perspective tokens (--p-text / --p-muted / --p-border)
+ * so it stays readable on light surfaces (historian) and dark (ruler/worker).
  */
 import { motion } from "framer-motion";
 import { PRESSURE_META, type Pressures } from "@/data/contradiction";
@@ -15,9 +17,9 @@ const KEYS: (keyof Pressures)[] = [
 
 const HUE: Record<keyof Pressures, string> = {
   classTension: "from-rose-500/80 to-orange-400/80",
-  repression: "from-slate-300/80 to-slate-500/80",
+  repression: "from-slate-400/80 to-slate-600/80",
   legitimacyLoss: "from-amber-400/80 to-yellow-500/80",
-  organization: "from-sky-400/80 to-indigo-500/80",
+  organization: "from-sky-500/80 to-indigo-500/80",
   productionInstability: "from-orange-400/80 to-red-500/80",
   ruptureRisk: "from-fuchsia-500/90 to-rose-600/90",
 };
@@ -32,13 +34,13 @@ export function PressureGauges({ p }: { p: Pressures }) {
           <div
             key={k}
             title={`${meta.label}: ${meta.description}`}
-            className="rounded-md border border-white/10 bg-white/5 px-2 py-1.5"
+            className="rounded-md border border-[var(--p-border)] bg-[var(--p-accent-soft)] px-2 py-1.5"
           >
-            <div className="flex items-center justify-between text-[9px] uppercase tracking-[0.15em] text-white/55">
+            <div className="flex items-center justify-between text-[9px] uppercase tracking-[0.15em] text-[var(--p-muted)]">
               <span className="truncate">{meta.short}</span>
-              <span className="font-mono text-white/80">{v}</span>
+              <span className="font-mono text-[var(--p-text)]">{v}</span>
             </div>
-            <div className="mt-1 h-1 w-full overflow-hidden rounded-full bg-white/10">
+            <div className="mt-1 h-1 w-full overflow-hidden rounded-full bg-[color-mix(in_oklab,var(--p-text)_15%,transparent)]">
               <motion.div
                 key={v}
                 initial={{ width: 0 }}
