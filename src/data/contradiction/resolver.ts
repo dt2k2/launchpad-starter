@@ -3,6 +3,7 @@
  * Given a SimState-ish snapshot returns: active tier, derived pressures,
  * locked option ids for the current decision, and (optionally) an event roll.
  */
+import type { EraId } from "../eras";
 import type { Decision, DecisionOption, PerspectiveId } from "../historicalSim";
 import { derivePressures, type Pressures } from "./pressures";
 import { CONTRADICTION_EVENTS, type ContradictionEvent } from "./events";
@@ -20,6 +21,8 @@ export interface ResolverInput {
   tagCounts: Partial<Record<string, number>>;
   progressiveCount: number;
   eventCooldowns: Record<string, number>;
+  /** Current era — gates era-specific contradiction events. */
+  eraId?: EraId;
 }
 
 export interface ResolverOutput {
