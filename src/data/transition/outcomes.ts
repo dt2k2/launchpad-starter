@@ -41,7 +41,7 @@ export const OUTCOME_NARRATION: Record<PathOutcome, OutcomeNarration> = {
   suppress: {
     title: "Đàn áp toàn diện",
     body: "Trật tự được giữ — bằng nhà tù, mật vụ, và sự im lặng. Cánh cửa cải cách đã khép.",
-    tone: "strained" as any,
+    tone: "strained",
   },
   failed_uprising: {
     title: "Khởi nghĩa thất bại",
