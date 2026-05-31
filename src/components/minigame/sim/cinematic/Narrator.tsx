@@ -196,6 +196,8 @@ export function Narrator({ line, onDone, muted = false }: Props) {
           </motion.div>
         </motion.div>
       )}
+      <audio ref={audioRef} preload="auto" aria-hidden />
     </AnimatePresence>
   );
+
 }
