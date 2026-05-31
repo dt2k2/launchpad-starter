@@ -108,6 +108,7 @@ export type SimAction =
   | { type: "startStage" }
   | { type: "decide"; option: DecisionOption }
   | { type: "ackConsequence" }
+  | { type: "ackTransition" }
   | { type: "ackRevolution" }
   | { type: "ackCompanion" }
   | { type: "restart" };
