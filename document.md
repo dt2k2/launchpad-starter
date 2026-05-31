@@ -269,6 +269,94 @@ Có **≥6 template**: `ruler_authoritarian_continuity`, `worker_revolution_won`
 - 4 tier mâu thuẫn và hệ quả unlock/lock.
 - 6 outcome chuyển ải.
 
+### 4.16 Đọc HUD trong game (giải nghĩa từng dòng người chơi nhìn thấy)
+
+Khi vào ải, HUD hiển thị 3 khối: **Mục tiêu lăng kính**, **Mâu thuẫn + Điểm + 5 chỉ số gốc**, **Áp lực hệ thống (6 thanh)**. Ví dụ HUD đầu Era 1 (Ruler):
+
+```text
+Giai cấp thống trị · Mục tiêu
+Giữ trật tự, đè nén cách mạng
+
+Mâu thuẫn · Bình lặng  5
+
+Điểm 63
+Sản xuất 10 · Ổn định 70 · Công nghệ 8 · Mâu thuẫn 5 · Cách mạng 0
+
+Áp lực hệ thống
+Căng thẳng 0 · Đàn áp 0 · Chính danh 0 · Tổ chức 0 · Sản xuất 0 · Vỡ trận 0
+```
+
+#### Khối 1 — Mục tiêu lăng kính
+
+Câu chốt thay đổi theo perspective, là **kim chỉ nam** chấm điểm cuối game:
+
+| Perspective | Câu mục tiêu                                   | Ý nghĩa hành động                                  |
+| ----------- | ---------------------------------------------- | -------------------------------------------------- |
+| Ruler       | "Giữ trật tự, đè nén cách mạng."               | Tối đa `stability`, giữ `legitimacyLoss` thấp, kiểm soát `contradiction`. Sống sót 5 ải không bị rupture = thắng. |
+| Worker      | "Tổ chức giai cấp, lật đổ trật tự bất công."   | Tối đa `organization`, đẩy `contradiction` lên RUPTURE đúng lúc → thắng bằng `rupture`. |
+| Historian   | "Ghi chép, phân tích — không can thiệp."       | Mở càng nhiều `memory tag` và quan sát càng nhiều outcome càng tốt. Thắng = bộ sử đa dạng. |
+
+#### Khối 2 — Mâu thuẫn, Điểm, 5 chỉ số gốc
+
+- **Mâu thuẫn · Bình lặng 5** — `contradiction = 5`, tier = `STABLE` (nhãn "Bình lặng"). Các nhãn khác: `Bất ổn` (UNSTABLE), `Khẩn cấp` (EMERGENCY), `Vỡ ải` (RUPTURE).
+- **Điểm 63** — chỉ số tổng hợp đọc nhanh sức khoẻ xã hội, xấp xỉ `0.35·production + 0.35·stability + 0.2·tech − 0.2·contradiction − 0.15·revolution + 50`. **Không quyết outcome** — chỉ là dashboard.
+- **Sản xuất / Ổn định / Công nghệ / Mâu thuẫn / Cách mạng** — 5 metric gốc 0–100 (định nghĩa ở §4.3). Mọi delta của option đẩy thẳng vào đây; mọi pressure phái sinh từ đây.
+
+> Mẹo đọc: nếu **Mâu thuẫn > Ổn định** → đang chạy về phía rupture/collapse. Nếu **Sản xuất < 30 và Ổn định < 30** → cảnh báo sụp đổ.
+
+#### Khối 3 — 6 áp lực hệ thống
+
+Sáu thanh trong HUD = 6 pressure ở §4.4. Cách đọc nhanh:
+
+| Thanh HUD     | Pressure key            | Khi nào nên lo                                              |
+| ------------- | ----------------------- | ----------------------------------------------------------- |
+| **Căng thẳng** | `classTension`          | > 60 → giai cấp bị trị nhìn thấy bất công rõ ràng.          |
+| **Đàn áp**     | `repression`            | > 60 (Ruler) → trigger outcome `suppress`, khoá reform vĩnh viễn. |
+| **Chính danh** | `legitimacyLoss`        | > 50 → nhân nhượng/cải cách kém hiệu quả, dân không tin.    |
+| **Tổ chức**    | `organization`          | > 60 + contradiction cao → đủ điều kiện `rupture`.          |
+| **Sản xuất**   | `productionInstability` | > 50 → đói kém, sản xuất chập chờn, dễ `collapse`.          |
+| **Vỡ trận**    | `ruptureRisk`           | > 70 → ải này nhiều khả năng kết bằng rupture/failed_uprising. |
+
+Tùy perspective, một số thanh bị **ẩn** hoặc **mờ** (xem §4.10). HUD ví dụ ở trên (Ruler đầu game) có `organization` mờ — đúng tinh thần: vua không nhìn thấy phong trào ngầm.
+
+---
+
+## 4.17 Ý nghĩa lựa chọn theo từng góc nhìn
+
+Mỗi decision được lọc qua `lens.optionTags`. Cùng một tình huống "Mùa màng thất bát" ở Era Phong kiến, 3 perspective sẽ thấy 3 bộ option khác nhau:
+
+| Perspective | Option hiện ra                              | Tag           | Deltas chính (ước lượng)                                       | Ý nghĩa lý luận                                                 |
+| ----------- | ------------------------------------------- | ------------- | -------------------------------------------------------------- | --------------------------------------------------------------- |
+| **Ruler**   | "Ban chiếu giảm tô 1 năm"                   | `concession`  | `stability +8, legitimacy +6, production −3`                   | Nhân nhượng từ trên xuống. Giữ chính danh, mất một phần địa tô. |
+| Ruler       | "Điều quân đàn áp nông dân"                 | `repression`  | `stability +4 (ngắn hạn), repression +18, contradiction +10`   | Bạo lực. Tạo memory `mass_repression` đè nặng về sau.           |
+| Ruler       | "Mở kho dự trữ quốc gia"                    | `reform`      | `stability +12, production −5, tech +2`                        | Cải cách hành chính. Tốn của, tăng chính danh dài hạn.          |
+| **Worker**  | "Tổ chức đoàn nông dân kéo đến quan phủ"    | `organize`    | `organization +14, contradiction +6, stability −4`             | Hành động tập thể — điều kiện tiên quyết cho rupture.           |
+| Worker      | "Cướp kho lúa của địa chủ"                  | `direct_action` / `uprising` | `revolution +10, contradiction +12, production −4, repression tăng mạnh stage sau` | Hành động trực tiếp. Rủi ro `failed_uprising`. |
+| Worker      | "Truyền tin ngầm giữa các làng"             | `underground` | `organization +8, memory: underground_network`                 | Tích luỹ âm thầm. An toàn, chậm, bền.                           |
+| **Historian** | "Ghi chép số liệu thiệt hại mùa màng"     | `document`    | `tech +3, memory: famine`                                      | Không can thiệp metric. Mở memory tag → ending phong phú hơn.   |
+| Historian   | "Phỏng vấn nhân chứng các bên"              | `analyze`     | `tech +2, mở insight về legitimacyLoss thực tế`                | Đặc quyền Historian: thấy pressure ẩn.                          |
+| Historian   | "Ghi lại lời kêu gọi nổi dậy" *(thay cho direct_action)* | `record:uprising` | `tech +2, memory: failed_revolt (nếu uprising thất bại)` | Chứng kiến, không can thiệp — đúng vai sử gia.                  |
+
+### Khác biệt cốt lõi giữa 3 góc nhìn
+
+| Khía cạnh                | Ruler                                  | Worker                                | Historian                          |
+| ------------------------ | -------------------------------------- | ------------------------------------- | ---------------------------------- |
+| **Mục tiêu thắng**       | Sống sót 5 ải, contradiction thấp.     | Trigger `rupture` ít nhất 1 lần.       | Mở nhiều memory + thấy đa outcome. |
+| **Option độc quyền**     | `repression`, `decree`, `concession`.  | `strike`, `organize`, `sabotage`, `solidarity`. | `document`, `analyze`, `record:*`. |
+| **Option bị khoá**       | `sabotage`, `underground`, `strike`.   | `decree`, `repression`.                | Mọi `direct_action` (thay bằng `record:*`). |
+| **Pressure nhìn rõ**     | `stability`, `legitimacy`, `production`. | `classTension`, `organization`, `repression`. | Tất cả, nhưng **trễ 1 stage**.    |
+| **Pressure bị ẩn**       | `organization` (phong trào ngầm).      | macro `tech`, `legitimacy` chỉ thấy mờ. | Không ẩn, chỉ trễ.                |
+| **Companion**            | Cận thần — khuyên giữ trật tự.         | Đồng đội — kêu gọi tổ chức.            | Trợ lý lưu trữ — đặt câu hỏi phản biện. |
+| **Ending dễ rơi vào**    | `ruler_authoritarian_continuity`, `shared_stagnation`. | `worker_revolution_won`, `worker_failed_uprising_legacy`. | `historian_collapse_documented`, `shared_rupture_unfinished`. |
+
+### Vì sao cùng 1 option có ý nghĩa khác nhau theo perspective
+
+- **Cùng metric, khác lens.** Ruler "ban chiếu giảm tô" thấy `stability +8` rõ — nhưng `organization` của giai cấp bị trị vẫn âm thầm tăng (Ruler không nhìn thấy). Worker chơi cùng tình huống thì thanh `organization` hiện rõ → biết phải đẩy thêm bao nhiêu mới đủ rupture.
+- **Cùng tag, khác hệ quả memory.** Tag `uprising` của Worker push `failed_revolt` nếu organization < 40; cùng tag đó Historian chỉ ghi `documented_revolt` — không ảnh hưởng repression stage sau.
+- **Cùng outcome, khác narration.** Outcome `rupture`: Ruler nghe *"Triều đại của ngươi sụp đổ trong đêm"*; Worker nghe *"Lá cờ đỏ lần đầu bay trên thành luỹ"*; Historian nghe *"Sử ký ghi lại ngày X tháng Y…"*.
+
+> **Thông điệp sư phạm:** giai cấp không chỉ định vị thế **kinh tế** mà còn định vị thế **nhận thức**. Cùng một sự kiện, ba người ở ba vị trí giai cấp khác nhau sẽ thấy ba sự kiện khác nhau — và sẽ đưa ra ba quyết định khác nhau với cùng một thông tin.
+
 ---
 
 ## 5. Quiz minigame (rà SGK Mác – Lênin)
