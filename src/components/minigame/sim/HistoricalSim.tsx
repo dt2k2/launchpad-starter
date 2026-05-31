@@ -97,7 +97,9 @@ export function HistoricalSim() {
       if (e.key === "Escape") {
         setTechOpen(false);
         setInsightsOpen(false);
+        setHelpOpen(false);
       }
+
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
