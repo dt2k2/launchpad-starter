@@ -571,6 +571,7 @@ export function reducer(state: SimState, action: SimAction): SimState {
           pressures: EMPTY_PRESSURES,
           reformLocked: true,
           stagesCompleted: state.stagesCompleted + 1,
+          unlockedTech: grantBaselineTech(state.stageIdx + 1, state.unlockedTech),
           phase: "intro",
         };
       }
