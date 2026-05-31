@@ -619,6 +619,7 @@ export function reducer(state: SimState, action: SimAction): SimState {
         lockReasons: {},
         ruptureStreak: 0,
         memory,
+        unlockedTech: grantBaselineTech(nextStageIdx, state.unlockedTech),
         phase: "intro",
       };
     }
