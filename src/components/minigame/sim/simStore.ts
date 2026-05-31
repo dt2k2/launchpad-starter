@@ -550,6 +550,7 @@ export function reducer(state: SimState, action: SimAction): SimState {
           contradictionTier: resolveTier(collapsed.contradiction).id,
           pressures: EMPTY_PRESSURES,
           stagesCompleted: state.stagesCompleted + 1,
+          unlockedTech: grantBaselineTech(state.stageIdx + 1, state.unlockedTech),
           phase: "intro",
         };
       }
