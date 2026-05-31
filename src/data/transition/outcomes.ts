@@ -14,7 +14,7 @@ export type PathOutcome =
 export interface OutcomeNarration {
   title: string;
   body: string;
-  tone: "calm" | "tense" | "rupture" | "uneasy" | "urgent" | "fractured";
+  tone: "calm" | "tense" | "rupture" | "uneasy" | "urgent" | "fractured" | "strained";
 }
 
 export const OUTCOME_NARRATION: Record<PathOutcome, OutcomeNarration> = {
