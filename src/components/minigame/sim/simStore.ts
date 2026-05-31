@@ -513,7 +513,7 @@ export function reducer(state: SimState, action: SimAction): SimState {
         };
       }
 
-      // FREEZE / FAILED UPRISING → repeat current stage
+      // FREEZE / FAILED UPRISING → repeat current stage (after transition screen)
       if (outcome === "freeze" || outcome === "failed_uprising") {
         const penalty: Partial<Record<MetricKey, number>> =
           outcome === "failed_uprising"
@@ -525,16 +525,16 @@ export function reducer(state: SimState, action: SimAction): SimState {
           metrics: newMetrics,
           stageFreezeCount: outcome === "freeze" ? state.stageFreezeCount + 1 : state.stageFreezeCount,
           decisionIdx: 0,
-          phase: "intro",
+          phase: "transition",
           contradictionTier: resolveTier(newMetrics.contradiction).id,
           stagesCompleted: state.stagesCompleted,
         };
         return next;
       }
 
-      // COLLAPSE → heavy penalty + jump to next stage (or finale)
+      // COLLAPSE → heavy penalty + jump to next stage (or finale), via transition screen
       if (outcome === "collapse") {
-        if (isLast) return { ...withOutComp, phase: "finale", stagesCompleted: state.stagesCompleted + 1 };
+        if (isLast) return { ...withOutComp, phase: "transition", stagesCompleted: state.stagesCompleted + 1 };
         const nextStage = STAGES[state.stageIdx + 1];
         const carriedBase = baseMetricsFor(nextStage);
         const collapsed = {
@@ -553,13 +553,13 @@ export function reducer(state: SimState, action: SimAction): SimState {
           pressures: EMPTY_PRESSURES,
           stagesCompleted: state.stagesCompleted + 1,
           unlockedTech: grantBaselineTech(state.stageIdx + 1, state.unlockedTech),
-          phase: "intro",
+          phase: "transition",
         };
       }
 
-      // SUPPRESS → advance, lock reforms for rest of run
+      // SUPPRESS → advance, lock reforms for rest of run, via transition screen
       if (outcome === "suppress") {
-        if (isLast) return { ...withOutComp, phase: "finale", reformLocked: true, stagesCompleted: state.stagesCompleted + 1 };
+        if (isLast) return { ...withOutComp, phase: "transition", reformLocked: true, stagesCompleted: state.stagesCompleted + 1 };
         const nextStage = STAGES[state.stageIdx + 1];
         const carriedBase = baseMetricsFor(nextStage);
         const carried = { ...carriedBase, stability: Math.min(85, carriedBase.stability + 15) };
@@ -574,7 +574,7 @@ export function reducer(state: SimState, action: SimAction): SimState {
           reformLocked: true,
           stagesCompleted: state.stagesCompleted + 1,
           unlockedTech: grantBaselineTech(state.stageIdx + 1, state.unlockedTech),
-          phase: "intro",
+          phase: "transition",
         };
       }
 
