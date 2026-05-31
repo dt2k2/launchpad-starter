@@ -229,8 +229,10 @@ export function HistoricalSim() {
           onChangeSettings={setSettings}
           onOpenTech={() => setTechOpen(true)}
           onOpenInsights={() => setInsightsOpen(true)}
+          onOpenHelp={() => setHelpOpen(true)}
           onRestart={() => dispatch({ type: "restart" })}
         />
+
 
 
         <main className="mx-auto max-w-5xl px-4 pb-[360px] pt-6 sm:px-6 sm:pb-[380px]">
