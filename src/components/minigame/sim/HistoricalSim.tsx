@@ -33,6 +33,7 @@ import {
 import {
   AlertTriangle,
   Cpu,
+  HelpCircle,
   Library,
   RotateCcw,
   Sparkles,
@@ -42,6 +43,7 @@ import {
   Check,
   ChevronRight,
 } from "lucide-react";
+
 import { AmbientEngine } from "./cinematic/AmbientEngine";
 import { StressOverlay } from "./cinematic/StressOverlay";
 import { Narrator, type NarratorPayload } from "./cinematic/Narrator";
