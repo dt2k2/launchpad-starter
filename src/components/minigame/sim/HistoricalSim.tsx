@@ -294,10 +294,11 @@ export function HistoricalSim() {
           </AnimatePresence>
         </main>
 
-        {/* Perspective-aware HUD — hidden during revolution cinematic to avoid overlap */}
+        {/* Perspective-aware HUD — hidden during cinematic/transition to avoid overlap */}
         {state.phase !== "perspective" &&
           state.phase !== "finale" &&
-          state.phase !== "revolution" && <PerspectiveHUD state={state} />}
+          state.phase !== "revolution" &&
+          state.phase !== "transition" && <PerspectiveHUD state={state} />}
 
       </motion.div>
 
