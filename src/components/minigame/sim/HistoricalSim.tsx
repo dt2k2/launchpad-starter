@@ -106,7 +106,8 @@ export function HistoricalSim() {
           id: `enter-${stage.id}`,
           text: line.text,
           tone: "calm",
-          holdMs: 4500,
+          holdMs: 7000,
+          audioSrc: NARRATOR_AUDIO[stage.id]?.enter,
         });
       }
       lastTensionEra.current = null;
@@ -122,7 +123,8 @@ export function HistoricalSim() {
           id: `rev-${stage.id}-${state.stagesCompleted}`,
           text: line.text,
           tone: "rupture",
-          holdMs: 4800,
+          holdMs: 7200,
+          audioSrc: NARRATOR_AUDIO[stage.id]?.revolution,
         });
       }
     }
@@ -141,12 +143,14 @@ export function HistoricalSim() {
           id: `tension-${stage.id}`,
           text: line.text,
           tone: "tense",
-          holdMs: 4000,
+          holdMs: 6500,
+          audioSrc: NARRATOR_AUDIO[stage.id]?.tension,
         });
         lastTensionEra.current = stage.id;
       }
     }
   }, [state.metrics.contradiction, stage.id, state.phase]);
+
 
   // Narrator: contradiction event triggered
   useEffect(() => {
