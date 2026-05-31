@@ -276,6 +276,13 @@ export function HistoricalSim() {
                 onDone={() => dispatch({ type: "ackRevolution" })}
               />
             )}
+            {state.phase === "transition" && (
+              <TransitionScreen
+                key={`trans-${stage.id}-${state.stagesCompleted}`}
+                state={state}
+                onContinue={() => dispatch({ type: "ackTransition" })}
+              />
+            )}
 
             {state.phase === "finale" && (
               <EndingScreen
