@@ -487,9 +487,14 @@ function TopBar({
             {state.insights.length}
           </span>
         </IconBtn>
+        <IconBtn label="Hướng dẫn" onClick={onOpenHelp}>
+          <HelpCircle className="h-4 w-4" />
+          <span className="hidden text-xs sm:inline">Hướng dẫn</span>
+        </IconBtn>
         <IconBtn label="Bắt đầu lại" onClick={onRestart}>
           <RotateCcw className="h-4 w-4" />
         </IconBtn>
+
       </div>
     </header>
   );
