@@ -342,65 +342,75 @@ function WorldBackdrop({ stage, reduceMotion }: { stage: SimStage; reduceMotion:
    ========================================================= */
 function StageAudio({ eraId, muted }: { eraId: EraId; muted: boolean }) {
   const ref = useRef<HTMLAudioElement | null>(null);
+  const fadeRef = useRef<number | null>(null);
   const src = STAGE_AUDIO[eraId];
+  const TARGET = 0.28;
 
-  // crossfade on era change
+  const fadeTo = (target: number, ms = 900) => {
+    const a = ref.current;
+    if (!a) return;
+    if (fadeRef.current) {
+      window.clearInterval(fadeRef.current);
+      fadeRef.current = null;
+    }
+    const steps = Math.max(8, Math.round(ms / 50));
+    const start = a.volume;
+    const delta = (target - start) / steps;
+    let i = 0;
+    fadeRef.current = window.setInterval(() => {
+      i++;
+      const next = Math.max(0, Math.min(1, start + delta * i));
+      a.volume = next;
+      if (i >= steps) {
+        a.volume = target;
+        if (fadeRef.current) window.clearInterval(fadeRef.current);
+        fadeRef.current = null;
+      }
+    }, 50) as unknown as number;
+  };
+
+  // Era change: fade out, swap src, fade in.
   useEffect(() => {
     const a = ref.current;
     if (!a) return;
-    a.volume = 0;
-    a.src = src;
-    a.loop = true;
-    const tryPlay = () => a.play().catch(() => {});
-    tryPlay();
-    const start = () => {
-      tryPlay();
-      window.removeEventListener("pointerdown", start);
-      window.removeEventListener("keydown", start);
+    let cancelled = false;
+    const swap = () => {
+      if (cancelled) return;
+      a.src = src;
+      a.loop = true;
+      a.volume = 0;
+      a.play().catch(() => {});
+      fadeTo(muted ? 0 : TARGET, 1200);
     };
-    window.addEventListener("pointerdown", start, { once: true });
-    window.addEventListener("keydown", start, { once: true });
-    // fade in
-    const target = muted ? 0 : 0.35;
-    let v = 0;
-    const id = window.setInterval(() => {
-      v = Math.min(target, v + 0.025);
-      a.volume = v;
-      if (v >= target) window.clearInterval(id);
-    }, 60);
+    if (a.src && !a.paused) {
+      fadeTo(0, 600);
+      window.setTimeout(swap, 650);
+    } else {
+      swap();
+    }
+    // unlock on first interaction (autoplay policy)
+    const unlock = () => {
+      a.play().catch(() => {});
+      window.removeEventListener("pointerdown", unlock);
+      window.removeEventListener("keydown", unlock);
+    };
+    window.addEventListener("pointerdown", unlock, { once: true });
+    window.addEventListener("keydown", unlock, { once: true });
     return () => {
-      window.clearInterval(id);
-      window.removeEventListener("pointerdown", start);
-      window.removeEventListener("keydown", start);
-      // fade out previous
-      let vv = a.volume;
-      const idOut = window.setInterval(() => {
-        vv = Math.max(0, vv - 0.05);
-        a.volume = vv;
-        if (vv <= 0) {
-          window.clearInterval(idOut);
-          a.pause();
-        }
-      }, 40);
+      cancelled = true;
+      window.removeEventListener("pointerdown", unlock);
+      window.removeEventListener("keydown", unlock);
     };
   }, [src]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // react to mute
+  // React to mute toggle
   useEffect(() => {
-    const a = ref.current;
-    if (!a) return;
-    const target = muted ? 0 : 0.35;
-    let v = a.volume;
-    const id = window.setInterval(() => {
-      v = muted ? Math.max(0, v - 0.05) : Math.min(target, v + 0.05);
-      a.volume = v;
-      if ((muted && v <= 0) || (!muted && v >= target)) window.clearInterval(id);
-    }, 40);
-    return () => window.clearInterval(id);
+    fadeTo(muted ? 0 : TARGET, 500);
   }, [muted]);
 
   return <audio ref={ref} preload="auto" aria-hidden />;
 }
+
 
 /* =========================================================
    Top bar
