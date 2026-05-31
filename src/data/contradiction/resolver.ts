@@ -85,6 +85,7 @@ export function rollContradictionEvent(
   const eligible = CONTRADICTION_EVENTS.filter((ev) => {
     if ((ctx.eventCooldowns[ev.id] ?? 0) > 0) return false;
     if (tierIndex(tier.id) < tierIndex(ev.minTier)) return false;
+    if (ev.eras && ctx.eraId && !ev.eras.includes(ctx.eraId)) return false;
     if (
       ev.condition &&
       !ev.condition({ metrics: ctx.metrics, pressures: ctx.pressures, perspective: ctx.perspective })
