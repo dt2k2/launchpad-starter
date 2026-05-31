@@ -324,12 +324,14 @@ export function reducer(state: SimState, action: SimAction): SimState {
       // Recompute pressures with new metrics
       const progressiveCount =
         state.progressiveCount + (action.option.progressive ? 1 : 0);
+      const eraId = STAGES[state.stageIdx]?.id;
       const { tier: newTier, pressures } = resolveContradiction({
         metrics: nextMetrics,
         perspective: state.perspective,
         tagCounts,
         progressiveCount,
         eventCooldowns: state.eventCooldowns,
+        eraId,
       });
 
       // Roll contradiction event
@@ -339,6 +341,7 @@ export function reducer(state: SimState, action: SimAction): SimState {
         tagCounts,
         progressiveCount,
         eventCooldowns: state.eventCooldowns,
+        eraId,
         pressures,
       });
 
