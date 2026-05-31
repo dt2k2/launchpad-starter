@@ -302,6 +302,8 @@ export function HistoricalSim() {
         onClose={() => setInsightsOpen(false)}
         insights={state.insights}
       />
+      <HelpDrawer open={helpOpen} onClose={() => setHelpOpen(false)} />
+
     </div>
     </PerspectiveProvider>
   );
