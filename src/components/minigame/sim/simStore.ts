@@ -158,6 +158,39 @@ function baseMetricsFor(stage: SimStage): Record<MetricKey, number> {
   };
 }
 
+/**
+ * Foundational techs per stage — techPool entries that NO option's `unlocks`
+ * field grants. They represent the baseline LLSX of the era (đồ đá cho cộng
+ * sản nguyên thuỷ, đồng cho chiếm hữu nô lệ, cày nặng + cối xay nước cho
+ * phong kiến, máy hơi nước + điện cho tư bản, năng lượng tái tạo cho XHCN).
+ * Without auto-grant chúng sẽ vĩnh viễn bị khoá. Tính một lần ở module load.
+ */
+const BASELINE_TECH_BY_STAGE: Record<string, string[]> = (() => {
+  const everUnlockable = new Set<string>();
+  for (const s of STAGES) {
+    for (const d of s.decisions) {
+      for (const o of d.options) {
+        for (const t of o.unlocks ?? []) everUnlockable.add(t);
+      }
+    }
+  }
+  const out: Record<string, string[]> = {};
+  for (const s of STAGES) {
+    out[s.id] = s.techPool.filter((t) => !everUnlockable.has(t));
+  }
+  return out;
+})();
+
+function grantBaselineTech(stageIdx: number, current: string[]): string[] {
+  const stage = STAGES[stageIdx];
+  if (!stage) return current;
+  const baseline = BASELINE_TECH_BY_STAGE[stage.id] ?? [];
+  if (!baseline.length) return current;
+  const set = new Set(current);
+  for (const t of baseline) set.add(t);
+  return Array.from(set);
+}
+
 function recomputeLocks(state: SimState): { lockedOptionIds: string[]; lockReasons: Record<string, string> } {
   const stage = STAGES[state.stageIdx];
   const decision = stage?.decisions[state.decisionIdx];
