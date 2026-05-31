@@ -591,6 +591,17 @@ export function reducer(state: SimState, action: SimAction): SimState {
 
     }
 
+    case "ackTransition": {
+      // After the transition narration screen, decide what comes next.
+      // If we already advanced into the last stage and outcome was terminal
+      // (collapse/suppress on final era), go to finale; else play the new stage intro.
+      const isLast = state.stageIdx >= STAGES.length - 1;
+      const terminal =
+        isLast &&
+        (state.lastTransition === "collapse" || state.lastTransition === "suppress");
+      return { ...state, phase: terminal ? "finale" : "intro" };
+    }
+
     case "ackRevolution": {
       // Rupture branch — advance to next era after the cinematic.
       const nextStageIdx = state.stageIdx + 1;
