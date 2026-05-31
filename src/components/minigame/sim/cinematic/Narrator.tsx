@@ -107,8 +107,10 @@ export function Narrator({ line, onDone, muted = false }: Props) {
         };
 
   return (
+    <>
     <AnimatePresence mode="wait">
       {active && (
+
         <motion.div
           key={active.id}
           initial={{ opacity: 0 }}
