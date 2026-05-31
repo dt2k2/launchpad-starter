@@ -55,11 +55,12 @@ export function PerspectiveHUD({ state }: { state: SimState }) {
               onClick={() => setCollapsed((c) => !c)}
               aria-label={collapsed ? "Mở rộng HUD" : "Thu gọn HUD"}
               aria-expanded={!collapsed}
-              className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-white/15 bg-white/5 text-white/70 transition hover:bg-white/15 hover:text-white"
+              className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-[var(--p-border)] bg-[var(--p-accent-soft)] text-[var(--p-text)] transition hover:bg-[var(--p-accent)] hover:text-[var(--p-bg)]"
             >
               {collapsed ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
             </button>
           </div>
+
         </div>
 
         <AnimatePresence initial={false}>
