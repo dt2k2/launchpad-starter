@@ -40,7 +40,7 @@ export function PressureGauges({ p }: { p: Pressures }) {
               <span className="truncate">{meta.short}</span>
               <span className="font-mono text-[var(--p-text)]">{v}</span>
             </div>
-            <div className="mt-1 h-1 w-full overflow-hidden rounded-full bg-black/15 dark:bg-white/10">
+            <div className="mt-1 h-1 w-full overflow-hidden rounded-full bg-[color-mix(in_oklab,var(--p-text)_15%,transparent)]">
               <motion.div
                 key={v}
                 initial={{ width: 0 }}
