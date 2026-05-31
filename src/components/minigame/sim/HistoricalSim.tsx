@@ -48,6 +48,7 @@ import { AmbientEngine } from "./cinematic/AmbientEngine";
 import { StressOverlay } from "./cinematic/StressOverlay";
 import { Narrator, type NarratorPayload } from "./cinematic/Narrator";
 import { RevolutionCinematic } from "./cinematic/RevolutionCinematic";
+import { TransitionScreen } from "./cinematic/TransitionScreen";
 import { ReplayTimeline } from "./cinematic/ReplayTimeline";
 import {
   SettingsToggle,
