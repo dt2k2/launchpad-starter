@@ -85,6 +85,8 @@ export function HistoricalSim() {
   const reduceMotion = useReducedMotion();
   const [techOpen, setTechOpen] = useState(false);
   const [insightsOpen, setInsightsOpen] = useState(false);
+  const [helpOpen, setHelpOpen] = useState(false);
+
   const [settings, setSettings] = useCinematicSettings();
   const [narratorLine, setNarratorLine] = useState<NarratorPayload | null>(null);
   const lastTensionEra = useRef<string | null>(null);
