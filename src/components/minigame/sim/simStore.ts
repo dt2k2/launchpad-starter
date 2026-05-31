@@ -48,6 +48,7 @@ export type SimPhase =
   | "intro"
   | "playing"
   | "consequence"
+  | "transition"
   | "revolution"
   | "finale";
 
