@@ -72,7 +72,7 @@ export function RevolutionCinematic({ stage, metrics, onDone, audioSrc, muted = 
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.4 }}
-      className="relative mx-auto h-[70vh] max-w-3xl pt-2"
+      className="relative mx-auto flex min-h-[78vh] max-w-3xl flex-col items-center justify-center px-4 py-10"
     >
       {/* shock flash */}
       {!reduce && (
@@ -96,8 +96,8 @@ export function RevolutionCinematic({ stage, metrics, onDone, audioSrc, muted = 
         />
       )}
 
-      {/* destruction symbols crumble */}
-      <div className="pointer-events-none absolute inset-0 z-[7]">
+      {/* destruction symbols — top band, away from text card */}
+      <div className="pointer-events-none absolute inset-x-0 top-0 z-[7] h-[24%]">
         {destructionItems.map((s, i) => (
           <motion.span
             key={`d-${i}`}
@@ -107,8 +107,8 @@ export function RevolutionCinematic({ stage, metrics, onDone, audioSrc, muted = 
                 ? { opacity: 0 }
                 : {
                     opacity: 0,
-                    x: s.x * 1.6,
-                    y: s.y * 1.6 + 80,
+                    x: s.x * 1.2,
+                    y: 80,
                     rotate: s.r * 2,
                   }
             }
@@ -117,10 +117,10 @@ export function RevolutionCinematic({ stage, metrics, onDone, audioSrc, muted = 
               duration: 1.6,
               ease: "easeIn",
             }}
-            className="absolute select-none text-3xl text-white/70 sm:text-4xl"
+            className="absolute select-none text-2xl text-white/70 sm:text-3xl"
             style={{
-              left: `calc(50% + ${s.x}px)`,
-              top: `calc(38% + ${s.y}px)`,
+              left: `calc(50% + ${s.x * 0.85}px)`,
+              top: `${28 + (i % 2) * 18}%`,
             }}
           >
             {s.glyph}
@@ -128,23 +128,23 @@ export function RevolutionCinematic({ stage, metrics, onDone, audioSrc, muted = 
         ))}
       </div>
 
-      {/* rebirth symbols rise */}
-      <div className="pointer-events-none absolute inset-0 z-[8]">
+      {/* rebirth symbols — bottom band, away from text card */}
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[8] h-[24%]">
         {rebirthItems.map((s, i) => (
           <motion.span
             key={`r-${i}`}
-            initial={{ opacity: 0, y: 80 }}
+            initial={{ opacity: 0, y: 60 }}
             animate={{ opacity: [0, 1, 1], y: 0 }}
             transition={{
               delay: 1.9 + i * 0.09,
               duration: 1.4,
               ease: [0.22, 1, 0.36, 1],
             }}
-            className="absolute select-none text-3xl sm:text-4xl"
+            className="absolute select-none text-2xl sm:text-3xl"
             style={{
               color: motif.sparkColor,
-              left: `calc(50% + ${s.x}px)`,
-              top: `calc(58% + ${s.y * 0.6}px)`,
+              left: `calc(50% + ${s.x * 0.85}px)`,
+              bottom: `${18 + (i % 2) * 18}%`,
               textShadow: `0 0 18px ${motif.sparkColor}`,
             }}
           >
@@ -153,38 +153,43 @@ export function RevolutionCinematic({ stage, metrics, onDone, audioSrc, muted = 
         ))}
       </div>
 
-      {/* center title + quote */}
-      <div className="relative z-[10] flex h-full flex-col items-center justify-center text-center">
-        <motion.span
-          initial={{ opacity: 0, scale: 0.9 }}
+      {/* center title + quote in a readable card */}
+      <div className="relative z-[10] flex flex-col items-center justify-center text-center">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.96 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 2.4, duration: 0.6 }}
-          className="rounded-full border px-3 py-1 text-[10px] uppercase tracking-[0.45em]"
-          style={{ borderColor: motif.sparkColor, color: motif.sparkColor }}
+          transition={{ delay: 2.3, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+          className="rounded-3xl border border-white/10 bg-stone-950/75 px-8 py-10 backdrop-blur-md sm:px-12"
+          style={{ boxShadow: `0 0 60px -10px ${motif.sparkColor}55` }}
         >
-          {burst ? "Cách mạng bùng nổ" : motif.ruptureLabel}
-        </motion.span>
-        <motion.h2
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 2.7, duration: 0.8 }}
-          className="mt-4 max-w-2xl font-display text-4xl text-balance text-white sm:text-6xl"
-        >
-          {stage.transitionTitle}
-        </motion.h2>
+          <span
+            className="inline-block rounded-full border px-3 py-1 text-[10px] uppercase tracking-[0.45em]"
+            style={{ borderColor: motif.sparkColor, color: motif.sparkColor }}
+          >
+            {burst ? "Cách mạng bùng nổ" : motif.ruptureLabel}
+          </span>
+          <motion.h2
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 2.6, duration: 0.8 }}
+            className="mt-5 max-w-2xl font-display text-4xl text-balance text-white sm:text-5xl"
+          >
+            {stage.transitionTitle}
+          </motion.h2>
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 3.1, duration: 1.0 }}
+            className="mx-auto mt-4 max-w-xl text-sm italic text-white/75 sm:text-base"
+          >
+            "{stage.transitionLine}"
+          </motion.p>
+        </motion.div>
         <motion.p
           initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 3.2, duration: 1.0 }}
-          className="mt-4 max-w-xl text-white/80 italic"
-        >
-          "{stage.transitionLine}"
-        </motion.p>
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 0.7 }}
-          transition={{ delay: 4.6, duration: 0.6 }}
-          className="mt-10 text-xs uppercase tracking-[0.4em] text-white/50"
+          animate={{ opacity: 0.6 }}
+          transition={{ delay: 4.4, duration: 0.6 }}
+          className="mt-6 text-[10px] uppercase tracking-[0.4em] text-white/50"
         >
           Lực lượng sản xuất đã vượt khỏi quan hệ cũ…
         </motion.p>
