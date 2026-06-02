@@ -290,13 +290,18 @@
   75% { transform: translate(-0.5px, 0.5px); }
 }
 
-/* ---------- Narrator tone distortion (driven by contradiction tier) ---------- */
+/* ---------- Narrator tone distortion (driven by contradiction tier) ----------
+   IMPORTANT: only animate compositor-safe properties (opacity / text-shadow /
+   filter). Animating `letter-spacing`, `text-transform`, or `transform` on the
+   text element causes the glyphs (and the surrounding " " quotes) to reflow
+   on every keyframe — that is the visible "text jumping" bug, especially in
+   late stages where the contradiction tier is high. */
 .narrator-uneasy {
   animation: narrator-wobble 4s ease-in-out infinite;
 }
 @keyframes narrator-wobble {
-  0%, 100% { letter-spacing: 0em; }
-  50% { letter-spacing: 0.012em; }
+  0%, 100% { opacity: 1; filter: none; }
+  50% { opacity: 0.94; filter: blur(0.15px); }
 }
 .narrator-strained {
   text-shadow:
@@ -309,8 +314,8 @@
   50% { text-shadow: 2px 0 rgba(244,63,94,0.55), -2px 0 rgba(56,189,248,0.4); }
 }
 .narrator-urgent {
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+  /* Uppercase styling is static — do NOT animate text-transform/letter-spacing
+     because they trigger text reflow. Only opacity pulses here. */
   animation: narrator-pulse 1.4s ease-in-out infinite;
 }
 @keyframes narrator-pulse {
@@ -318,16 +323,20 @@
   50% { opacity: 0.78; }
 }
 .narrator-glitch {
+  /* Chromatic-aberration look without translating the text node itself. */
   animation: narrator-glitch 1.2s steps(2) infinite;
-  text-shadow:
-    2px 0 rgba(244, 63, 94, 0.7),
-    -2px 0 rgba(56, 189, 248, 0.55);
 }
 @keyframes narrator-glitch {
-  0%, 100% { transform: translate(0, 0); }
-  25% { transform: translate(-1px, 0.5px); }
-  50% { transform: translate(1px, -0.5px); }
-  75% { transform: translate(-0.5px, 1px); }
+  0%, 100% {
+    text-shadow:
+      2px 0 rgba(244, 63, 94, 0.7),
+      -2px 0 rgba(56, 189, 248, 0.55);
+  }
+  50% {
+    text-shadow:
+      -2px 0 rgba(244, 63, 94, 0.7),
+      2px 0 rgba(56, 189, 248, 0.55);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
