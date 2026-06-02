@@ -32,6 +32,7 @@ export function AmbientEngine({ era, contradiction, muted }: Props) {
   const rumbleGainRef = useRef<GainNode | null>(null);
   const distortionRef = useRef<WaveShaperNode | null>(null);
   const startedRef = useRef(false);
+  const muteSuspendRef = useRef<number | null>(null);
 
   /* ---------- one-time graph construction on first gesture ---------- */
   useEffect(() => {
@@ -116,6 +117,7 @@ export function AmbientEngine({ era, contradiction, muted }: Props) {
       const ctx = ctxRef.current;
       if (ctx) {
         try {
+          if (muteSuspendRef.current) window.clearTimeout(muteSuspendRef.current);
           droneNodesRef.current.forEach((n) => {
             try {
               n.stop();
@@ -154,11 +156,31 @@ export function AmbientEngine({ era, contradiction, muted }: Props) {
     const ctx = ctxRef.current;
     const master = masterRef.current;
     if (!ctx || !master) return;
-    if (ctx.state === "suspended") ctx.resume().catch(() => {});
-    const target = m ? 0 : 0.7;
+    if (muteSuspendRef.current) {
+      window.clearTimeout(muteSuspendRef.current);
+      muteSuspendRef.current = null;
+    }
     const now = ctx.currentTime;
-    master.gain.cancelScheduledValues(now);
-    master.gain.linearRampToValueAtTime(Math.max(0.0001, target), now + 0.6);
+    if (m) {
+      master.gain.cancelScheduledValues(now);
+      master.gain.linearRampToValueAtTime(0, now + 0.45);
+      muteSuspendRef.current = window.setTimeout(() => {
+        master.gain.value = 0;
+        ctx.suspend().catch(() => {});
+        muteSuspendRef.current = null;
+      }, 520);
+      return;
+    }
+
+    const resume = ctx.state === "suspended" ? ctx.resume() : Promise.resolve();
+    resume
+      .then(() => {
+        const t = ctx.currentTime;
+        master.gain.cancelScheduledValues(t);
+        master.gain.setValueAtTime(Math.max(master.gain.value, 0.0001), t);
+        master.gain.linearRampToValueAtTime(0.7, t + 0.6);
+      })
+      .catch(() => {});
   }
 
   function applyContradiction(c: number) {

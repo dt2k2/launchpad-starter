@@ -35,7 +35,7 @@ export const PRESSURE_META: Record<keyof Pressures, { label: string; short: stri
   },
   legitimacyLoss: {
     label: "Mất tính chính danh",
-    short: "Chính danh",
+    short: "Mất chính danh",
     description: "Trật tự hiện hành không còn được xã hội tự nguyện thừa nhận.",
   },
   organization: {

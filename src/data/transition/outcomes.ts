@@ -1,6 +1,7 @@
 /**
  * Transition outcomes — the 6 ways a stage can end.
- * Stage advance is NOT guaranteed; only `evolve` and `rupture` move forward.
+ * Stage advance is NOT guaranteed. `freeze` and `failed_uprising` repeat the
+ * stage; the other outcomes move forward with different scars/modifiers.
  */
 export type PathOutcome =
   | "evolve"          // normal advance to the next stage

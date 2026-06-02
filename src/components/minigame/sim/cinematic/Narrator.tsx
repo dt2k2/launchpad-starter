@@ -7,6 +7,11 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 
+const TEXT_HOLD_MS = 6500;
+const AUDIO_FALLBACK_HOLD_MS = 9000;
+const AUDIO_TAIL_MS = 900;
+const MAX_AUDIO_HOLD_MS = 14000;
+
 export interface NarratorPayload {
   id: string;
   text: string;
@@ -32,9 +37,37 @@ export function Narrator({ line, onDone, muted = false }: Props) {
     setActive(line);
 
     // Voiceover — clamp display to audio duration if available
-    let hold = line.holdMs ?? 4500;
+    let done = false;
+    let timeoutId: ReturnType<typeof setTimeout> | undefined;
     const a = audioRef.current;
+
+    const finish = () => {
+      if (done) return;
+      done = true;
+      setActive(null);
+      onDone?.();
+    };
+
+    const scheduleDone = (ms: number) => {
+      if (timeoutId) clearTimeout(timeoutId);
+      timeoutId = setTimeout(finish, ms);
+    };
+
+    const onLoadedMetadata = () => {
+      if (!a || !Number.isFinite(a.duration)) return;
+      const audioHold = Math.min(MAX_AUDIO_HOLD_MS, Math.ceil(a.duration * 1000) + AUDIO_TAIL_MS);
+      scheduleDone(Math.max(line.holdMs ?? 0, audioHold));
+    };
+
+    const onAudioEnded = () => {
+      scheduleDone(AUDIO_TAIL_MS);
+    };
+
+    const hasPlayableAudio = Boolean(line.audioSrc && !muted);
+    scheduleDone(line.holdMs ?? (hasPlayableAudio ? AUDIO_FALLBACK_HOLD_MS : TEXT_HOLD_MS));
     if (a && line.audioSrc && !muted) {
+      a.addEventListener("loadedmetadata", onLoadedMetadata);
+      a.addEventListener("ended", onAudioEnded);
       a.src = line.audioSrc;
       a.volume = 0.85;
       a.currentTime = 0;
@@ -43,19 +76,28 @@ export function Narrator({ line, onDone, muted = false }: Props) {
       a.pause();
     }
 
-    const t = setTimeout(() => {
-      setActive(null);
-      onDone?.();
-    }, hold);
     return () => {
-      clearTimeout(t);
+      if (timeoutId) clearTimeout(timeoutId);
       const aa = audioRef.current;
       if (aa) {
+        aa.removeEventListener("loadedmetadata", onLoadedMetadata);
+        aa.removeEventListener("ended", onAudioEnded);
         aa.pause();
         aa.removeAttribute("src");
       }
     };
-  }, [line, onDone, muted]);
+  }, [line, onDone]);
+
+  useEffect(() => {
+    const a = audioRef.current;
+    if (!a || !active?.audioSrc) return;
+    if (muted) {
+      a.pause();
+      return;
+    }
+    if (!a.src) a.src = active.audioSrc;
+    a.play().catch(() => {});
+  }, [muted, active?.audioSrc]);
 
   const dismiss = () => {
     const a = audioRef.current;

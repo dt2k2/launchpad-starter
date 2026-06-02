@@ -24,17 +24,28 @@ const HUE: Record<keyof Pressures, string> = {
   ruptureRisk: "from-fuchsia-500/90 to-rose-600/90",
 };
 
-export function PressureGauges({ p }: { p: Pressures }) {
+export function PressureGauges({
+  p,
+  watched = [],
+}: {
+  p: Pressures;
+  watched?: (keyof Pressures)[];
+}) {
   return (
     <div className="grid grid-cols-3 gap-2 sm:grid-cols-6">
       {KEYS.map((k) => {
         const v = Math.round(p[k]);
         const meta = PRESSURE_META[k];
+        const isWatched = watched.includes(k);
         return (
           <div
             key={k}
             title={`${meta.label}: ${meta.description}`}
-            className="rounded-md border border-[var(--p-border)] bg-[var(--p-accent-soft)] px-2 py-1.5"
+            className={`rounded-md border px-2 py-1.5 ${
+              isWatched
+                ? "border-[var(--p-accent)] bg-[var(--p-accent-soft)] ring-1 ring-[var(--p-accent)]/30"
+                : "border-[var(--p-border)] bg-[var(--p-accent-soft)] opacity-70"
+            }`}
           >
             <div className="flex items-center justify-between text-[9px] uppercase tracking-[0.15em] text-[var(--p-muted)]">
               <span className="truncate">{meta.short}</span>

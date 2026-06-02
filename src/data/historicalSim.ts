@@ -164,6 +164,7 @@ export type OptionTag =
   | "uprising"
   | "reactionary"
   | "emergency"
+  | "document"
   | "neutral";
 
 export interface DecisionOption {
@@ -969,6 +970,51 @@ export const STAGES: SimStage[] = [
     ],
   },
 ];
+
+const STANDARD_OPTION_TAGS: Record<string, OptionTag> = {
+  "p-d1:share": "reform",
+  "p-d1:hoard": "reactionary",
+  "p-d2:farm": "emergency",
+  "p-d2:migrate": "neutral",
+  "p-d3:enslave": "repression",
+  "p-d3:free": "concession",
+
+  "s-d1:war": "repression",
+  "s-d1:reform": "reform",
+  "s-d2:crush": "repression",
+  "s-d2:concede": "concession",
+  "s-d3:ignore": "reactionary",
+  "s-d3:invest": "emergency",
+
+  "f-d1:grant": "reactionary",
+  "f-d1:free": "reform",
+  "f-d2:fund": "emergency",
+  "f-d2:refuse": "reactionary",
+  "f-d3:repress": "repression",
+  "f-d3:constitution": "reform",
+
+  "c-d1:layoff": "repression",
+  "c-d1:welfare": "concession",
+  "c-d2:automate-private": "reactionary",
+  "c-d2:automate-share": "reform",
+  "c-d3:techno-fix": "reactionary",
+  "c-d3:social-plan": "reform",
+
+  "x-d1:ubi": "reform",
+  "x-d1:equal": "reactionary",
+  "x-d2:data-common": "reform",
+  "x-d2:data-private": "reactionary",
+  "x-d3:transparent": "reform",
+  "x-d3:topdown": "reactionary",
+};
+
+for (const stage of STAGES) {
+  for (const decision of stage.decisions) {
+    for (const option of decision.options) {
+      option.tag ??= STANDARD_OPTION_TAGS[`${decision.id}:${option.id}`] ?? "neutral";
+    }
+  }
+}
 
 /* =========================================================
    Endings

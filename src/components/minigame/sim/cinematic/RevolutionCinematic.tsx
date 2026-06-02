@@ -9,7 +9,7 @@
  *  2.6  era title + cinematic quote fade in
  *  4.6  hint "Tiếp tục" appears
  */
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import type { MetricKey, SimStage } from "@/data/historicalSim";
 import { REVOLUTION_MOTIFS } from "./cinematicConfig";
@@ -18,18 +18,47 @@ interface Props {
   stage: SimStage; // the stage that JUST ended
   metrics: Record<MetricKey, number>;
   onDone: () => void;
+  audioSrc?: string;
+  muted?: boolean;
 }
 
-export function RevolutionCinematic({ stage, metrics, onDone }: Props) {
+export function RevolutionCinematic({ stage, metrics, onDone, audioSrc, muted = false }: Props) {
   const motif = REVOLUTION_MOTIFS[stage.id];
   const burst = metrics.revolution >= stage.revolutionThreshold;
   const reduce = useReducedMotion();
-  const duration = reduce ? 2000 : 5200;
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [audioDurationMs, setAudioDurationMs] = useState<number | null>(null);
+  const baseDuration = reduce ? 2000 : 5200;
+  const duration = Math.max(baseDuration, audioSrc && !muted ? (audioDurationMs ?? 11000) : 0);
 
   useEffect(() => {
     const t = setTimeout(onDone, duration);
     return () => clearTimeout(t);
   }, [onDone, duration]);
+
+  useEffect(() => {
+    const a = audioRef.current;
+    if (!a || !audioSrc || muted) {
+      if (a) a?.pause();
+      return;
+    }
+    const onLoadedMetadata = () => {
+      if (Number.isFinite(a.duration)) {
+        setAudioDurationMs(Math.ceil(a.duration * 1000) + 900);
+      }
+    };
+    a.addEventListener("loadedmetadata", onLoadedMetadata);
+    a.src = audioSrc;
+    a.volume = 0.9;
+    a.currentTime = 0;
+    a.play().catch(() => {});
+    return () => {
+      a.removeEventListener("loadedmetadata", onLoadedMetadata);
+      a.pause();
+      a.removeAttribute("src");
+      setAudioDurationMs(null);
+    };
+  }, [audioSrc, muted]);
 
   const destructionItems = useMemo(
     () => spread(motif.destruction, 8),
@@ -160,6 +189,7 @@ export function RevolutionCinematic({ stage, metrics, onDone }: Props) {
           Lực lượng sản xuất đã vượt khỏi quan hệ cũ…
         </motion.p>
       </div>
+      <audio ref={audioRef} preload="auto" aria-hidden />
     </motion.section>
   );
 }

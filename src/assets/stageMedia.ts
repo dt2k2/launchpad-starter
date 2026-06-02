@@ -1,4 +1,5 @@
 import type { EraId } from "@/data/eras";
+import type { PerspectiveId } from "@/data/historicalSim";
 
 import bg1 from "./background/stage1.png";
 import bg2 from "./background/stage2.png";
@@ -18,22 +19,7 @@ import a3 from "./audio/stage3.mp3";
 import a4 from "./audio/stage4.mp3";
 import a5 from "./audio/stage5.mp3";
 
-// Narrator voiceover — 15 files, era{1..5}-{enter|tension|revolution}.mp3
-import n1e from "./audio/narrator/era1-enter.mp3";
-import n1t from "./audio/narrator/era1-tension.mp3";
-import n1r from "./audio/narrator/era1-revolution.mp3";
-import n2e from "./audio/narrator/era2-enter.mp3";
-import n2t from "./audio/narrator/era2-tension.mp3";
-import n2r from "./audio/narrator/era2-revolution.mp3";
-import n3e from "./audio/narrator/era3-enter.mp3";
-import n3t from "./audio/narrator/era3-tension.mp3";
-import n3r from "./audio/narrator/era3-revolution.mp3";
-import n4e from "./audio/narrator/era4-enter.mp3";
-import n4t from "./audio/narrator/era4-tension.mp3";
-import n4r from "./audio/narrator/era4-revolution.mp3";
-import n5e from "./audio/narrator/era5-enter.mp3";
-import n5t from "./audio/narrator/era5-tension.mp3";
-import n5r from "./audio/narrator/era5-revolution.mp3";
+// Narrator voiceovers are loaded by glob below; shared legacy files are optional.
 
 export const ERA_BG: Record<EraId, string> = {
   primitive: bg1,
@@ -61,10 +47,54 @@ export const STAGE_AUDIO: Record<EraId, string> = {
 
 export type NarratorMoment = "enter" | "tension" | "revolution";
 
-export const NARRATOR_AUDIO: Record<EraId, Record<NarratorMoment, string>> = {
-  primitive: { enter: n1e, tension: n1t, revolution: n1r },
-  slave: { enter: n2e, tension: n2t, revolution: n2r },
-  feudal: { enter: n3e, tension: n3t, revolution: n3r },
-  capitalist: { enter: n4e, tension: n4t, revolution: n4r },
-  socialist: { enter: n5e, tension: n5t, revolution: n5r },
+const NARRATOR_AUDIO_FILES = import.meta.glob<string>("./audio/narrator/**/*.mp3", {
+  eager: true,
+  import: "default",
+});
+
+const ERA_BY_AUDIO_INDEX: Record<string, EraId> = {
+  "1": "primitive",
+  "2": "slave",
+  "3": "feudal",
+  "4": "capitalist",
+  "5": "socialist",
 };
+
+export const NARRATOR_AUDIO: Partial<Record<EraId, Partial<Record<NarratorMoment, string>>>> = {};
+
+export const ROLE_NARRATOR_AUDIO: Partial<
+  Record<EraId, Partial<Record<PerspectiveId, Partial<Record<NarratorMoment, string>>>>>
+> = {};
+
+for (const [path, src] of Object.entries(NARRATOR_AUDIO_FILES)) {
+  const filename = path.split("/").pop() ?? "";
+  const roleMatch = /^era([1-5])-(ruler|worker|historian)-(enter|tension|revolution)\.mp3$/.exec(
+    filename,
+  );
+  if (roleMatch) {
+    const [, eraIndex, role, moment] = roleMatch;
+    const eraId = ERA_BY_AUDIO_INDEX[eraIndex];
+    if (!eraId) continue;
+    const eraAudio = (ROLE_NARRATOR_AUDIO[eraId] ??= {});
+    const roleAudio = (eraAudio[role as PerspectiveId] ??= {});
+    roleAudio[moment as NarratorMoment] = src;
+    continue;
+  }
+
+  const sharedMatch = /^era([1-5])-(enter|tension|revolution)\.mp3$/.exec(filename);
+  if (sharedMatch) {
+    const [, eraIndex, moment] = sharedMatch;
+    const eraId = ERA_BY_AUDIO_INDEX[eraIndex];
+    if (!eraId) continue;
+    const eraAudio = (NARRATOR_AUDIO[eraId] ??= {});
+    eraAudio[moment as NarratorMoment] = src;
+  }
+}
+
+export function resolveNarratorAudio(
+  eraId: EraId,
+  perspective: PerspectiveId,
+  moment: NarratorMoment,
+): string | undefined {
+  return ROLE_NARRATOR_AUDIO[eraId]?.[perspective]?.[moment] ?? NARRATOR_AUDIO[eraId]?.[moment];
+}

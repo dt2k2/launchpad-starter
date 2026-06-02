@@ -56,11 +56,11 @@ const PRESSURE_GUIDE: Record<
 };
 
 const TIERS = [
-  { range: "0–29", name: "Êm", desc: "Trật tự ổn. Quyết định cải cách rẻ." },
-  { range: "30–49", name: "Căng", desc: "Cảnh báo đầu tiên. Sự kiện nhỏ nổ." },
-  { range: "50–69", name: "Bất ổn", desc: "Sự kiện khủng hoảng. Lựa chọn co lại." },
-  { range: "70–84", name: "Khẩn cấp", desc: "Banner đỏ. Rất khó kéo lùi." },
-  { range: "85+", name: "Rạn", desc: "Bước nhảy gần kề — cách mạng hoặc sụp đổ." },
+  { range: "0–49", name: "Bình lặng", desc: "Trật tự còn vận hành; chưa có event khủng hoảng." },
+  { range: "50–69", name: "Căng thẳng", desc: "Bắt đầu decay nhẹ và event chance 35%." },
+  { range: "70–84", name: "Bất ổn", desc: "Cải cách bị khóa; stability/production hao mòn nhanh hơn." },
+  { range: "85–94", name: "Khẩn cấp", desc: "Cải cách và nhượng bộ bị khóa; event gần như chắc chắn." },
+  { range: "95–100", name: "Vỡ trận", desc: "Chỉ còn nổi dậy, đàn áp, khẩn cấp hoặc ghi chép." },
 ];
 
 export function HelpDrawer({ open, onClose }: { open: boolean; onClose: () => void }) {

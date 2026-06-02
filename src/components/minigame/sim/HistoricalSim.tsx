@@ -10,7 +10,7 @@
  * - Class perspective picker
  * - Multiple endings
  */
-import { useReducer, useEffect, useMemo, useState, useRef } from "react";
+import { useReducer, useEffect, useMemo, useState, useRef, useCallback } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import {
   STAGES,
@@ -44,7 +44,6 @@ import {
   ChevronRight,
 } from "lucide-react";
 
-import { AmbientEngine } from "./cinematic/AmbientEngine";
 import { StressOverlay } from "./cinematic/StressOverlay";
 import { Narrator, type NarratorPayload } from "./cinematic/Narrator";
 import { RevolutionCinematic } from "./cinematic/RevolutionCinematic";
@@ -54,8 +53,8 @@ import {
   SettingsToggle,
   useCinematicSettings,
 } from "./cinematic/SettingsToggle";
-import { NARRATOR_LINES, STRESS } from "./cinematic/cinematicConfig";
-import { STAGE_BG, STAGE_AUDIO, NARRATOR_AUDIO } from "@/assets/stageMedia";
+import { resolveNarratorLine, STRESS } from "./cinematic/cinematicConfig";
+import { STAGE_BG, STAGE_AUDIO, resolveNarratorAudio } from "@/assets/stageMedia";
 
 import type { EraId } from "@/data/eras";
 import { PerspectiveProvider, VoiceText, usePerspective } from "./perspective/PerspectiveProvider";
@@ -91,6 +90,14 @@ export function HistoricalSim() {
   const [settings, setSettings] = useCinematicSettings();
   const [narratorLine, setNarratorLine] = useState<NarratorPayload | null>(null);
   const lastTensionEra = useRef<string | null>(null);
+  const lastNarratorId = useRef<string | null>(null);
+
+  const showNarrator = useCallback((line: NarratorPayload) => {
+    if (lastNarratorId.current === line.id) return;
+    lastNarratorId.current = line.id;
+    setNarratorLine(line);
+  }, []);
+  const handleNarratorDone = useCallback(() => setNarratorLine(null), []);
 
   // Keyboard: Esc closes drawers
   useEffect(() => {
@@ -106,38 +113,33 @@ export function HistoricalSim() {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
+  useEffect(() => {
+    if (state.phase === "perspective") {
+      lastNarratorId.current = null;
+      lastTensionEra.current = null;
+      setNarratorLine(null);
+    }
+    if (state.phase === "revolution" || state.phase === "transition" || state.phase === "finale") {
+      setNarratorLine(null);
+    }
+  }, [state.phase]);
+
   // Narrator: fire on entering a stage
   useEffect(() => {
     if (state.phase === "intro") {
-      const line = NARRATOR_LINES[stage.id]?.enter;
+      const line = resolveNarratorLine(stage.id, state.perspective, "enter");
       if (line) {
-        setNarratorLine({
-          id: `enter-${stage.id}`,
+        showNarrator({
+          id: `enter-${stage.id}-${state.perspective}`,
           text: line.text,
           tone: "calm",
           holdMs: 7000,
-          audioSrc: NARRATOR_AUDIO[stage.id]?.enter,
+          audioSrc: resolveNarratorAudio(stage.id, state.perspective, "enter"),
         });
       }
       lastTensionEra.current = null;
     }
-  }, [state.phase, stage.id]);
-
-  // Narrator: fire on revolution
-  useEffect(() => {
-    if (state.phase === "revolution") {
-      const line = NARRATOR_LINES[stage.id]?.revolution;
-      if (line) {
-        setNarratorLine({
-          id: `rev-${stage.id}-${state.stagesCompleted}`,
-          text: line.text,
-          tone: "rupture",
-          holdMs: 7200,
-          audioSrc: NARRATOR_AUDIO[stage.id]?.revolution,
-        });
-      }
-    }
-  }, [state.phase, stage.id, state.stagesCompleted]);
+  }, [state.phase, state.perspective, stage.id, showNarrator]);
 
   // Narrator: tension when contradiction crosses unease threshold (once per era)
   useEffect(() => {
@@ -146,19 +148,19 @@ export function HistoricalSim() {
       lastTensionEra.current !== stage.id &&
       state.phase === "playing"
     ) {
-      const line = NARRATOR_LINES[stage.id]?.tension;
+      const line = resolveNarratorLine(stage.id, state.perspective, "tension");
       if (line) {
-        setNarratorLine({
-          id: `tension-${stage.id}`,
+        showNarrator({
+          id: `tension-${stage.id}-${state.perspective}`,
           text: line.text,
           tone: "tense",
           holdMs: 6500,
-          audioSrc: NARRATOR_AUDIO[stage.id]?.tension,
+          audioSrc: resolveNarratorAudio(stage.id, state.perspective, "tension"),
         });
         lastTensionEra.current = stage.id;
       }
     }
-  }, [state.metrics.contradiction, stage.id, state.phase]);
+  }, [state.metrics.contradiction, state.perspective, stage.id, state.phase, showNarrator]);
 
 
   // Narrator: contradiction event triggered
@@ -173,7 +175,7 @@ export function HistoricalSim() {
       urgent: "urgent",
       fractured: "fractured",
     } as const;
-    setNarratorLine({
+    showNarrator({
       id: `evt-${ev.id}-${state.stagesCompleted}-${state.decisionIdx}`,
       text: `${ev.title} — ${ev.narrator}`,
       tone: toneMap[tier.narratorTone],
@@ -185,10 +187,13 @@ export function HistoricalSim() {
     state.decisionIdx,
     state.stagesCompleted,
     state.metrics.contradiction,
+    showNarrator,
   ]);
 
 
   const shake = state.metrics.contradiction >= 70 && !reduceMotion && !settings.reducedFx;
+  const allowNarratorOverlay =
+    state.phase !== "revolution" && state.phase !== "transition" && state.phase !== "finale";
 
   return (
     <PerspectiveProvider perspective={state.perspective}>
@@ -196,17 +201,14 @@ export function HistoricalSim() {
       data-era={stage.id}
       className={`relative min-h-screen overflow-hidden bg-gradient-to-b ${stage.theme.bg} text-stone-100 transition-colors duration-700`}
     >
-      <AmbientEngine
-        era={stage.id}
-        contradiction={state.metrics.contradiction}
-        muted={settings.muted}
-      />
       <StageAudio eraId={stage.id} muted={settings.muted} />
       <StressOverlay
         contradiction={state.metrics.contradiction}
         reduced={settings.reducedFx}
       />
-      <Narrator line={narratorLine} muted={settings.muted} onDone={() => setNarratorLine(null)} />
+      {allowNarratorOverlay && (
+        <Narrator line={narratorLine} muted={settings.muted} onDone={handleNarratorDone} />
+      )}
       <EmergencyBanner state={state} />
       <CompanionVoice
         line={state.companionLine}
@@ -273,6 +275,8 @@ export function HistoricalSim() {
                 key={`rev-${stage.id}`}
                 stage={stage}
                 metrics={state.metrics}
+                audioSrc={resolveNarratorAudio(stage.id, state.perspective, "revolution")}
+                muted={settings.muted}
                 onDone={() => dispatch({ type: "ackRevolution" })}
               />
             )}
@@ -364,6 +368,7 @@ function WorldBackdrop({ stage, reduceMotion }: { stage: SimStage; reduceMotion:
 function StageAudio({ eraId, muted }: { eraId: EraId; muted: boolean }) {
   const ref = useRef<HTMLAudioElement | null>(null);
   const fadeRef = useRef<number | null>(null);
+  const mutePauseRef = useRef<number | null>(null);
   const src = STAGE_AUDIO[eraId];
   const TARGET = 0.28;
 
@@ -400,8 +405,12 @@ function StageAudio({ eraId, muted }: { eraId: EraId; muted: boolean }) {
       a.src = src;
       a.loop = true;
       a.volume = 0;
-      a.play().catch(() => {});
-      fadeTo(muted ? 0 : TARGET, 1200);
+      if (muted) {
+        a.pause();
+      } else {
+        a.play().catch(() => {});
+        fadeTo(TARGET, 1200);
+      }
     };
     if (a.src && !a.paused) {
       fadeTo(0, 600);
@@ -426,7 +435,34 @@ function StageAudio({ eraId, muted }: { eraId: EraId; muted: boolean }) {
 
   // React to mute toggle
   useEffect(() => {
-    fadeTo(muted ? 0 : TARGET, 500);
+    const a = ref.current;
+    if (!a) return;
+    if (mutePauseRef.current) {
+      window.clearTimeout(mutePauseRef.current);
+      mutePauseRef.current = null;
+    }
+    if (muted) {
+      fadeTo(0, 450);
+      mutePauseRef.current = window.setTimeout(() => {
+        a.pause();
+        a.volume = 0;
+        mutePauseRef.current = null;
+      }, 520);
+      return () => {
+        if (mutePauseRef.current) {
+          window.clearTimeout(mutePauseRef.current);
+          mutePauseRef.current = null;
+        }
+      };
+    }
+    if (a.paused) a.play().catch(() => {});
+    fadeTo(TARGET, 650);
+    return () => {
+      if (mutePauseRef.current) {
+        window.clearTimeout(mutePauseRef.current);
+        mutePauseRef.current = null;
+      }
+    };
   }, [muted]);
 
   return <audio ref={ref} preload="auto" aria-hidden />;
@@ -671,7 +707,7 @@ function DecisionPanel({
   onChoose: (o: DecisionOption) => void;
 }) {
   if (!decision) return null;
-  const options = resolveOptions(decision, state.perspective);
+  const options = resolveOptions(decision, state.perspective, state.contradictionTier);
   return (
     <motion.section
       initial={{ opacity: 0, y: 30 }}
@@ -723,11 +759,6 @@ function DecisionPanel({
                   {locked && (
                     <span className="mr-2 inline-flex items-center gap-1 text-[10px] uppercase tracking-widest text-rose-300">
                       <Lock className="h-3 w-3" /> Bị khoá
-                    </span>
-                  )}
-                  {emphasized && !locked && (
-                    <span className={`mr-2 text-[10px] uppercase tracking-widest text-[var(--p-accent)]`}>
-                      ◆ Đúng vai
                     </span>
                   )}
                   {opt.label}

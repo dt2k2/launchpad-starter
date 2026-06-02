@@ -42,6 +42,7 @@ import {
 import { resolveTransition } from "@/data/transition/resolver";
 import type { PathOutcome } from "@/data/transition/outcomes";
 import { pickCompanionLine, type CompanionLine, type CompanionTrigger } from "@/data/companion/lines";
+import { resolveOptions } from "@/data/perspective/perspectiveConfig";
 
 export type SimPhase =
   | "perspective"
@@ -197,15 +198,25 @@ function recomputeLocks(state: SimState): { lockedOptionIds: string[]; lockReaso
   const stage = STAGES[state.stageIdx];
   const decision = stage?.decisions[state.decisionIdx];
   const tier = resolveTier(state.metrics.contradiction);
-  const { lockedIds, reasons } = computeLockedOptionIds(decision, tier);
+  const resolvedOptions = decision ? resolveOptions(decision, state.perspective, tier.id) : [];
+  const decisionForLocks = decision ? { ...decision, options: resolvedOptions } : undefined;
+  const { lockedIds, reasons } = computeLockedOptionIds(decisionForLocks, tier);
   // Add reformLocked: ban reform-tagged options after a suppress outcome
-  if (state.reformLocked && decision) {
-    for (const opt of decision.options) {
+  if (state.reformLocked && decisionForLocks) {
+    for (const opt of resolvedOptions) {
       if (opt.tag === "reform" && !lockedIds.includes(opt.id)) {
         lockedIds.push(opt.id);
         reasons[opt.id] = "Cánh cửa cải cách đã bị niêm phong sau đợt đàn áp.";
       }
     }
+  }
+  if (decisionForLocks && resolvedOptions.length > 0 && lockedIds.length >= resolvedOptions.length) {
+    const fallback =
+      resolvedOptions.find((opt) => opt.tag && ["uprising", "repression", "emergency"].includes(opt.tag)) ??
+      resolvedOptions[0];
+    const fallbackIdx = lockedIds.indexOf(fallback.id);
+    if (fallbackIdx >= 0) lockedIds.splice(fallbackIdx, 1);
+    delete reasons[fallback.id];
   }
   return { lockedOptionIds: lockedIds, lockReasons: reasons };
 }
@@ -290,8 +301,14 @@ export function reducer(state: SimState, action: SimAction): SimState {
 
     case "decide": {
       const stage = STAGES[state.stageIdx];
+      const decision = stage?.decisions[state.decisionIdx];
+      if (!decision) return state;
+      const availableOptions = resolveOptions(decision, state.perspective, state.contradictionTier);
+      const option = availableOptions.find((opt) => opt.id === action.option.id);
+      if (!option || state.lockedOptionIds.includes(option.id)) return state;
+
       const bias = PERSPECTIVES.find((p) => p.id === state.perspective)?.bias ?? {};
-      const biased = applyBias(action.option.effect, bias);
+      const biased = applyBias(option.effect, bias);
 
       // Current tier (before this decision applies) gates risk + decay
       const currentTier = resolveTier(state.metrics.contradiction);
@@ -310,20 +327,20 @@ export function reducer(state: SimState, action: SimAction): SimState {
       nextMetrics = applyMetrics(nextMetrics, decay);
 
       // Tag tracking
-      const tag = (action.option.tag ?? "neutral") as OptionTag;
+      const tag = (option.tag ?? "neutral") as OptionTag;
       const tagCounts = { ...state.tagCounts, [tag]: (state.tagCounts[tag] ?? 0) + 1 };
 
       // Insights + tech
-      const insight = action.option.insight
-        ? stage.insights.find((i) => i.id === action.option.insight)
+      const insight = option.insight
+        ? stage.insights.find((i) => i.id === option.insight)
         : null;
-      const newTech = (action.option.unlocks ?? []).filter(
+      const newTech = (option.unlocks ?? []).filter(
         (t) => !state.unlockedTech.includes(t),
       );
 
       // Recompute pressures with new metrics
       const progressiveCount =
-        state.progressiveCount + (action.option.progressive ? 1 : 0);
+        state.progressiveCount + (option.progressive ? 1 : 0);
       const eraId = STAGES[state.stageIdx]?.id;
       const { tier: newTier, pressures } = resolveContradiction({
         metrics: nextMetrics,
@@ -414,13 +431,13 @@ export function reducer(state: SimState, action: SimAction): SimState {
           ...state.log,
           {
             stage: stage.id,
-            optionLabel: action.option.label,
-            chain: action.option.causeChain,
+            optionLabel: option.label,
+            chain: option.causeChain,
             tag,
           },
         ],
         lastChoice: {
-          option: action.option,
+          option,
           deltas,
           newlyUnlocked: newTech,
           riskApplied,

@@ -108,7 +108,10 @@ export function PerspectiveHUD({ state }: { state: SimState }) {
                   <p className="mb-1 text-[9px] uppercase tracking-[0.3em] text-[var(--p-muted)]">
                     Áp lực hệ thống
                   </p>
-                  <PressureGauges p={state.pressures} />
+                  <PressureGauges
+                    p={state.pressures}
+                    watched={objective.pressuresWatched}
+                  />
                 </div>
 
                 <p className="mt-2 text-[10px] italic text-[var(--p-muted)]">

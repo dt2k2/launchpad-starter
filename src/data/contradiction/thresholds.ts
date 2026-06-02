@@ -12,6 +12,7 @@ export type OptionTag =
   | "uprising"
   | "reactionary"
   | "emergency"
+  | "document"
   | "neutral";
 
 export type NarratorTone = "neutral" | "uneasy" | "strained" | "urgent" | "fractured";
@@ -27,7 +28,7 @@ export interface Tier {
   productionDecay: number;
   optionRiskFactor: number;  // 0..1 → reduces positive metric outcomes
   lockTags: OptionTag[];     // option tags blocked at this tier
-  emergencyOnly: boolean;    // when true, only `uprising/repression/emergency` are usable
+  emergencyOnly: boolean;    // when true, only crisis-compatible tags are usable
   eventChance: number;       // probability of rolling a contradiction event per decision
 }
 
@@ -118,7 +119,7 @@ export function tierIndex(id: TierId): number {
 }
 
 export function tierLockReason(tier: Tier, tag: OptionTag | undefined): string | null {
-  if (tier.emergencyOnly && tag && !["uprising", "repression", "emergency"].includes(tag)) {
+  if (tier.emergencyOnly && tag && !["uprising", "repression", "emergency", "document"].includes(tag)) {
     return `Vỡ trận — chỉ còn lựa chọn cực đoan`;
   }
   if (tag && tier.lockTags.includes(tag)) {
