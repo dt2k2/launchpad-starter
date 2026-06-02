@@ -21,6 +21,12 @@ import {
   Flag,
   Hammer,
 } from "lucide-react";
+import {
+  getGameStateFromCookie,
+  saveGameStateToCookie,
+  clearGameStateFromCookie,
+  serializeGameState,
+} from "@/lib/minigame-storage";
 
 /* =========================================================
    State machine — useReducer
@@ -74,6 +80,18 @@ const totalPossibleAll = STAGES.reduce(
 );
 
 function init(): GameState {
+  // Try to load saved state from cookie first
+  if (typeof document !== "undefined") {
+    const savedState = getGameStateFromCookie();
+    if (savedState) {
+      return {
+        ...savedState,
+        phase: (savedState.phase as Phase) || "intro",
+      } as GameState;
+    }
+  }
+
+  // Otherwise return fresh initial state
   return {
     currentStageIdx: 0,
     phase: "intro",
@@ -194,8 +212,10 @@ function reducer(state: GameState, action: Action): GameState {
       };
     }
 
-    case "restart":
+    case "restart": {
+      clearGameStateFromCookie();
       return init();
+    }
 
     default:
       return state;
@@ -210,6 +230,12 @@ export function MiniGame() {
   const [state, dispatch] = useReducer(reducer, undefined, init);
   const stage = STAGES[state.currentStageIdx];
   const reduceMotion = useReducedMotion();
+
+  // Save game state to cookie whenever it changes
+  useEffect(() => {
+    const serialized = serializeGameState(state);
+    saveGameStateToCookie(serialized);
+  }, [state]);
 
   // keyboard: Enter to advance after answer
   useEffect(() => {

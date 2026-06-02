@@ -30,6 +30,11 @@ import {
   type SimState,
 } from "./simStore";
 import {
+  getSimStateFromCookie,
+  saveSimStateToCookie,
+  clearSimStateFromCookie,
+} from "@/lib/sim-storage";
+import {
   AlertTriangle,
   Cpu,
   HelpCircle,
@@ -75,8 +80,21 @@ import { HelpDrawer } from "./HelpDrawer";
 /* =========================================================
    Root
    ========================================================= */
+
+function initSimState(): SimState {
+  // Try to load saved state from cookie first
+  if (typeof document !== "undefined") {
+    const savedState = getSimStateFromCookie();
+    if (savedState) {
+      return savedState as SimState;
+    }
+  }
+  // Otherwise return fresh initial state
+  return initialState();
+}
+
 export function HistoricalSim() {
-  const [state, dispatch] = useReducer(reducer, undefined, initialState);
+  const [state, dispatch] = useReducer(reducer, undefined, initSimState);
 
   const stage = STAGES[state.stageIdx];
   const reduceMotion = useReducedMotion();
@@ -89,12 +107,22 @@ export function HistoricalSim() {
   const lastTensionEra = useRef<string | null>(null);
   const lastNarratorId = useRef<string | null>(null);
 
+  // Save sim state to cookie whenever it changes
+  useEffect(() => {
+    saveSimStateToCookie(state);
+  }, [state]);
+
   const showNarrator = useCallback((line: NarratorPayload) => {
     if (lastNarratorId.current === line.id) return;
     lastNarratorId.current = line.id;
     setNarratorLine(line);
   }, []);
   const handleNarratorDone = useCallback(() => setNarratorLine(null), []);
+
+  const handleRestart = useCallback(() => {
+    clearSimStateFromCookie();
+    dispatch({ type: "restart" });
+  }, []);
 
   // Keyboard: Esc closes drawers
   useEffect(() => {
@@ -230,7 +258,7 @@ export function HistoricalSim() {
           onOpenTech={() => setTechOpen(true)}
           onOpenInsights={() => setInsightsOpen(true)}
           onOpenHelp={() => setHelpOpen(true)}
-          onRestart={() => dispatch({ type: "restart" })}
+          onRestart={handleRestart}
         />
 
 
@@ -297,7 +325,7 @@ export function HistoricalSim() {
               <EndingScreen
                 key="finale"
                 state={state}
-                onRestart={() => dispatch({ type: "restart" })}
+                onRestart={handleRestart}
               />
             )}
           </AnimatePresence>
