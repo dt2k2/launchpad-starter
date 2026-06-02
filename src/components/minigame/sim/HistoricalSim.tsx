@@ -10,7 +10,7 @@
  * - Class perspective picker
  * - Multiple endings
  */
-import { useReducer, useEffect, useMemo, useState, useRef, useCallback } from "react";
+import { useReducer, useEffect, useState, useRef, useCallback } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import {
   STAGES,
@@ -26,7 +26,6 @@ import {
 import {
   reducer,
   initialState,
-  finalize,
   ALL_METRICS,
   type SimState,
 } from "./simStore";
@@ -37,7 +36,6 @@ import {
   Library,
   RotateCcw,
   Sparkles,
-  Trophy,
   X,
   Lock,
   Check,
@@ -60,14 +58,13 @@ import type { EraId } from "@/data/eras";
 import { PerspectiveProvider, VoiceText, usePerspective } from "./perspective/PerspectiveProvider";
 import { PerspectiveHUD } from "./perspective/PerspectiveHUD";
 import {
-  PERSPECTIVE_THEMES,
-  PERSPECTIVE_OBJECTIVES,
-  ENDING_NARRATIONS,
   resolveOptions,
   isOptionEmphasized,
   isInsightVisible,
 } from "@/data/perspective/perspectiveConfig";
 import { resolveTier } from "@/data/contradiction";
+import { memoryEcho } from "@/data/memory";
+import { getInterlude, resolveInterludeOptions } from "@/data/interludes";
 import { EmergencyBanner } from "./pressure/EmergencyBanner";
 import { CompanionVoice } from "./companion/CompanionVoice";
 import { EndingScreen } from "./ending/EndingScreen";
@@ -285,6 +282,14 @@ export function HistoricalSim() {
                 key={`trans-${stage.id}-${state.stagesCompleted}`}
                 state={state}
                 onContinue={() => dispatch({ type: "ackTransition" })}
+              />
+            )}
+            {state.phase === "interlude" && state.pendingInterlude && (
+              <InterludePanel
+                key={`interlude-${state.pendingInterlude}-${stage.id}-${state.stagesCompleted}`}
+                state={state}
+                stage={stage}
+                onChoose={(opt) => dispatch({ type: "resolveInterlude", option: opt })}
               />
             )}
 
@@ -693,6 +698,96 @@ function InfoCard({ title, items }: { title: string; items: string[] }) {
 }
 
 /* =========================================================
+   Interlude panel
+   ========================================================= */
+function InterludePanel({
+  state,
+  stage,
+  onChoose,
+}: {
+  state: SimState;
+  stage: SimStage;
+  onChoose: (o: DecisionOption) => void;
+}) {
+  if (!state.pendingInterlude) return null;
+  const interlude = getInterlude(state.pendingInterlude);
+  const options = resolveInterludeOptions(state.pendingInterlude, state.perspective);
+  const echo = memoryEcho(state.memory);
+
+  return (
+    <motion.section
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -20 }}
+      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+      className="mx-auto max-w-3xl pt-2"
+    >
+      <div
+        className={`overflow-hidden rounded-[var(--p-radius)] border border-[var(--p-border)] bg-stone-950/70 p-6 backdrop-blur-md sm:p-8`}
+      >
+        <div className="flex items-center justify-between gap-4">
+          <p className="text-[10px] uppercase tracking-[0.35em] text-[var(--p-muted)]">
+            {interlude.eyebrow}
+          </p>
+          <span className={stage.theme.accent}>{stage.theme.glyph}</span>
+        </div>
+        <h2 className="mt-2 font-display text-3xl text-balance text-white sm:text-5xl">
+          {interlude.title}
+        </h2>
+        <p className="mt-4 text-sm leading-relaxed text-white/75 sm:text-base">
+          {interlude.body}
+        </p>
+        {echo && (
+          <p className="mt-4 rounded-[var(--p-radius)] border border-white/10 bg-white/[0.04] px-4 py-3 text-sm italic text-white/65">
+            Dư âm lịch sử: {echo}
+          </p>
+        )}
+        <p className="mt-6 text-lg font-medium text-white">{interlude.prompt}</p>
+
+        <div className="mt-5 grid gap-3">
+          {options.map((opt) => (
+            <button
+              key={opt.id}
+              type="button"
+              onClick={() => onChoose(opt)}
+              className="group flex flex-col rounded-[var(--p-radius)] border border-white/10 bg-white/[0.03] p-4 text-left transition hover:border-[var(--p-accent)]/70 hover:bg-[var(--p-accent-soft)]"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <p className="font-medium text-white">{opt.label}</p>
+                <ChevronRight className="h-4 w-4 shrink-0 text-white/30 transition group-hover:translate-x-0.5 group-hover:text-white/80" />
+              </div>
+              <p className="mt-1 text-sm text-white/60">{opt.flavor}</p>
+              <div className="mt-3 flex flex-wrap gap-1.5">
+                {ALL_METRICS.filter((k) => (opt.effect[k] ?? 0) !== 0).map((k) => {
+                  const v = opt.effect[k]!;
+                  const pos = v > 0;
+                  const isBad = k === "contradiction" || k === "revolution";
+                  return (
+                    <span
+                      key={k}
+                      className={`rounded-full border px-2 py-0.5 text-[10px] font-mono ${
+                        pos
+                          ? isBad
+                            ? "border-rose-400/30 bg-rose-400/10 text-rose-200"
+                            : "border-emerald-400/30 bg-emerald-400/10 text-emerald-200"
+                          : "border-white/15 bg-white/5 text-white/70"
+                      }`}
+                    >
+                      {pos ? "+" : ""}
+                      {v} {METRIC_META[k].short}
+                    </span>
+                  );
+                })}
+              </div>
+            </button>
+          ))}
+        </div>
+      </div>
+    </motion.section>
+  );
+}
+
+/* =========================================================
    Decision panel
    ========================================================= */
 function DecisionPanel({
@@ -708,6 +803,7 @@ function DecisionPanel({
 }) {
   if (!decision) return null;
   const options = resolveOptions(decision, state.perspective, state.contradictionTier);
+  const echo = memoryEcho(state.memory);
   return (
     <motion.section
       initial={{ opacity: 0, y: 30 }}
@@ -733,6 +829,11 @@ function DecisionPanel({
         <h2 className="mt-2 font-display text-2xl text-balance text-white sm:text-3xl">
           <VoiceText event="decisionPrompt" decision={decision} fallback={decision.prompt} />
         </h2>
+        {echo && (
+          <p className="mt-4 rounded-[var(--p-radius)] border border-white/10 bg-white/[0.04] px-4 py-3 text-sm italic text-white/65">
+            Dư âm lịch sử: {echo}
+          </p>
+        )}
 
         <div className="mt-6 grid gap-3">
           {options.map((opt) => {
@@ -980,96 +1081,6 @@ function MetricBar({ k, value }: { k: MetricKey; value: number }) {
 }
 
 /* (Legacy RevolutionPanel removed — replaced by RevolutionCinematic.) */
-
-
-/* =========================================================
-   Finale
-   ========================================================= */
-function Finale({
-  state,
-  onRestart,
-}: {
-  state: SimState;
-  onRestart: () => void;
-}) {
-  const ending = useMemo(() => finalize(state), [state]);
-  const narration = ENDING_NARRATIONS[ending.vibe][state.perspective];
-  const theme = PERSPECTIVE_THEMES[state.perspective];
-  const objective = PERSPECTIVE_OBJECTIVES[state.perspective];
-  const score = Math.round(objective.score(state));
-  return (
-    <motion.section
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6 }}
-      className="mx-auto max-w-3xl pt-8 text-center"
-    >
-      <Trophy className={`mx-auto h-10 w-10 ${theme.classes.accentText}`} />
-      <p className="mt-4 text-xs uppercase tracking-[0.5em] text-white/50">
-        {theme.label} · Kết thúc · {ending.vibe === "linear" ? "Tuyến tính" : ending.vibe === "rupture" ? "Đứt gãy" : ending.vibe === "future" ? "Tương lai" : "Trì trệ"}
-      </p>
-      <h1 className="mt-3 font-display text-5xl text-balance text-white sm:text-6xl">
-        {narration.title}
-      </h1>
-      <p className="mt-3 text-lg italic text-white/70">{ending.subtitle}</p>
-      <p className="mx-auto mt-6 max-w-xl text-white/85">{narration.body}</p>
-      <p className={`mx-auto mt-6 max-w-xl border-t border-white/10 pt-6 text-sm italic ${theme.classes.accentText}`}>
-        — {narration.epitaph}
-      </p>
-
-      <div className={`mx-auto mt-6 inline-flex items-center gap-3 rounded-[var(--p-radius)] border px-5 py-3 ${theme.classes.surface}`}>
-        <span className="text-2xl">{theme.emblem}</span>
-        <div className="text-left">
-          <p className="text-[10px] uppercase tracking-widest text-[var(--p-muted)]">
-            Điểm theo mục tiêu của ngươi
-          </p>
-          <p className="font-mono text-3xl text-[var(--p-accent)]">{score}/100</p>
-          <p className="text-[11px] italic text-[var(--p-muted)]">{objective.primary}</p>
-        </div>
-      </div>
-
-      <p className="mx-auto mt-6 max-w-xl text-xs text-white/50">{ending.reflection}</p>
-
-
-      <div className="mt-8 grid gap-2 text-left sm:grid-cols-5">
-        {ALL_METRICS.map((k) => (
-          <div key={k} className="rounded-xl border border-white/10 bg-white/5 p-3">
-            <p className="text-[10px] uppercase tracking-[0.25em] text-white/50">
-              {METRIC_META[k].short}
-            </p>
-            <p className="font-mono text-2xl text-white">
-              {Math.round(state.metrics[k])}
-            </p>
-          </div>
-        ))}
-      </div>
-
-      <div className="mt-6 flex flex-wrap items-center justify-center gap-3 text-xs text-white/60">
-        <span className="rounded-full border border-white/15 bg-white/5 px-3 py-1">
-          Công nghệ đã mở: {state.unlockedTech.length}/{TECH_TREE.length}
-        </span>
-        <span className="rounded-full border border-white/15 bg-white/5 px-3 py-1">
-          Tri thức: {state.insights.length}
-        </span>
-        <span className="rounded-full border border-white/15 bg-white/5 px-3 py-1">
-          Cách mạng bùng nổ: {state.revolutionsBurned}
-        </span>
-        <span className="rounded-full border border-white/15 bg-white/5 px-3 py-1">
-          Lựa chọn tiến bộ: {state.progressiveCount}
-        </span>
-      </div>
-
-      <button
-        onClick={onRestart}
-        className="mt-10 inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-medium uppercase tracking-[0.25em] text-stone-950"
-      >
-        <RotateCcw className="h-4 w-4" /> Chơi lại với góc nhìn khác
-      </button>
-
-      <ReplayTimeline state={state} />
-    </motion.section>
-  );
-}
 
 
 /* =========================================================

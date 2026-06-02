@@ -19,7 +19,7 @@ Stage start → Decision N (option pick) → Apply deltas →
   Pressures + Tier update → (maybe) Event roll →
   Companion line → Next decision …
   Last decision → resolveTransition() → {evolve | rupture | freeze | collapse | suppress | failed_uprising}
-                                      → Cinematic (nếu cần) → Stage tiếp theo
+                                      → Cinematic / Interlude (nếu cần) → Stage tiếp theo
 End of Era 5 → resolveEnding() → EndingScreen + Replay timeline
 ```
 
@@ -134,6 +134,17 @@ Sau decision cuối của mỗi stage, `resolveTransition()` chọn 1 trong 6 ou
 
 Chống loop: freeze 2 lần liên tiếp tự nâng cấp thành `evolve | rupture | collapse`.
 
+### 4.1 Interlude — quá độ không tự động
+
+Interlude không phải era thứ 6. Đây là màn trung gian ngắn sau outcome lớn, dùng để nhấn mạnh rằng lịch sử không tiến lên một cách máy móc:
+
+- `collapse → dark_age`: xã hội bước qua một thời kỳ đen tối, sản xuất đứt gãy, tri thức có thể thất truyền, quyền lực phân mảnh. Người chơi chọn phần nào được cứu trước.
+- `rupture → consolidation`: cách mạng chỉ mở cửa. Người chơi phải chọn cách tổ chức quan hệ sản xuất mới để tránh phục hồi trật tự cũ dưới tên khác.
+
+Mỗi interlude có option riêng cho `ruler | worker | historian`, có delta metric, tag, memory và cause-chain như decision thường.
+
+File: `src/data/interludes.ts`, `simStore.resolveInterlude`, `HistoricalSim.InterludePanel`.
+
 File: `src/data/transition/{outcomes.ts, resolver.ts}`.
 
 ---
@@ -148,10 +159,10 @@ Memory được **đẩy ra** từ: decision tag (`memoryFromChoice`) và outcom
 
 Memory được **đọc bởi**:
 
-- Stage intro composer — chèn câu *"Sau nạn đói thập kỷ trước…"*.
-- Narrator — echo lại ở tier ≥ UNSTABLE.
+- Decision/interlude UI — hiện dòng "Dư âm lịch sử" khi có memory đủ mạnh.
 - `ReplayTimeline` — render icon mỗi tag.
 - Ending resolver — template `match()` theo memory.
+- Interlude resolver — một số lựa chọn sau collapse/rupture đẩy thêm memory mới.
 
 File: `src/data/memory/index.ts`.
 
@@ -219,7 +230,8 @@ File: `src/data/endings/templates.ts`, `EndingScreen.tsx`.
 
 ```text
 phase: "perspective" → "intro" → "playing" → "consequence"
-      → ("playing" | "transition" | "revolution" | "finale")
+      → ("playing" | "transition" | "revolution" | "interlude" | "finale")
+      → "intro" sau khi interlude được giải quyết
 ```
 
 Slice chính:
@@ -236,6 +248,7 @@ Slice chính:
   contradictionTier: TierId;
   memory: MemoryTag[];
   stagePath: PathOutcome[];
+  pendingInterlude: InterludeKind | null;
   companionLine: CompanionLine | null;
   eventCooldowns: Record<string, number>;
   tagCounts: Record<OptionTag, number>;
@@ -245,7 +258,7 @@ Slice chính:
 }
 ```
 
-Action chính: `decide(option)` → tính delta → `applyOptionRisk(tier)` → `pushMemory` nếu tag là `repression/uprising/...` → `ackConsequence()` để đi tiếp decision hoặc resolve transition.
+Action chính: `decide(option)` → tính delta → `applyOptionRisk(tier)` → `pushMemory` nếu tag là `repression/uprising/...` → `ackConsequence()` để đi tiếp decision hoặc resolve transition. Interlude dùng `resolveInterlude(option)` để áp delta nhỏ sau `collapse/rupture`.
 
 File: `src/components/minigame/sim/simStore.ts`.
 

@@ -12,7 +12,6 @@ import type { EraId } from "@/data/eras";
 import {
   STAGES,
   TECH_TREE,
-  classifyEnding,
   type Decision,
   type DecisionOption,
   type Insight,
@@ -43,12 +42,14 @@ import { resolveTransition } from "@/data/transition/resolver";
 import type { PathOutcome } from "@/data/transition/outcomes";
 import { pickCompanionLine, type CompanionLine, type CompanionTrigger } from "@/data/companion/lines";
 import { resolveOptions } from "@/data/perspective/perspectiveConfig";
+import { resolveInterludeOptions, type InterludeKind } from "@/data/interludes";
 
 export type SimPhase =
   | "perspective"
   | "intro"
   | "playing"
   | "consequence"
+  | "interlude"
   | "transition"
   | "revolution"
   | "finale";
@@ -97,6 +98,7 @@ export interface SimState {
   stageFreezeCount: number;     // freezes in the current stage (anti-loop)
   reformLocked: boolean;        // true after suppress — reform tag banned
   lastTransition: PathOutcome | null;
+  pendingInterlude: InterludeKind | null;
   endingId: string | null;
 
   /* ───── Companion presence (NEW) ───── */
@@ -111,6 +113,7 @@ export type SimAction =
   | { type: "ackConsequence" }
   | { type: "ackTransition" }
   | { type: "ackRevolution" }
+  | { type: "resolveInterlude"; option: DecisionOption }
   | { type: "ackCompanion" }
   | { type: "restart" };
 
@@ -249,6 +252,7 @@ export function initialState(): SimState {
     stageFreezeCount: 0,
     reformLocked: false,
     lastTransition: null,
+    pendingInterlude: null,
     endingId: null,
     companionSaid: [],
     companionLine: null,
@@ -280,6 +284,21 @@ function memoryFromChoice(
   if (tag === "uprising" && state.pressures.organization > 55) return "general_strike";
   if (tag === "uprising") return "underground_network";
   if (tag === "concession" && state.metrics.stability < 40) return "betrayed_promise";
+  return null;
+}
+
+function memoryFromInterlude(kind: InterludeKind, tag: OptionTag): MemoryTagId | null {
+  if (kind === "dark_age") {
+    if (tag === "document") return "collapse_scar";
+    if (tag === "uprising") return "underground_network";
+    if (tag === "concession" || tag === "reform") return "successful_reform";
+  }
+  if (kind === "consolidation") {
+    if (tag === "uprising") return "general_strike";
+    if (tag === "reform" || tag === "document") return "successful_reform";
+    if (tag === "reactionary") return "betrayed_promise";
+    if (tag === "emergency") return "mass_repression";
+  }
   return null;
 }
 
@@ -518,7 +537,9 @@ export function reducer(state: SimState, action: SimAction): SimState {
         lastChoice: null,
         ruptureStreak: 0,
       };
-      const withOutComp = withCompanion(base, { kind: "outcome", outcome } as any);
+      const companionTrigger: CompanionTrigger =
+        outcome === "rupture" ? { kind: "rupture" } : { kind: "outcome", outcome };
+      const withOutComp = withCompanion(base, companionTrigger);
 
       const isLast = state.stageIdx >= STAGES.length - 1;
 
@@ -619,7 +640,11 @@ export function reducer(state: SimState, action: SimAction): SimState {
       const terminal =
         isLast &&
         (state.lastTransition === "collapse" || state.lastTransition === "suppress");
-      return { ...state, phase: terminal ? "finale" : "intro" };
+      if (terminal) return { ...state, phase: "finale", pendingInterlude: null };
+      if (state.lastTransition === "collapse") {
+        return { ...state, phase: "interlude", pendingInterlude: "dark_age" };
+      }
+      return { ...state, phase: "intro", pendingInterlude: null };
     }
 
     case "ackRevolution": {
@@ -653,6 +678,63 @@ export function reducer(state: SimState, action: SimAction): SimState {
         ruptureStreak: 0,
         memory,
         unlockedTech: grantBaselineTech(nextStageIdx, state.unlockedTech),
+        pendingInterlude: state.lastTransition === "rupture" ? "consolidation" : null,
+        phase: state.lastTransition === "rupture" ? "interlude" : "intro",
+      };
+    }
+
+    case "resolveInterlude": {
+      const kind = state.pendingInterlude;
+      if (state.phase !== "interlude" || !kind) return state;
+      const stage = STAGES[state.stageIdx];
+      if (!stage) return state;
+      const option = resolveInterludeOptions(kind, state.perspective).find(
+        (opt) => opt.id === action.option.id,
+      );
+      if (!option) return state;
+
+      const tag = (option.tag ?? "neutral") as OptionTag;
+      const metrics = applyMetrics(state.metrics, option.effect);
+      const tagCounts = { ...state.tagCounts, [tag]: (state.tagCounts[tag] ?? 0) + 1 };
+      const progressiveCount = state.progressiveCount + (option.progressive ? 1 : 0);
+      const { tier, pressures } = resolveContradiction({
+        metrics,
+        perspective: state.perspective,
+        tagCounts,
+        progressiveCount,
+        eventCooldowns: state.eventCooldowns,
+        eraId: stage.id,
+      });
+      const memTagId = memoryFromInterlude(kind, tag);
+      const memory = memTagId
+        ? pushMemory(state.memory, {
+            id: memTagId,
+            stage: stage.id,
+            perspective: state.perspective,
+          })
+        : state.memory;
+
+      return {
+        ...state,
+        metrics,
+        memory,
+        tagCounts,
+        progressiveCount,
+        pressures,
+        contradictionTier: tier.id,
+        pendingInterlude: null,
+        lastChoice: null,
+        lockedOptionIds: [],
+        lockReasons: {},
+        log: [
+          ...state.log,
+          {
+            stage: stage.id,
+            optionLabel: option.label,
+            chain: option.causeChain,
+            tag,
+          },
+        ],
         phase: "intro",
       };
     }
@@ -666,11 +748,3 @@ export function reducer(state: SimState, action: SimAction): SimState {
   }
 }
 
-export function finalize(state: SimState) {
-  return classifyEnding({
-    ...state.metrics,
-    stagesCompleted: state.stagesCompleted,
-    revolutionsBurned: state.revolutionsBurned,
-    progressiveCount: state.progressiveCount,
-  });
-}

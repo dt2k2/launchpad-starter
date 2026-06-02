@@ -162,8 +162,8 @@ export const ROLE_NARRATOR_LINES: Record<EraId, Record<PerspectiveId, NarratorLi
   },
   slave: {
     ruler: {
-      enter: { text: "Đế chế cần ruộng, mỏ và thân người lao động. Luật pháp được viết để bảo vệ quyền sở hữu ấy." },
-      tension: { text: "Khi nô lệ chỉ làm vì roi, sản xuất phải mua thêm bạo lực để tự tiếp tục." },
+      enter: { text: "Đế chế cần ruộng, cần mỏ và thân xác người lao động. Luật pháp được viết ra là để bảo vệ quyền sở hữu ấy." },
+      tension: { text: "Khi nô lệ chỉ làm vì roi vọt, sản xuất phải mua thêm bạo lực để tự tiếp tục." },
       revolution: { text: "Một trật tự sống bằng cưỡng bức sẽ sụp khi cái giá của cưỡng bức đắt hơn sản phẩm nó lấy được." },
     },
     worker: {
@@ -179,17 +179,17 @@ export const ROLE_NARRATOR_LINES: Record<EraId, Record<PerspectiveId, NarratorLi
   },
   feudal: {
     ruler: {
-      enter: { text: "Đất đai nuôi triều đình. Tô thuế nuôi lãnh chúa. Chính danh giữ nông nô ở lại với ruộng đồng." },
-      tension: { text: "Thị dân và thương nhân mang tiền vào thành, còn đặc quyền cũ lại không biết phải chứa họ ở đâu." },
+      enter: { text: "Đất đai nuôi triều đình. Tô thuế nuôi lãnh chúa. Còn chính danh giữ chân nông nô ở lại với ruộng đồng." },
+      tension: { text: "Thị dân và thương nhân mang tiền bạc vào thành, còn những đặc quyền cũ lại không biết phải chứa họ ở đâu." },
       revolution: { text: "Khi thị trường lớn hơn lãnh địa, ngai vàng chỉ còn chọn hai lựa chọn:cải cách hoặc bị lật đổ qua cổng thành." },
     },
     worker: {
-      enter: { text: "Ta sinh trên đất của lãnh chúa, nộp tô trên đất ấy, và bị gọi là kẻ mang ơn." },
+      enter: { text: "Ta sinh trên đất của lãnh chúa, nộp tô trên mảnh  đất ấy, và bị gọi là kẻ mang ơn." },
       tension: { text: "Trong phố, người ta kháo nhau về tự do. Ngoài ruộng, sổ tô vẫn ghi tên từng nhà." },
       revolution: { text: "Đốt sổ tô là không đủ. Phải xóa sạch cả quyền nói rằng đời ta thuộc về đất của kẻ khác." },
     },
     historian: {
-      enter: { text: "Phong kiến đặt quyền lực trên sở hữu đất đai và ràng buộc cá nhân qua tô, thân phận cùng giáo hội." },
+      enter: { text: "Phong kiến đặt quyền lực lên sở hữu đất đai và ràng buộc cá nhân qua tô thuế, thân phận cùng giáo hội." },
       tension: { text: "Thị trường mang hàng hóa và tích lũy tư bản nguyên thủy đã biến các quan hệ phong kiến thành một vách ngăn cản trở." },
       revolution: { text: "Cách mạng tư sản đập tan đặc quyền phong kiến, nhưng quyền lực mới lại chuyển dịch vào tay sở hữu tư bản." },
     },
@@ -206,7 +206,7 @@ export const ROLE_NARRATOR_LINES: Record<EraId, Record<PerspectiveId, NarratorLi
       revolution: { text: "Khi ta hiểu ra rằng nhà máy sống nhờ bàn tay mình, câu hỏi lúc này không còn là \"xin thêm\" nữa, mà là giành lại." },
     },
     historian: {
-      enter: { text: "CNTB giải phóng lao động khỏi lãnh chúa chỉ để buộc họ phải tự bán mình trên thị trường." },
+      enter: { text: "CNTB giải phóng người lao động khỏi tay lãnh chúa chỉ để buộc họ phải tự bán mình trên thị trường." },
       tension: { text: "Sản xuất mang tính xã hội hóa đói lập với chiếm hữu tư nhân. Đó là mâu thuẫn cốt lõi của phương thức tư bản." },
       revolution: { text: "Tự động hóa đẩy mâu thuẫn tới mức cực hạn: lực lượng sản xuất giờ đây đòi hỏi một quan hệ sở hữu hoàn toàn mới." },
     },

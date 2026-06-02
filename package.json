@@ -8,6 +8,7 @@
     "build": "vite build",
     "build:dev": "vite build --mode development",
     "preview": "vite preview",
+    "check:minigame": "jiti scripts/check-minigame-options.ts && jiti scripts/check-minigame-consistency.ts && node scripts/check-narrator-audio.mjs",
     "lint": "eslint .",
     "format": "prettier --write ."
   },

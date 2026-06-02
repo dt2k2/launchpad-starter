@@ -2,10 +2,10 @@
  * Ending templates v2 — match against the full final state (path history,
  * memory, pressures, perspective). The resolver picks the first match.
  */
-import type { SimState } from "@/components/minigame/sim/simStore";
-import type { PerspectiveId } from "@/data/historicalSim";
-import { hasMemory } from "@/data/memory";
-import type { PathOutcome } from "@/data/transition/outcomes";
+import type { SimState } from "../../components/minigame/sim/simStore";
+import type { PerspectiveId } from "../historicalSim";
+import { hasMemory } from "../memory";
+import type { PathOutcome } from "../transition/outcomes";
 
 export type EndingTone = "somber" | "defiant" | "frozen" | "hopeful" | "ironic" | "fractured";
 
