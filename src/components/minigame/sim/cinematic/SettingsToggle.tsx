@@ -17,7 +17,7 @@ export function useCinematicSettings(): [
   (patch: Partial<CinematicSettings>) => void,
 ] {
   const [state, setState] = useState<CinematicSettings>({
-    muted: true, // default muted so first load is silent until user opts in
+    muted: false, // default audio enabled
     reducedFx: false,
   });
 
