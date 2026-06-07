@@ -1,405 +1,238 @@
-# Script Thuyết Trình Minigame — "Hành Trình Tiến Hoá"
+# Script Thuyết Trình Freestyle — Minigame "Hành Trình Tiến Hoá"
 
-> **Thời lượng gợi ý:** 10-12 phút.  
-> **Cách dùng:** phần *in nghiêng* là gợi ý thao tác/nhấn giọng khi trình bày.  
-> **Trọng tâm:** giới thiệu minigame như một mô phỏng tương tác về **chủ nghĩa duy vật lịch sử**, không phải một bài quiz.
-
----
-
-## 0. Mở Đầu Nhanh
-
-*Mở trang minigame, để màn hình chọn vai hiện lên. Dừng 2-3 giây trước khi nói.*
-
-Kính chào thầy cô và các bạn.
-
-Hôm nay em xin giới thiệu phần minigame của project: **"Hành Trình Tiến Hoá"**.
-
-Nếu phần website chính giúp người học đọc và nhìn thấy 5 hình thái kinh tế - xã hội, thì minigame này cho người học **tự bước vào lịch sử**. Người chơi không trả lời câu hỏi trắc nghiệm kiểu "đúng hay sai", mà phải ra quyết định trong một xã hội đang có mâu thuẫn.
-
-Ý tưởng cốt lõi của game là:
-
-> **Lịch sử không tiến lên vì một cá nhân muốn như vậy. Lịch sử vận động vì lực lượng sản xuất phát triển, quan hệ sản xuất cũ trở nên chật hẹp, và mâu thuẫn xã hội buộc phải được giải quyết.**
-
-Minigame biến ý tưởng đó thành trải nghiệm có lựa chọn, có chỉ số, có khủng hoảng, có cách mạng, có sụp đổ, và có nhiều kết cục khác nhau.
+> **Mục tiêu:** Nói mượt mà khi không có slide, vừa thể hiện độ sâu về triết học, vừa giới thiệu được cơ chế rõ ràng của game.
+> **Thời lượng linh hoạt:** 8 - 12 phút. Nếu bị ép thời gian, chỉ nói các phần có nhãn **[Bắt buộc]**.
+> **Cách dùng:** Không đọc vẹt. Hãy bám chắc vào các "mỏ neo" in đậm để giữ mạch tư duy và tự tin tương tác.
 
 ---
 
-## 1. Vì Sao Là Minigame?
+## 1. Mở Đầu: Đập Tan Định Kiến Về Môn Triết [Bắt buộc]
 
-Thông thường, khi học chủ nghĩa duy vật lịch sử, người học dễ nhớ công thức:
+**Mỏ neo:** Học triết thường khô vì người học chỉ nghe kết luận, chưa được trải nghiệm mâu thuẫn.
 
-> Lực lượng sản xuất phát triển → quan hệ sản xuất không còn phù hợp → mâu thuẫn tăng → cách mạng xã hội xảy ra.
+Kính chào thầy cô và các bạn. 
 
-Nhưng nếu chỉ học như một câu định nghĩa, người học rất khó cảm nhận được:
+Hôm nay, em đến đây không phải để thuyết trình một bài lý thuyết, mà là để cùng mọi người dấn thân vào một **Hành Trình Tiến Hoá**. 
 
-- Tại sao cải cách đôi khi cứu được một trật tự cũ, nhưng đôi khi lại quá muộn.
-- Tại sao đàn áp có thể tạo ổn định ngắn hạn nhưng làm mâu thuẫn sâu hơn.
-- Tại sao một cuộc nổi dậy có thể thất bại nếu chưa có tổ chức.
-- Tại sao cùng một biến cố, người cai trị và người lao động lại nhìn thấy hai thực tại rất khác nhau.
+Chúng ta hãy thẳng thắn với nhau một điều: Tại sao khi học Triết, đặc biệt là chủ nghĩa duy vật lịch sử, sinh viên thường thấy... buồn ngủ? Lỗi không phải ở Triết học. Lỗi là vì chúng ta đang phải học theo kiểu "nhai lại" các kết luận có sẵn của lịch sử. Chúng ta thuộc làu làu định nghĩa về lực lượng sản xuất, quan hệ sản xuất, mâu thuẫn giai cấp... nhưng chỉ nhìn chúng như những dòng chữ chết trên trang giấy. Chúng ta nghe kết luận, nhưng chưa từng được đặt mình vào **tình huống lịch sử**.
 
-Vì vậy, minigame được thiết kế như một **phòng thí nghiệm tư tưởng**. Người chơi thử lựa chọn, nhìn hệ quả, rồi tự rút ra quy luật.
+Chính vì thế, minigame này được ra đời với một ý tưởng cực kỳ đơn giản:
+
+> Thay vì bắt người chơi trả lời một câu hỏi quiz khô khan: *"Mâu thuẫn giữa lực lượng sản xuất và quan hệ sản xuất là gì?"*, game sẽ ném thẳng bạn vào một xã hội đang rệu rã vì khủng hoảng, và ép bạn phải ra quyết định để định đoạt số phận của xã hội đó.
+
+Bạn không chơi game để tìm đáp án đúng/sai. Bạn chọn hành động, nhìn xã hội biến đổi dưới tay mình, và tự rùng mình nhận ra: *Hóa ra lịch sử vận động là vì vậy.*
 
 ---
 
-## 2. Cấu Trúc Tổng Thể Của Game
+## 2. Luận Điểm Cốt Lõi Của Game [Bắt buộc]
 
-*Chỉ vào màn hình chọn vai.*
+**Mỏ neo:** Lịch sử không do ý muốn cá nhân, mà do điều kiện vật chất và mâu thuẫn xã hội.
 
-Game có 3 lớp lớn.
+Nếu phải tóm gọn bản chất của minigame này trong một câu duy nhất, em sẽ nói:
 
-Thứ nhất là **5 era**, tương ứng với 5 hình thái kinh tế - xã hội:
+> Đây là một mô hình tương tác trực quan về cách một xã hội chuyển mình từ hình thái kinh tế - xã hội này sang hình thái khác, dưới sức ép ngạt thở của mâu thuẫn giữa lực lượng sản xuất và quan hệ sản xuất.
 
+Trong game, bạn sẽ dẫn dắt xã hội đi qua 5 thời đại lịch sử: 
 1. Cộng sản nguyên thuỷ.
 2. Chiếm hữu nô lệ.
 3. Phong kiến.
 4. Tư bản chủ nghĩa.
 5. Xã hội chủ nghĩa.
 
-Mỗi era có phần giới thiệu, lực lượng sản xuất, quan hệ sản xuất, mâu thuẫn cốt lõi, 3 decision hoặc event, công nghệ có thể mở khoá và insight lý luận.
+Nhưng xin lưu ý: 5 thời đại này không phải 5 màn chơi tuyến tính kiểu "giết xong trùm thì qua màn". Game định nghĩa chúng là 5 trạng thái cấu trúc. Ở đó, mỗi era đều sở hữu một giới hạn công nghệ riêng, một cách tổ chức sản xuất riêng và một mâu thuẫn nội tại không thể né tránh.
 
-Thứ hai là **3 góc nhìn**:
+Điều quan trọng nhất: Trong game không có chuyện "tôi muốn tiến bộ là xã hội sẽ tiến bộ". Ý chí của bạn, dù là một bực minh quân hay một vị lãnh tụ, luôn bị xích lại bởi điều kiện vật chất của thời đại đó. Đây chính là cái lõi của duy vật lịch sử: Ý chí con người có vai trò cực lớn, nhưng nó không bay lơ lửng. Nó phải hoạt động trên nền tảng những chất liệu cụ thể mà quá khứ để lại.
 
-- **Ruler**: người cai trị.
-- **Worker**: người lao động.
-- **Historian**: sử gia.
+---
 
-Thứ ba là **transition engine**, tức hệ thống quyết định xã hội sau mỗi era sẽ đi tiếp bằng con đường nào: chuyển hoá êm dịu, cách mạng, đóng băng, sụp đổ, đàn áp, hoặc khởi nghĩa thất bại.
+## 3. Vòng Lặp Gameplay (Gameplay Loop)
 
-Vòng lặp chính của game là:
+**Mỏ neo:** Chọn vai → Đọc tình huống → Chọn quyết định → Chỉ số biến thiên → Phát sinh mâu thuẫn → Kết cục era.
+
+Cơ chế vận hành của game vận động theo một vòng lặp rất tự nhiên:
 
 ```text
-Chọn vai → vào era → đọc tình huống → chọn quyết định
-→ chỉ số thay đổi → mâu thuẫn tăng/giảm → có thể phát sinh event
-→ hết era → hệ thống chọn kết cục chuyển tiếp
-→ cinematic / interlude → era tiếp theo
-→ cuối game → ending + timeline
+Chọn vai trò → Bước vào thời đại → Đối mặt biến cố → Đưa ra quyết định
+→ Hệ chỉ số rung lắc → Mâu thuẫn tích tụ → Điểm đứt gãy lịch sử (Transition)
 ```
 
-Điểm quan trọng là: người chơi không "qua màn" theo đường thẳng. Mỗi era có thể rẽ sang nhiều hướng khác nhau.
+Điểm đặc biệt ở đây là gì? Người chơi không "phá đảo" game theo một kịch bản được tô hồng. Tùy vào cách bạn hành xử, kết cục của một thời đại có thể là một cuộc chuyển giao êm thấm, một cuộc cách mạng long trời lở đất, nhưng nó cũng có thể là một cuộc khởi nghĩa đẫm máu bị dập tắt, một xã hội đóng băng trong sự trì trệ, hoặc tệ nhất — sụp đổ hoàn toàn.
 
----
+Game triệt tiêu góc nhìn máy móc về lịch sử. Tiến bộ không bao giờ tự động đến. Nó là máu, là mồ hôi, là sự tổ chức và là kết quả của việc giải quyết mâu thuẫn.
 
-## 3. Ba Góc Nhìn: Không Phải Skin, Mà Là Vị Trí Giai Cấp
+## 4. Hệ Thống 3 Góc Nhìn: Bản Chất Của Vị Trí Giai Cấp [Bắt buộc]
 
-*Demo gợi ý: chọn nhanh từng vai để cho thấy HUD/giọng/option khác nhau. Nếu ít thời gian, chọn Worker để demo chính.*
+**Mỏ neo:** Cùng một sự kiện, ba vị trí xã hội nhìn thấy ba thế giới khác nhau.
 
-Điểm em muốn nhấn mạnh nhất là: 3 vai trong game không chỉ đổi màu giao diện. Chúng đại diện cho **vị trí xã hội khác nhau**, nên nhìn thấy thế giới khác nhau và có quyền hành động khác nhau.
+Phần tinh túy nhất, học thuật nhất của minigame này chính là Hệ thống 3 góc nhìn. Bạn phải chọn nhập vai vào một trong ba thế lực:
 
-### Ruler
+- Ruler (Người cai trị)
+- Worker (Người lao động)
+- Historian (Sử gia)
 
-Ruler là người cai trị. Vai này quan tâm đến trật tự, chính danh, sản xuất và khả năng duy trì bộ máy.
+Lựa chọn này không phải để thay đổi cái giao diện cho đẹp. Nó thay đổi hoàn toàn lăng kính của bạn về thế giới. Cùng một biến cố lịch sử xảy ra, nhưng ba vị trí này sẽ nhìn thấy ba thực tế hoàn toàn khác nhau.
 
-Ruler có thể:
+### Ruler (Người cai trị)
+Bạn đứng ở đỉnh tháp quyền lực. Giao diện hiển thị của bạn chỉ toàn những từ khóa: Sự ổn định, Tính chính danh, Sản lượng và Quyền kiểm soát.
 
-- Cải cách từ trên xuống.
-- Nhân nhượng để giảm mâu thuẫn.
-- Dùng đàn áp để giữ trật tự.
-- Ban chính sách, điều tiết tài nguyên, bảo vệ quyền sở hữu hiện hành.
+Ruler trong game không phải là những kẻ ác độc theo kiểu phản diện. Họ có thể là những nhà cải cách đầy thiện chí. Nhưng vì đứng ở vị trí phải bảo vệ trật tự hiện hành để quản trị xã hội, họ bị một "điểm mù" chí mạng: Họ luôn nhìn người lao động như một bài toán quản lý, và dễ đánh giá thấp sức mạnh ngầm của sự bất mãn.
 
-Nhưng cái mù của Ruler là: họ không luôn nhìn thấy đầy đủ mức độ tổ chức của người bị trị. Họ có thể nghĩ xã hội đã yên, trong khi bên dưới đang tích tụ bất mãn.
+### Worker (Người lao động)
+Thế giới của bạn co lại xung quanh hai chữ: Sinh tồn và Phản kháng. Bạn nhìn thấy sự bóc lột rõ mồn một. Bạn có thể chọn đình công, xây dựng mạng lưới ngầm, hoặc phát động nổi dậy để giành lấy tư liệu sản xuất.
 
-### Worker
+Nhưng game cũng rất tàn nhẫn: Nếu mâu thuẫn xã hội chưa đủ chín muồi, nếu tính tổ chức của bạn còn non trẻ, cuộc nổi dậy sẽ bị dập tắt ngay lập tức. Bất mãn thôi là chưa đủ, muốn cách mạng thành công thì phải có lý luận và tổ chức.
 
-Worker là người lao động. Vai này quan tâm đến sinh tồn, tổ chức, phản kháng và khả năng tự quản.
+### Historian (Sử gia)
+Đây là vai chơi đặc biệt nhất. Bạn không thể ban chính sách như Ruler, không thể cầm cuốc đi biểu tình như Worker. Bạn đứng ngoài, quan sát, ghi chép và bóc tách các quy luật ngầm.
 
-Worker có thể:
+Nếu Ruler hỏi "Làm sao để giữ ghế?", Worker hỏi "Làm sao để sống?", thì Historian hỏi "Cơ chế lịch sử nào đang vận hành ở đây?".
 
-- Tổ chức đình công hoặc mạng lưới ngầm.
-- Đòi phân phối lại.
-- Tự quản công cụ sản xuất.
-- Chuẩn bị khởi nghĩa khi mâu thuẫn đủ cao.
+Qua 3 vai chơi này, game mô phỏng một luận điểm kinh điển của chủ nghĩa Marx: Vị trí giai cấp định hình nhận thức xã hội. Bạn ngồi ở đâu, bạn sẽ tư duy ở đó.
 
-Nhưng Worker cũng không toàn năng. Nếu nổi dậy khi tổ chức chưa đủ, outcome có thể là **failed uprising**: khởi nghĩa thất bại, repression tăng, memory thất bại còn lưu lại trong các era sau.
+## 5. Hệ Chỉ Số: Khi Lý Luận Biến Thành Trải Nghiệm Số
 
-### Historian
+**Mỏ neo:** Game có 5 chỉ số gốc, nhưng mục tiêu không phải "chơi số", mà là cảm được quan hệ nhân quả.
 
-Historian là sử gia. Đây là vai đặc biệt nhất: không can thiệp trực tiếp vào xã hội.
+Để cụ thể hóa Triết học, game số hóa xã hội bằng 5 chỉ số cốt lõi:
 
-Khi Ruler và Worker chọn hành động, Historian chọn cách ghi chép, so sánh, phân tích. Các option thường được chuyển thành dạng `record:*`.
+- **Sản xuất:** Đại diện cho lực lượng sản xuất, năng suất, công cụ.
+- **Công nghệ:** Tri thức kỹ thuật tích lũy.
+- **Ổn định:** Mức độ xã hội còn chấp nhận trật tự hiện hành.
+- **Mâu thuẫn:** Khoảng cách giữa lực lượng sản xuất và quan hệ sản xuất.
+- **Cách mạng:** Áp lực cách mạng đã tích tụ.
 
-Điều này giữ đúng vai trò triết học của sử gia: họ không trực tiếp ban lệnh hay khởi nghĩa, nhưng có thể nhìn rộng, mở insight, ghi lại nguyên nhân và hệ quả.
+Cái hay của game là bạn không thể điều chỉnh các chỉ số này một cách trực tiếp theo ý muốn. Bạn chỉ được chọn hành động, và chấp nhận luật nhân quả.
 
-Vì vậy, cùng một sự kiện lịch sử, game cho ba trải nghiệm khác nhau:
+Ví dụ: Bạn chơi vai Ruler thời Phong kiến. Để làm giàu cho quốc khố, bạn quyết định mở rộng giao thương, khuyến khích thương nhân. Chỉ số Sản xuất và Công nghệ sẽ tăng vọt. Bạn hí hửng tưởng mình đang làm tốt? Không. Tầng lớp thương nhân mạnh lên, họ bắt đầu thấy cái khung áo phong kiến quá chật chội. Chỉ số Mâu thuẫn tăng theo cấp số nhân. Một quyết định thúc đẩy lực lượng sản xuất phát triển, lại chính là quyết định tự tay đào mồ chôn quan hệ sản xuất cũ. Không có lựa chọn nào là miễn phí trong lịch sử!
 
-- Ruler hỏi: "Làm sao giữ trật tự?"
-- Worker hỏi: "Làm sao sống và tổ chức?"
-- Historian hỏi: "Cơ chế xã hội nào đang bộc lộ ở đây?"
+## 6. Sức Ém Khủng Hoảng: Khi Không Gian Lựa Chọn Bị Thu Hẹp
 
-Đây chính là cách game mô phỏng luận điểm: **vị trí giai cấp định hình nhận thức xã hội**.
+**Mỏ neo:** Khi mâu thuẫn cao, các lựa chọn ôn hòa sẽ bị khóa lại.
 
----
+Mâu thuẫn trong game được chia làm các cấp độ từ thấp đến cao: Calm (Bình lặng) → Tension (Căng thẳng) → Unstable (Bất ổn) → Emergency (Khẩn cấp) → Rupture (Đứt gãy).
 
-## 4. Hệ Chỉ Số: Xã Hội Được Mã Hoá Như Thế Nào?
+Khi chỉ số mâu thuẫn leo thang, game không chỉ đổi màu thanh chỉ số. Nó bóp nghẹt không gian lựa chọn của bạn.
 
-*Chỉ vào HUD chỉ số.*
+Khi ở mức Calm, bạn có hàng tá phương án ôn hòa, cải cách, đối thoại. Nhưng khi đã rơi vào vùng Emergency hay Rupture, khủng hoảng đã chín muồi, toàn bộ các phương án thỏa hiệp sẽ bị hệ thống khóa cứng. Xã hội lúc này chỉ còn lại những lựa chọn cực đoan nhất: Hoặc là Ruler dùng bạo lực đàn áp toàn diện, hoặc là Worker đứng lên đập tan xiềng xích.
 
-Để người chơi cảm nhận được xã hội đang vận động, game dùng 5 chỉ số gốc.
+Cơ chế này giúp người chơi hiểu được một thực tế lịch sử: Khi một cuộc cách mạng nổ ra, đó không phải vì con người hiếu chiến, mà vì mâu thuẫn cấu trúc đã dồn ép họ vào cái thế không thể làm khác được.
 
-### 5 chỉ số gốc
+## 7. Transition: Hết Một Era Không Có Nghĩa Là Luôn Tiến Lên [Bắt buộc]
 
-- **Sản xuất**: đại diện cho lực lượng sản xuất, năng suất, công cụ, kỹ thuật.
-- **Ổn định**: mức xã hội còn chấp nhận trật tự hiện hành.
-- **Công nghệ**: tri thức kỹ thuật tích luỹ, dùng để mở khoá tech.
-- **Mâu thuẫn**: khoảng cách giữa lực lượng sản xuất và quan hệ sản xuất.
-- **Cách mạng**: áp lực cách mạng đã tích tụ trong xã hội.
+**Mỏ neo:** Cuối era có 6 kết cục, để tránh lịch sử tuyến tính.
 
-Người chơi không kéo trực tiếp các thanh này. Người chơi chỉ chọn quyết định. Sau mỗi lựa chọn, các chỉ số thay đổi.
+Để chuyển sang một thời đại mới, bộ máy Transition Engine của game sẽ quét toàn bộ chỉ số để đưa ra 1 trong 6 kết cục:
 
-Ví dụ:
+- **Evolve (Tiến hóa):** Một cuộc chuyển giao hòa bình khi quan hệ sản xuất cũ chấp nhận tự cải cách để thích nghi với lực lượng sản xuất mới.
+- **Rupture (Đứt gãy/Cách mạng):** Trật tự cũ bị lật nhào. Nhưng đây không phải là một "Happy Ending" lãng mạn. Cách mạng thành công luôn đi kèm với một cái giá rất đắt về xương máu và sự xáo trộn xã hội.
+- **Failed Uprising (Khởi nghĩa thất bại):** Minh chứng cho thấy sự bất mãn nếu thiếu đi sự chín muồi của các điều kiện khách quan và tổ chức thì sẽ chỉ dẫn đến bi kịch.
+- **Freeze (Đóng băng):** Xã hội rơi vào cái bẫy trì trệ, không đủ sức đi lên, không đủ sức sụp đổ, cứ thế mòn mỏi trong sự bế tắc.
+- **Collapse (Sụp đổ):** Khi cả sản xuất lẫn ổn định đều chạm đáy, xã hội phân rã, mọi thành tựu văn minh bị xóa sổ.
+- **Suppress (Đàn áp):** Trật tự cũ tạm thời được giữ vững bằng một bàn tay sắt, nhưng cái giá phải trả là triệt tiêu hoàn toàn động lực phát triển tương lai.
 
-- Đầu tư công cụ có thể tăng sản xuất và công nghệ, nhưng cũng làm mâu thuẫn tăng nếu quan hệ sở hữu cũ không đổi.
-- Đàn áp có thể tăng ổn định ngắn hạn, nhưng tăng repression và làm mất chính danh.
-- Nhân nhượng có thể giảm mâu thuẫn, nhưng làm tầng lớp thống trị mất một phần quyền kiểm soát.
-- Tổ chức quần chúng có thể tăng khả năng cách mạng, nhưng cũng làm xã hội căng hơn.
+## 8. Hai Màn Trung Gian: Dark Age & Consolidation
 
-Không có option nào là tốt tuyệt đối. Mỗi lựa chọn đều có trade-off.
+**Mỏ neo:** Sụp đổ không tự sinh ra tiến bộ; cách mạng không tự hoàn thành xã hội mới.
 
----
+Để đẩy tính học thuật lên cao nhất, game thiết kế 2 chương đặc biệt (Interlude):
 
-## 5. Áp Lực Hệ Thống Và Tier Mâu Thuẫn
+Nếu xã hội rơi vào Collapse, bạn buộc phải chơi màn Dark Age. Ở đây, sản xuất đứt gãy, quyền lực phân mảnh. Bạn phải chật vật lựa chọn xem nên "cứu" lấy điều gì giữa đống đổ nát. Màn này đập tan ảo tưởng rằng: "Cứ đập sụp cái cũ là cái mới tốt đẹp tự hiện ra". Không, nếu lực lượng sản xuất bị phá hủy, lịch sử sẵn sàng đi lùi.
 
-Từ 5 chỉ số gốc, hệ thống tính thêm các áp lực phái sinh như:
+Nếu xã hội đạt được Rupture, bạn bước vào màn Consolidation (Củng cố). Bài toán lúc này không còn là "Làm sao để lật đổ?" nữa, mà là "Xã hội mới được tổ chức như thế nào?". Tư liệu sản xuất thuộc về ai? Quyền lực có quay lại tay một thiểu số mới không? Người lao động có thực sự được tham gia quản lý? Quá độ lịch sử chưa bao giờ là một khoảnh khắc, nó là một quá trình.
 
-- Căng thẳng giai cấp.
-- Đàn áp.
-- Mất chính danh.
-- Tổ chức quần chúng.
-- Bất ổn sản xuất.
-- Nguy cơ đứt gãy.
+## 9. Hệ Thống Dư Âm Lịch Sử (Memory) & Bạn Đồng Hành
 
-Những áp lực này khiến game không chỉ là cộng trừ điểm đơn giản. Nó mô phỏng việc xã hội có những lực ngầm mà người chơi không luôn kiểm soát được.
+**Mỏ neo:** Quyết định cũ không biến mất; nó để lại ký ức ảnh hưởng đến tương lai.
 
-Mâu thuẫn được chia thành 5 tier:
+Lịch sử có tính tích lũy. Những gì bạn làm ở thời đại trước sẽ để lại một vết sẹo hoặc một bệ phóng cho thời đại sau thông qua hệ thống Memory (Ký ức lịch sử). Nếu ở thời Phong kiến bạn đàn áp đẫm máu người lao động, thì khi bước sang thời Tư bản, vết sẹo đó sẽ khiến lòng căm thù của Worker tích tụ nhanh hơn gấp đôi.
 
-```text
-calm      : 0-49
-tension   : 50-69
-unstable  : 70-84
-emergency : 85-94
-rupture   : 95-100
-```
+Bên cạnh đó, để trò chơi có phần "hồn", mỗi vai chơi sẽ có một Companion (Bạn đồng hành) tương ứng: Ruler có cận thần, Worker có đồng chí, Historian có trợ lý lưu trữ.
 
-Khi tier tăng, hệ thống bắt đầu thay đổi hành vi:
+Những người bạn này sẽ nói bằng ngôn ngữ độc bản của thời đại đó. Worker thời Chiếm hữu nô lệ sẽ rầm rì về xiềng xích và những lằn roi, chứ không nói những thuật ngữ vĩ mô của thế kỷ 21. Điều này giữ cho tính nhập vai đạt mức tuyệt đối.
 
-- Ở `tension`, event xã hội có thể phát sinh.
-- Ở `unstable`, cải cách bắt đầu khó hơn.
-- Ở `emergency`, nhượng bộ không còn dễ cứu tình hình.
-- Ở `rupture`, xã hội chỉ còn các hành động khủng hoảng: nổi dậy, đàn áp, khẩn cấp hoặc ghi chép.
+## 10. Hệ Thống Âm Thanh Bộc Lộ Bản Chất
 
-Điều này rất quan trọng về mặt triết học: khi mâu thuẫn đã tích tụ quá cao, con người không còn được lựa chọn trong một không gian bình thường nữa. Họ bị lịch sử ép vào những lựa chọn cực đoan hơn.
+**Mỏ neo:** Audio không chỉ trang trí; nó làm rõ vai và thời điểm lịch sử.
 
----
+Để tăng trải nghiệm giác quan khi không có slide, hệ thống âm thanh của game được thiết kế theo trục ma trận: 5 Thời đại × 3 Vai chơi × 3 Khoảnh khắc bùng nổ = 45 File Audio độc lập.
 
-## 6. Decision Và Event: Câu Hỏi Không Chỉ Là "Chọn Gì?"
+Ba khoảnh khắc đó là:
 
-*Mở một decision trong game.*
+- **Enter:** Bắt đầu era.
+- **Tension:** Khi mâu thuẫn bắt đầu căng thẳng.
+- **Revolution:** Khi tiếng súng cách mạng vang lên.
 
-Mỗi decision trong game được viết theo 3 lớp:
+Bạn chơi các vai khác nhau, tai bạn sẽ nghe thấy những âm thanh khác nhau, đẩy cảm xúc người chơi chạm đỉnh theo đúng vị thế giai cấp của mình.
 
-1. **Điều kiện vật chất**: xã hội đang thiếu gì, sản xuất đang ở đâu, công cụ nào xuất hiện.
-2. **Xung đột giai cấp**: ai được lợi, ai bị ép, ai đang phản kháng.
-3. **Trade-off hành động**: lựa chọn nào cũng có giá.
+## 11. Ending: Bản Án Của Lịch Sử
 
-Ví dụ cùng một biến cố, Ruler có thể thấy vấn đề như một cuộc khủng hoảng trật tự; Worker thấy đó là câu hỏi sinh tồn; Historian thấy đó là dấu hiệu của một quan hệ sản xuất đang lộ giới hạn.
+**Mỏ neo:** Ending đọc toàn bộ hành trình; không có thắng tuyệt đối.
 
-Đây là lý do phần câu hỏi trong minigame không chỉ hỏi: "Bạn quyết định gì?"
+Khi cuộc chơi kết thúc, màn hình game không hiện lên chữ "You Win" hay "You Lose" vô nghĩa. Trình giải mã Ending Resolver sẽ đọc lại toàn bộ biên niên sử do chính bạn viết ra: Bạn đã đi qua bao nhiêu cuộc cách mạng? Bạn đã tích lũy bao nhiêu vết sẹo đàn áp? Xã hội của bạn rốt cuộc đã trở thành cái gì?
 
-Nó phải làm người chơi hình dung được:
+Game hoàn toàn không có một "Chiến thắng tuyệt đối":
 
-- Xã hội đang căng ở đâu.
-- Mâu thuẫn nằm giữa lực lượng nào.
-- Hành động của mình cứu được cái gì và làm hỏng cái gì.
+- Một Ruler bảo thủ có thể giữ được sự ổn định suốt 5 era, nhưng kết cục là một xã hội thối rữa và đóng băng hoàn toàn.
+- Một Worker có thể giải phóng được giai cấp, nhưng phải đối mặt với một nền kinh tế kiệt quệ sau cuộc chiến.
+- Một Historian có thể hiểu hết mọi quy luật của vũ trụ, nhưng đau đớn nhận ra mình chỉ là một kẻ đứng bên lề nhìn lịch sử thăng trầm.
 
----
+## 12. Giao Lưu Với Audience Khi Đang Demo
 
-## 7. Transition Engine: Vì Sao Lịch Sử Không Tuyến Tính
+**Mẹo thực chiến:** Dùng các câu hỏi này để kéo giảng viên và các bạn sinh viên vào trạng thái tương tác, làm chủ hội trường.
 
-*Chuyển sang phần giải thích outcome. Có thể mở replay/timeline nếu đã chơi demo.*
+**Khi ở màn chọn vai:**
+"Nếu được chọn ngay bây giờ, thầy cô và các bạn sẽ muốn trải nghiệm phe nào: người cai trị nắm toàn quyền, người lao động tìm đường giải phóng, hay một sử gia đứng ngoài quan sát? Vì sao?"
 
-Cuối mỗi era, game không tự động đưa người chơi sang era sau. Nó dùng transition engine để chọn một trong 6 outcome.
+**Nếu có người chọn Ruler:** "Tuyệt vời, vậy lát nữa chúng ta sẽ cùng xem giữ trật tự xã hội đau đầu thế nào, khi một ổn định ngắn hạn có thể là mầm mống cho mâu thuẫn dài hạn."
 
-### 1. Evolve
+**Nếu có người chọn Worker:** "Vai này nhập vai cực mạnh, nhưng hãy cẩn thận nhé: bất mãn cao là chưa đủ, nếu tổ chức yếu thì cái giá phải trả sẽ là một cuộc tắm máu."
 
-Xã hội chuyển tiếp tương đối êm. Mâu thuẫn chưa vỡ, ổn định còn đủ, quan hệ sản xuất có thể thích nghi một phần.
+**Nếu có người chọn Historian:** "Đây là vai bình tĩnh nhất nhưng cũng bất lực nhất: thấy rõ quy luật ngầm, nhưng không thể trực tiếp can thiệp."
 
-### 2. Rupture
+**Khi đưa ra quyết định (Decision):**
+"Đứng trước biến cố này, nếu là mọi người, mọi người sẽ chọn phương án nào? Chấp nhận thắt lưng buộc bụng để tích lũy sản xuất, hay nhượng bộ để giữ ổn định trước mắt?"
 
-Cách mạng thành công. Trật tự cũ bị phá vỡ, quan hệ sản xuất mới bắt đầu hình thành. Nhưng game không mô tả rupture như "happy ending" tuyệt đối. Nó là một đứt gãy lịch sử, có chi phí và có hậu quả.
+**Sau khi họ chọn:** "Điểm hay của game là nó không phán xét lựa chọn này đúng hay sai. Nó chỉ trả về đúng hệ quả quan hệ nhân quả mà lịch sử phải gánh chịu."
 
-### 3. Failed Uprising
+**Khi chỉ số thay đổi:**
+"Mọi người hãy để ý thanh chỉ số: Sản xuất tăng không có nghĩa là xã hội sẽ yên bình hơn. Đôi khi sản xuất phát triển quá nhanh lại chính là thứ làm cho cái khung của quan hệ sản xuất cũ bị nứt toác ra nhanh hơn."
 
-Khởi nghĩa thất bại. Mâu thuẫn cao nhưng tổ chức chưa đủ hoặc đàn áp quá mạnh. Người chơi bị giữ lại trong era, với ký ức thất bại nặng hơn.
+## 13. Bản Rút Gọn 3 Phút (Dùng khi bị khống chế thời gian gắt gao)
+Nếu ban giám khảo hoặc giảng viên yêu cầu nói thật nhanh, hãy dùng phiên bản cô đọng này:
 
-### 4. Freeze
+> Kính chào thầy cô, dự án của nhóm em là minigame Hành Trình Tiến Hoá — một mô hình tương tác trực quan về Chủ nghĩa duy vật lịch sử. Thay vì kiểm tra lý thuyết bằng các câu hỏi trắc nghiệm, game ném người chơi vào dòng chảy của 5 hình thái kinh tế - xã hội từ Cộng sản nguyên thủy đến Xã hội chủ nghĩa.
+>
+> Điểm cốt lõi của game là Hệ thống 3 góc nhìn: Người chơi chọn nhập vai làm Ruler, Worker, hoặc Historian. Cùng một biến cố lịch sử, nhưng ba vị trí giai cấp này sẽ nhìn thấy ba thực tế khác nhau với hệ thống HUD và mục tiêu độc lập. Qua đó, game chứng minh luận điểm: Vị trí giai cấp định hình nhận thức xã hội.
+>
+> Mọi quyết định của người chơi sẽ tác động lên 5 chỉ số: Sản xuất, Công nghệ, Ổn định, Mâu thuẫn, và Cách mạng. Khi mâu thuẫn tích tụ, xã hội sẽ bị đẩy qua các tier khủng hoảng và buộc phải đối mặt với các bước ngoặt lịch sử. Kết cục cuối mỗi era không hề tuyến tính, hệ thống sẽ tự động tính toán để trả về 1 trong 6 kết cục: Tiến hóa, Đứt gãy cách mạng, Khởi nghĩa thất bại, Đóng băng, Sụp đổ, hoặc Đàn áp.
+>
+> Với các tính năng bổ trợ như màn chơi trung gian Dark Age, hệ thống vết sẹo lịch sử Memory và âm thanh ma trận theo vai, game không đơn giản hóa Triết học mà biến Triết học thành một thứ có thể cảm nhận được bằng trực giác: Lịch sử không tự động đi lên, và mỗi quyết định đều mang trọng lượng cấu trúc của thời đại.
 
-Xã hội đóng băng. Không đủ sức chuyển hoá, cũng không đủ sức sụp đổ ngay. Era có thể bị lặp lại với decay, thể hiện tình trạng trì trệ.
+## 14. Câu Kết Mạnh [Bắt buộc]
 
-### 5. Collapse
+**Mỏ neo:** Mỗi quyết định mang trọng lượng lịch sử.
 
-Sụp đổ. Khi sản xuất và ổn định đều quá thấp, xã hội không sinh ra hình thái mới ngay lập tức mà bước vào một khoảng tối.
+Em xin phép được khép lại bài giới thiệu của mình bằng một đúc kết:
 
-### 6. Suppress
+Minigame này không cố gắng tầm thường hóa Triết học. Mục tiêu của nhóm em là biến Triết học trở thành một thứ có thể cảm nhận được bằng trực giác.
 
-Đàn áp toàn diện. Trật tự được giữ bằng bạo lực, nhưng cải cách bị khoá về sau. Đây là kiểu "thắng ngắn hạn, thua dài hạn".
+Khi dấn thân vào trò chơi này, người học sẽ hiểu rằng không một ai trong chúng ta có thể đứng ngoài rìa của lịch sử. Không có một quyết định nào là vô can. Và đó cũng là thông điệp lớn nhất mà dự án "Hành Trình Tiến Hoá" muốn gửi gắm:
 
-Điểm em muốn nhấn mạnh: game không dạy rằng lịch sử tự động tiến bộ. Duy vật lịch sử không nói mọi xã hội chắc chắn đi lên một cách đẹp đẽ. Nó nói rằng xã hội vận động trong mâu thuẫn, và kết quả phụ thuộc vào điều kiện vật chất, tổ chức, lực lượng xã hội và cách mâu thuẫn được giải quyết.
+Mỗi quyết định của chúng ta ngày hôm nay, đều mang trọng lượng của lịch sử ngày mai.
 
----
+Em xin chân thành cảm ơn thầy cô và các bạn đã lắng nghe!
 
-## 8. Dark Age Và Consolidation: Sau Đứt Gãy Chưa Phải Là Kết Thúc
+## Phụ Lục: Trả Lời Khi Bị Giảng Viên Hỏi Sâu (Q&A Master)
 
-Một nâng cấp quan trọng của minigame là có **interlude**, tức màn trung gian sau biến cố lớn.
-
-Nếu outcome là `collapse`, người chơi bước vào **dark_age**.
-
-Dark age không phải một era thứ sáu. Nó là khoảng tối sau sụp đổ: sản xuất đứt gãy, tri thức có thể thất truyền, quyền lực phân mảnh. Người chơi phải chọn cứu điều gì trước: lương thực, tri thức, cộng đồng hay tổ chức.
-
-Nếu outcome là `rupture`, người chơi bước vào **consolidation**.
-
-Consolidation nhấn mạnh rằng cách mạng không kết thúc ở khoảnh khắc lật đổ. Sau đó còn câu hỏi khó hơn: quan hệ sản xuất mới được tổ chức thế nào? Quyền lực có quay lại tay thiểu số không? Công cụ sản xuất thuộc về ai?
-
-Hai interlude này làm game đúng triết học hơn, vì nó tránh cách hiểu đơn giản rằng:
-
-> Cách mạng xảy ra là xong, hoặc sụp đổ là tự động sinh ra cái mới.
-
-Trong game, quá độ luôn cần tổ chức.
-
----
-
-## 9. Memory, Companion Và Narrator
-
-*Chỉ vào dòng companion hoặc narrator HUD nếu đang hiện.*
-
-Game có hệ thống memory. Một số lựa chọn và outcome để lại ký ức lịch sử như:
-
-- Đàn áp hàng loạt.
-- Khởi nghĩa thất bại.
-- Cải cách thành công.
-- Di chứng sụp đổ.
-- Di sản cách mạng.
-- Mạng lưới ngầm.
-- Thập kỷ trì trệ.
-
-Memory không biến mất ngay. Nó ảnh hưởng đến các era sau, hiện lại trong dòng "Dư âm lịch sử", replay timeline và ending.
-
-Ngoài ra game có **Companion Voice**. Mỗi vai có một tiếng nói đi cùng:
-
-- Ruler có cận thần hoặc cố vấn.
-- Worker có đồng chí hoặc người cùng cảnh.
-- Historian có trợ lý lưu trữ.
-
-Các câu companion được viết theo từng era và từng role. Ví dụ ở thời chiếm hữu nô lệ, Worker nghe giọng của bạn nô lệ; ở tư bản chủ nghĩa, Worker nghe đồng nghiệp ca; ở xã hội chủ nghĩa, Worker nghe đồng chí cùng tổ.
-
-Narrator cũng có audio riêng theo role:
-
-```text
-5 era × 3 role × 3 moment = 45 voice files
-```
-
-Ba moment là:
-
-- `enter`: khi bước vào era.
-- `tension`: khi mâu thuẫn căng.
-- `revolution`: khi cách mạng/đứt gãy xảy ra.
-
-Điều này giúp game không chỉ có logic đúng, mà còn có cảm giác nhập vai.
-
----
-
-## 10. Ending: Không Có "Win" Tuyệt Đối
-
-Cuối game, ending không chỉ dựa vào điểm số. Nó đọc toàn bộ lịch sử người chơi đã tạo ra:
-
-- Đi qua era nào bằng evolve, rupture, collapse hay suppress.
-- Có bao nhiêu lần cách mạng.
-- Có memory đàn áp, thất bại, sụp đổ hay cải cách.
-- Người chơi đang ở vai nào.
-
-Hiện hệ thống có nhiều ending template, mỗi ending có narration riêng cho cả Ruler, Worker và Historian.
-
-Điểm quan trọng là: không có kết thúc nào là "đúng tuyệt đối".
-
-- Ruler có thể giữ được trật tự, nhưng cái giá là chính danh hoặc trì trệ.
-- Worker có thể tạo rupture, nhưng phải đối mặt với tổ chức xã hội mới.
-- Historian có thể hiểu sâu lịch sử, nhưng không trực tiếp cứu được con người trong biến cố.
-
-Kết thúc của game là một câu hỏi phản tư: nếu chọn khác đi, nếu tổ chức mạnh hơn, nếu đàn áp ít hơn, nếu cải cách sớm hơn, lịch sử có rẽ sang hướng khác không?
-
----
-
-## 11. Demo Gợi Ý Trong 2-3 Phút
-
-Nếu có thời gian demo trực tiếp, em sẽ đi theo thứ tự này:
-
-1. **Chọn Worker** để cảm giác nhập vai rõ nhất.
-2. Vào era đầu tiên, chỉ nhanh 5 chỉ số và HUD áp lực.
-3. Chọn một decision có tính trade-off, ví dụ chia sẻ tài nguyên hay tích trữ.
-4. Sau consequence, chỉ cách metric thay đổi và cause-chain giải thích hậu quả.
-5. Nếu có event hoặc companion xuất hiện, dừng lại đọc một câu để cho thấy game không chỉ là số.
-6. Quay lại màn chọn vai hoặc nói nhanh: cùng tình huống đó, Ruler và Historian sẽ thấy prompt/option khác.
-
-*Nếu cần tạo ấn tượng mạnh hơn, có thể demo tiếp một đoạn mâu thuẫn cao để cho thấy emergency/rupture lock option và narrator tension.*
-
----
-
-## 12. Giá Trị Của Project
-
-Em tóm tắt giá trị của minigame bằng 4 ý.
-
-Thứ nhất, nó biến lý thuyết thành trải nghiệm. Người học không chỉ đọc "mâu thuẫn giai cấp", mà thấy mâu thuẫn tăng lên qua từng lựa chọn.
-
-Thứ hai, nó giữ đúng tinh thần duy vật lịch sử. Các biến đổi không đến từ đạo đức cá nhân đơn giản, mà từ sản xuất, sở hữu, tổ chức, chính danh và mâu thuẫn xã hội.
-
-Thứ ba, nó cho phép so sánh góc nhìn. Cùng một biến cố, Ruler, Worker và Historian cho ba cách hiểu khác nhau. Đây là phần giúp người chơi cảm nhận được vai trò của vị trí giai cấp.
-
-Thứ tư, nó có khả năng mở rộng. Có thể thêm event, ending, voice, hoặc những case lịch sử cụ thể mà không phá lõi logic.
-
----
-
-## 13. Kết Luận
-
-*Dừng màn hình ở ending, timeline hoặc màn chọn vai.*
-
-Minigame **"Hành Trình Tiến Hoá"** không cố biến triết học thành một trò chơi dễ dãi. Ngược lại, nó giữ sự phức tạp của lịch sử, nhưng trình bày bằng trải nghiệm tương tác.
-
-Người chơi sẽ thấy rằng:
-
-- Sản xuất phát triển có thể mở ra tiến bộ, nhưng cũng làm lộ giới hạn của trật tự cũ.
-- Cải cách, đàn áp, nổi dậy hay ghi chép đều có vai trò lịch sử khác nhau.
-- Cách mạng không chỉ là một sự kiện, mà là kết quả của mâu thuẫn, tổ chức và điều kiện vật chất.
-- Và quan trọng nhất: lịch sử không có một con đường đơn giản, nhưng nó có quy luật vận động.
-
-Em xin kết thúc bằng thông điệp của minigame:
-
-> **Mỗi quyết định đều mang trọng lượng lịch sử. Không có lựa chọn nào đứng ngoài mâu thuẫn của thời đại mình.**
-
-Em xin cảm ơn thầy cô và các bạn đã lắng nghe.
-
----
-
-# Phụ Lục Q&A
-
-## Q1. Game có làm sai triết học khi cho người chơi "điều khiển lịch sử" không?
-
-Không. Người chơi không điều khiển lịch sử theo ý muốn tuyệt đối. Mỗi lựa chọn bị giới hạn bởi era, vai trò, tier mâu thuẫn, chỉ số xã hội và memory đã tích luỹ. Đây là cách game mô phỏng quan hệ giữa chủ thể hành động và điều kiện vật chất.
-
-## Q2. Vì sao Historian vẫn có lựa chọn nếu không được can thiệp?
-
-Vì lựa chọn của Historian là lựa chọn về cách ghi chép và phân tích. Vai này không ban lệnh, không đàn áp, không khởi nghĩa trực tiếp. Nó mở insight và để người chơi thấy cấu trúc lịch sử rõ hơn.
-
-## Q3. Game có thiên vị Worker không?
-
-Không theo nghĩa gameplay. Worker có khả năng tổ chức và rupture, nhưng nếu tổ chức yếu thì dễ thất bại. Ruler có thể giữ ổn định nhưng dễ rơi vào suppress hoặc trì trệ. Historian hiểu rộng nhất nhưng không trực tiếp thay đổi xã hội. Mỗi vai có sức mạnh và giới hạn riêng.
-
-## Q4. Vì sao có dark age?
-
-Vì sụp đổ không tự động sinh ra tiến bộ. Một xã hội có thể mất sản xuất, mất tri thức và rơi vào phân mảnh. Dark age giúp game tránh cách hiểu máy móc rằng cứ trật tự cũ sụp là hình thái mới sẽ xuất hiện ngay.
-
-## Q5. Vì sao cách mạng còn cần consolidation?
-
-Vì lật đổ trật tự cũ chỉ là khoảnh khắc mở đầu. Nếu quan hệ sản xuất mới không được tổ chức, quyền lực cũ có thể quay lại dưới hình thức khác. Consolidation thể hiện câu hỏi: sau cách mạng, xã hội mới được xây bằng cơ chế nào?
-
-## Q6. Điểm kỹ thuật nổi bật nhất của minigame là gì?
-
-Nổi bật nhất là hệ thống kết hợp giữa `metrics`, `pressures`, `tier`, `option tags`, `memory`, `transition outcome`, `role lens`, `companion` và `ending resolver`. Các phần này không đứng riêng lẻ, mà nối thành một vòng phản hồi lịch sử.
-
+1. **Thầy/Cô hỏi:** "Game có đang làm lịch sử thành chuyện cá nhân, đề cao vai trò anh hùng cá nhân không?"
+   **Trả lời:** "Dạ không ạ. Ngược lại, game nhấn mạnh tính khách quan của lịch sử. Người chơi có quyền lựa chọn, nhưng các phương án lựa chọn luôn bị khóa hoặc mở dựa trên điều kiện vật chất (chỉ số Sản xuất, Công nghệ) và mâu thuẫn cấu trúc của era đó. Người chơi muốn làm khác đi cũng không được nếu hoàn cảnh lịch sử chưa chín muồi. Đây chính là cách mô phỏng mối quan hệ giữa chủ thể hành động và điều kiện khách quan của lịch sử."
+2. **Thầy/Cô hỏi:** "Tại sao lại chọn đúng 3 vai này mà không phải các vai khác?"
+   **Trả lời:** "Bởi vì 3 vai này đại diện cho 3 trạng thái nhận thức luận Marxist rõ ràng nhất: Ruler đại diện cho giai cấp thống trị (bảo vệ cấu trúc thượng tầng và quan hệ sản xuất cũ để quản trị); Worker đại diện cho giai cấp bị trị (lực lượng sản xuất trực tiếp, mang động lực giải phóng); còn Historian đại diện cho lực lượng lý luận, quan sát khách quan để bóc tách quy luật. Hệ thống này chứng minh: Sự nhận thức về thế giới bị quy định bởi vị trí lợi ích giai cấp."
+3. **Thầy/Cô hỏi:** "Tại sao thiết kế vai Historian không cho họ can thiệp, ban lệnh hay khởi nghĩa? Như vậy có chán không?"
+   **Trả lời:** "Dạ, vai Historian được thiết kế dành riêng cho những người muốn trải nghiệm game dưới góc độ lý luận sâu. Nếu cho Historian đi ban chính sách như Ruler hay phát động khởi nghĩa như Worker thì sẽ bị sai lệch về mặt logic học thuật. Historian can thiệp vào game bằng cách lựa chọn góc nhìn để ghi chép, mở khóa các 'Insight' bản chất cho người chơi, từ đó thay đổi cách tính toán điểm Ending ở cuối game."
+4. **Thầy/Cô hỏi:** "Game này có đang thiên vị, mặc định phe Cách mạng/Worker là luôn đúng và luôn thắng không?"
+   **Trả lời:** "Dạ hoàn toàn không. Game phản ánh lịch sử một cách duy vật và tỉnh táo. Nếu người chơi chọn vai Worker nhưng chỉ biết kích động bạo lực khi tính tổ chức chưa cao, game sẽ trả về kết cục Failed Uprising — một cuộc tắm máu thất bại. Thậm chí khi Cách mạng thành công (Rupture), game buộc người chơi phải giải quyết bài toán cực khó ở màn Consolidation: Làm sao tổ chức lại nền kinh tế bị kiệt quệ sau chiến tranh? Nếu không khéo, xã hội mới sẽ lại biến chất."
+5. **Thầy/Cô hỏi:** "Màn Dark Age có tác dụng gì về mặt học thuật?"
+   **Trả lời:** "Màn Dark Age sinh ra để chống lại tư duy duy tâm, máy móc cho rằng lịch sử luôn tự động đi lên theo đường thẳng. Khi lực lượng sản xuất và sự ổn định bị phá hủy hoàn toàn (Collapse), xã hội sẽ rơi vào suy thoái, tri thức bị xóa sổ và lịch sử có thể đi lùi hàng thế kỷ. Muốn đi lên lại, người chơi phải chật vật tích lũy lại những điều kiện vật chất tối thiểu."
+6. **Thầy/Cô hỏi:** "Điểm cốt lõi về mặt kỹ thuật giúp hiện thực hóa tư tưởng Triết học ở đây là gì?"
+   **Trả lời:** "Đó là kiến trúc hệ thống liên kết dạng chuỗi nhân quả: Option Tag (Nhãn lựa chọn) → Metric (Biến thiên chỉ số) → Pressure (Tích tụ áp lực) → Tier (Cấp độ khủng hoảng) → Event Trigger (Kích hoạt biến cố) → Transition Engine (Quyết định kết cục) → Memory (Dấu vết lịch sử) → Ending Resolver. Nhờ chuỗi logic này, một quyết định nhỏ từ thời đại trước có thể định đoạt số phận xã hội ở vài trăm năm sau."

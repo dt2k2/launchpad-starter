@@ -129,6 +129,58 @@ function clamp(v: number) {
   return Math.max(0, Math.min(100, v));
 }
 
+function hashString(input: string): number {
+  let h = 2166136261;
+  for (let i = 0; i < input.length; i += 1) {
+    h ^= input.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return h >>> 0;
+}
+
+function seededRng(seed: string): () => number {
+  let s = hashString(seed) || 0x9e3779b9;
+  return () => {
+    s = (s + 0x6d2b79f5) >>> 0;
+    let t = s;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+function decisionSeed(state: SimState, optionId: string) {
+  const metrics = ALL_METRICS.map((k) => `${k}:${Math.round(state.metrics[k])}`).join(",");
+  const path = state.log.map((entry) => `${entry.stage}:${entry.optionLabel}:${entry.tag ?? ""}`).join("|");
+  return [
+    state.perspective,
+    state.stageIdx,
+    state.decisionIdx,
+    state.stagesCompleted,
+    metrics,
+    path,
+    optionId,
+  ].join("::");
+}
+
+function resolveStateContradiction(
+  metrics: Record<MetricKey, number>,
+  perspective: PerspectiveId,
+  tagCounts: Partial<Record<OptionTag, number>>,
+  progressiveCount: number,
+  eventCooldowns: Record<string, number>,
+  eraId?: EraId,
+) {
+  return resolveContradiction({
+    metrics,
+    perspective,
+    tagCounts,
+    progressiveCount,
+    eventCooldowns,
+    eraId,
+  });
+}
+
 function applyBias(
   delta: Partial<Record<MetricKey, number>>,
   bias: Partial<Record<MetricKey, number>>,
@@ -226,6 +278,15 @@ function recomputeLocks(state: SimState): { lockedOptionIds: string[]; lockReaso
 
 export function initialState(): SimState {
   const metrics = baseMetricsFor(STAGES[0]);
+  const eventCooldowns: Record<string, number> = {};
+  const { tier, pressures } = resolveStateContradiction(
+    metrics,
+    "historian",
+    {},
+    0,
+    eventCooldowns,
+    STAGES[0].id,
+  );
   return {
     perspective: "historian",
     phase: "perspective",
@@ -239,11 +300,11 @@ export function initialState(): SimState {
     revolutionsBurned: 0,
     progressiveCount: 0,
     stagesCompleted: 0,
-    contradictionTier: resolveTier(metrics.contradiction).id,
-    pressures: EMPTY_PRESSURES,
+    contradictionTier: tier.id,
+    pressures,
     tagCounts: {},
     activeEvents: [],
-    eventCooldowns: {},
+    eventCooldowns,
     lockedOptionIds: [],
     lockReasons: {},
     ruptureStreak: 0,
@@ -304,11 +365,39 @@ function memoryFromInterlude(kind: InterludeKind, tag: OptionTag): MemoryTagId |
 
 export function reducer(state: SimState, action: SimAction): SimState {
   switch (action.type) {
-    case "choosePerspective":
-      return { ...state, perspective: action.id, phase: "intro" };
+    case "choosePerspective": {
+      const stage = STAGES[state.stageIdx];
+      const { tier, pressures } = resolveStateContradiction(
+        state.metrics,
+        action.id,
+        state.tagCounts,
+        state.progressiveCount,
+        state.eventCooldowns,
+        stage?.id,
+      );
+      return {
+        ...state,
+        perspective: action.id,
+        contradictionTier: tier.id,
+        pressures,
+        phase: "intro",
+      };
+    }
 
     case "startStage": {
-      const withComp = withCompanion(state, { kind: "stage_start" });
+      const stage = STAGES[state.stageIdx];
+      const { tier, pressures } = resolveStateContradiction(
+        state.metrics,
+        state.perspective,
+        state.tagCounts,
+        state.progressiveCount,
+        state.eventCooldowns,
+        stage?.id,
+      );
+      const withComp = withCompanion(
+        { ...state, contradictionTier: tier.id, pressures },
+        { kind: "stage_start" },
+      );
       const next = { ...withComp, phase: "playing" as const };
       const { lockedOptionIds, lockReasons } = recomputeLocks(next);
       return { ...next, lockedOptionIds, lockReasons };
@@ -331,7 +420,12 @@ export function reducer(state: SimState, action: SimAction): SimState {
 
       // Current tier (before this decision applies) gates risk + decay
       const currentTier = resolveTier(state.metrics.contradiction);
-      const risked = applyOptionRisk(biased, currentTier) as Partial<Record<MetricKey, number>>;
+      const seedBase = decisionSeed(state, option.id);
+      const risked = applyOptionRisk(
+        biased,
+        currentTier,
+        seededRng(`${seedBase}:risk`),
+      ) as Partial<Record<MetricKey, number>>;
       const riskApplied =
         currentTier.optionRiskFactor > 0 &&
         ALL_METRICS.some((k) => (risked[k] ?? 0) !== (biased[k] ?? 0));
@@ -379,7 +473,7 @@ export function reducer(state: SimState, action: SimAction): SimState {
         eventCooldowns: state.eventCooldowns,
         eraId,
         pressures,
-      });
+      }, seededRng(`${seedBase}:event`));
 
       let activeEvents = state.activeEvents;
       let eventCooldowns = state.eventCooldowns;
@@ -411,6 +505,7 @@ export function reducer(state: SimState, action: SimAction): SimState {
           tagCounts,
           progressiveCount,
           eventCooldowns,
+          eraId,
         }).pressures;
 
         if (rolled.pressureImpact) {
@@ -634,11 +729,10 @@ export function reducer(state: SimState, action: SimAction): SimState {
 
     case "ackTransition": {
       // After the transition narration screen, decide what comes next.
-      // If we already advanced into the last stage and outcome was terminal
+      // If we already finished the final stage and outcome was terminal
       // (collapse/suppress on final era), go to finale; else play the new stage intro.
-      const isLast = state.stageIdx >= STAGES.length - 1;
       const terminal =
-        isLast &&
+        state.stagesCompleted >= STAGES.length &&
         (state.lastTransition === "collapse" || state.lastTransition === "suppress");
       if (terminal) return { ...state, phase: "finale", pendingInterlude: null };
       if (state.lastTransition === "collapse") {

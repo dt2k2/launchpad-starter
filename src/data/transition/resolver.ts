@@ -23,8 +23,7 @@ export function resolveTransition(s: SimState): TransitionDecision {
   const leg = 100 - s.pressures.legitimacyLoss;
   const persp = s.perspective;
 
-  // Anti-loop: if we've frozen this stage once already, disqualify freeze
-  const frozenAlready = (s.stageFreezeCount ?? 0) >= 1;
+  // Note: We allow infinite freeze (stagnation) as historically accurate.
 
   const cands: Cand[] = [
     {
@@ -55,14 +54,14 @@ export function resolveTransition(s: SimState): TransitionDecision {
     {
       o: "freeze",
       w:
-        !frozenAlready && c < 55 && rev < 35 && p < 45 && org < 35
+        c < 55 && rev < 35 && p < 45 && org < 35
           ? 32 + (50 - org) * 0.2
           : 0,
       reason: "no pressure, no movement",
     },
     {
       o: "evolve",
-      w: st > 35 && c < 75 ? 32 + leg / 3 + p * 0.15 : 8,
+      w: st > 35 && c < 75 && p >= 40 ? 32 + leg / 3 + p * 0.15 : 8,
       reason: "stable enough to transition",
     },
   ];
@@ -80,13 +79,14 @@ export function resolveTransition(s: SimState): TransitionDecision {
   const pool = cands.filter((c) => c.w > 0);
   if (pool.length === 0) return pick(cands.find((x) => x.o === "evolve")!, cands);
 
-  const total = pool.reduce((a, x) => a + x.w, 0);
-  let r = Math.random() * total;
-  for (const x of pool) {
-    r -= x.w;
-    if (r <= 0) return pick(x, cands);
-  }
-  return pick(pool[pool.length - 1], cands);
+  // Deterministic fallback: pick the candidate with the highest weight
+  const chosen = pool.reduce((best, cand) => {
+    if (cand.w > best.w) return cand;
+    if (cand.w < best.w) return best;
+    return cand.o > best.o ? cand : best; // tie breaker
+  }, pool[0]);
+  
+  return pick(chosen, cands);
 }
 
 function pick(chosen: Cand, all: Cand[]): TransitionDecision {
