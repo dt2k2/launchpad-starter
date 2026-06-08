@@ -36,6 +36,14 @@ export function Footer() {
           <span>The Historical Materialism Timeline</span>
           <span>Một bản đồ lịch sử cuộn dọc · 2026</span>
         </div>
+        <div className="mt-8 border-t border-white/10 pt-6">
+          <p className="mb-2 font-display text-sm tracking-wide text-amber-200/90">
+            Hỗ trợ công cụ AI
+          </p>
+          <p className="font-display text-sm text-white/70">
+            Lovable · Claude
+          </p>
+        </div>
       </div>
     </footer>
   );
