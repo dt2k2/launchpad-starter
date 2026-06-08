@@ -705,8 +705,14 @@ export const OPTION_COPY_OVERRIDES: Record<
       },
     },
     historian: {
-      share: { label: "mẫu phân phối công cụ chung" },
-      hoard: { label: "mầm độc quyền công cụ sống còn" },
+      share: {
+        label: "Lửa phân phối theo nhu cầu — chưa có 'của tôi' trong từ điển cộng đồng",
+        flavor: "Không phải lý tưởng — đây là điều kiện vật chất bắt buộc. Khi không ai có dư, 'sở hữu riêng' không có chỗ bám. Ghi lại thời điểm này trước khi nó kết thúc.",
+      },
+      hoard: {
+        label: "Độc quyền lửa: lần đầu tiên 'điều kiện' xuất hiện trong trao đổi xã hội",
+        flavor: "Không phải ác ý. Đây là cấu trúc: ai kiểm soát phương tiện sống còn bắt đầu kiểm soát người khác. Ghi lại mốc này — lịch sử bắt đầu phân nhánh từ đây.",
+      },
     },
   },
   "p-d2": {
@@ -731,8 +737,14 @@ export const OPTION_COPY_OVERRIDES: Record<
       },
     },
     historian: {
-      farm: { label: "ngưỡng thặng dư nông nghiệp" },
-      migrate: { label: "tái sản xuất săn bắt - hái lượm" },
+      farm: {
+        label: "Định cư + thặng dư lần đầu: ngưỡng không thể đảo ngược của lịch sử",
+        flavor: "Từ đây có thể có kho. Có người giữ kho. Có luật về kho. Bước ngoặt này không ồn ào — nhưng mọi hình thái giai cấp sau này đều bắt đầu từ mảnh đất và hạt giống này.",
+      },
+      migrate: {
+        label: "Du mục tiếp diễn: bước chuyển phân tầng bị hoãn thêm một thế hệ",
+        flavor: "Không có thặng dư, không có tích luỹ, không có giai cấp — chưa. Xã hội giữ nguyên hình thái. Nhưng cần ghi rõ: đây là hoãn, không phải xoá.",
+      },
     },
   },
   "p-d3": {
@@ -757,8 +769,14 @@ export const OPTION_COPY_OVERRIDES: Record<
       },
     },
     historian: {
-      enslave: { label: "sự hình thành lao động cưỡng bức" },
-      free: { label: "sự kéo dài quan hệ cộng đồng cũ" },
+      enslave: {
+        label: "Tù binh sống sót = tài sản: giai cấp ra đời từ ba điều kiện hội đủ",
+        flavor: "Thặng dư đủ nuôi người thêm. Chiến tranh cung cấp nguồn. Công cụ kim loại làm lao động cưỡng bức có lãi. Lần đầu tiên trong lịch sử, con người bị quy đổi thành giá trị kinh tế. Ghi lại thời điểm này.",
+      },
+      free: {
+        label: "Thả tù binh: điều kiện vật chất chưa chín — hay ý chí cộng đồng chặn bước nhảy?",
+        flavor: "Giai cấp không hình thành hôm nay. Nhưng cần hỏi: đây là chọn lựa đạo đức, hay là điều kiện sản xuất chưa cho phép? Cả hai câu trả lời đều quan trọng với lịch sử.",
+      },
     },
   },
   "s-d1": {
@@ -793,8 +811,14 @@ export const OPTION_COPY_OVERRIDES: Record<
       },
     },
     historian: {
-      war: { label: "chiến tranh như cơ chế tái sản xuất nô lệ" },
-      reform: { label: "hình thức lệ thuộc chuyển tiếp sang colonus" },
+      war: {
+        label: "Chiến tranh = cỗ máy công nghiệp tái sản xuất lao động cưỡng bức",
+        flavor: "Đế chế không xâm lược vì khát máu. Nó xâm lược vì cỗ máy kinh tế đòi hỏi nhiên liệu người — và chiến tranh là cách rẻ nhất để có được. Ghi vào hồ sơ: kinh tế học đứng sau mọi cuộc chiến lớn.",
+      },
+      reform: {
+        label: "Colonus: QHSX nô lệ tự điều chỉnh khi bạo lực đơn thuần không còn đủ",
+        flavor: "Khi năng suất lao động cưỡng bức giảm, chủ nô nhượng một phần quyền sở hữu để giữ sản xuất. Đây là bước chuyển tiếp, không phải giải phóng — cần phân biệt rõ.",
+      },
     },
   },
   "s-d2": {
@@ -810,8 +834,14 @@ export const OPTION_COPY_OVERRIDES: Record<
       },
     },
     historian: {
-      crush: { label: "bạo lực đàn áp khởi nghĩa nô lệ" },
-      concede: { label: "nhượng bộ nhằm tái ổn định lao động cưỡng bức" },
+      crush: {
+        label: "Đàn áp Spartacus: nhà nước nô lệ huy động 6 quân đoàn để bảo vệ quan hệ sở hữu",
+        flavor: "Số quân cần thiết để đàn áp một cuộc khởi nghĩa nô lệ là dữ liệu kinh tế: nó cho thấy chi phí duy trì QHSX đang tiến gần điểm không còn bền vững. Spartacus thua về quân sự — nhưng thắng về lịch sử.",
+      },
+      concede: {
+        label: "Nhượng bộ: giai cấp thống trị mua ổn định bằng phần nhỏ quyền sở hữu",
+        flavor: "Đây là cải cách trong lòng hệ thống — không phải bước ra khỏi nó. Mâu thuẫn hạ nhiệt, nhưng cấu trúc con người bị định giá như tài sản vẫn nguyên vẹn. Cần ghi rõ sự khác biệt này.",
+      },
     },
   },
   "s-d3": {
@@ -841,8 +871,14 @@ export const OPTION_COPY_OVERRIDES: Record<
       },
     },
     historian: {
-      ignore: { label: "phát minh bị quan hệ nô lệ làm vô dụng" },
-      invest: { label: "mầm kỹ thuật vượt trước điều kiện xã hội" },
+      ignore: {
+        label: "QHSX nô lệ giết phát minh: lao động rẻ hơn gang thép",
+        flavor: "Hero of Alexandria thiết kế động cơ hơi nước từ thế kỷ 1 CN. Nó không được ứng dụng vì lý do đơn giản: nô lệ rẻ hơn. Không phải thiếu trí tuệ — QHSX không tạo ra điều kiện kinh tế cho đổi mới.",
+      },
+      invest: {
+        label: "Kỹ thuật vượt trước QHSX: phát minh đặt câu hỏi về giá trị của tài sản nô lệ",
+        flavor: "Đầu tư vào máy trong xã hội nô lệ là nghịch lý: nếu máy làm được, tại sao còn cần nô lệ? Câu hỏi đó có giá — và QHSX cũ sẽ phải đối mặt với nó.",
+      },
     },
   },
   "f-d1": {
@@ -857,8 +893,14 @@ export const OPTION_COPY_OVERRIDES: Record<
       },
     },
     historian: {
-      grant: { label: "đặc quyền phường hội bảo vệ trật tự cũ" },
-      free: { label: "thị trường đô thị phá khung phong kiến" },
+      grant: {
+        label: "Đặc quyền phường hội: phong kiến tự bảo vệ trước LLSX đô thị đang lớn lên",
+        flavor: "Không phải trì trệ mù quáng — đây là QHSX cũ nhận ra mối đe doạ và phản ứng. Nó sẽ thua, nhưng không thua ngay. Ghi lại cơ chế tự bảo vệ này.",
+      },
+      free: {
+        label: "Thị trường tự do: LLSX đô thị phá khung đặc quyền — và mở ra QHSX tư bản",
+        flavor: "Người làm ra của cải trong xưởng thủ công đô thị sắp vượt qua người thừa kế đất đai về quyền lực thực chất. Đây là thời điểm LLSX bắt đầu làm lung lay QHSX cũ.",
+      },
     },
   },
   "f-d2": {
@@ -888,8 +930,14 @@ export const OPTION_COPY_OVERRIDES: Record<
       },
     },
     historian: {
-      fund: { label: "tích lũy nguyên thủy qua thương mại và thuộc địa" },
-      refuse: { label: "phong kiến tự bảo tồn trước thị trường thế giới" },
+      fund: {
+        label: "Thuộc địa + thương mại biển: tích luỹ nguyên thuỷ tạo vật chất cho cách mạng công nghiệp",
+        flavor: "Vàng bạc thuộc địa không phải tài sản đơn giản — đó là điều kiện vật chất cho cách mạng công nghiệp 200 năm sau. Lịch sử có độ trễ rất dài; cần ghi nhận chuỗi nguyên nhân, không chỉ sự kiện.",
+      },
+      refuse: {
+        label: "Tự cô lập: thị trường thế giới hình thành không cần sự đồng ý của ai",
+        flavor: "Những trung tâm từ chối tham gia đúng thời điểm sẽ trở thành ngoại vi của trung tâm mới. Phong kiến không thể dừng lịch sử — chỉ chọn vị trí của mình trong lịch sử.",
+      },
     },
   },
   "f-d3": {
@@ -900,8 +948,14 @@ export const OPTION_COPY_OVERRIDES: Record<
       },
     },
     historian: {
-      repress: { label: "đàn áp tình thế cách mạng tư sản" },
-      constitution: { label: "thỏa hiệp hiến pháp của trật tự mới" },
+      repress: {
+        label: "Đàn áp tình thế cách mạng: QHSX phong kiến chiến đấu sinh tử với LLSX tư bản",
+        flavor: "Bạo lực có thể trì hoãn tình thế cách mạng — không thể xoá nó. LLSX tư sản đã vượt khung phong kiến về quy mô. Câu hỏi chỉ còn là hình thức và cái giá của chuyển giao.",
+      },
+      constitution: {
+        label: "Hiến pháp tư sản: QHSX mới được mã hoá thành luật — và giới hạn của nó",
+        flavor: "Đây là quá độ êm nhất có thể — và cần ghi rõ cái bị bỏ lại: 'tự do' trong hiến pháp tư sản là tự do mua bán sức lao động. Một hình thức sở hữu mới thay hình thức cũ.",
+      },
     },
   },
   "c-d1": {
@@ -912,8 +966,14 @@ export const OPTION_COPY_OVERRIDES: Record<
       },
     },
     historian: {
-      layoff: { label: "chuyển chi phí khủng hoảng sang lao động" },
-      welfare: { label: "điều tiết Keynes để trì hoãn mâu thuẫn" },
+      layoff: {
+        label: "Sa thải hàng loạt: tư bản xã hội hoá thua lỗ trong khi tư nhân hoá lợi nhuận",
+        flavor: "Đây không phải bất hạnh ngẫu nhiên — đây là cơ chế cấu trúc. CNTB tạo ra khủng hoảng rồi đẩy chi phí xuống tầng lớp không có quyền quyết định. Ghi vào hồ sơ: ai trả giá cho mỗi cuộc suy thoái.",
+      },
+      welfare: {
+        label: "Phúc lợi Keynes: nhà nước can thiệp để cứu thị trường — không phải để xoá nó",
+        flavor: "Tái phân phối một phần giúp hệ thống tiếp tục vận hành. Đây là bằng chứng: CNTB có thể tự sửa — và qua đó mâu thuẫn cơ bản không được giải quyết, chỉ được trì hoãn.",
+      },
     },
   },
   "c-d2": {
@@ -930,8 +990,14 @@ export const OPTION_COPY_OVERRIDES: Record<
       },
     },
     historian: {
-      "automate-private": { label: "tự động hóa tư nhân hóa lợi nhuận" },
-      "automate-share": { label: "xã hội hóa một phần lợi ích máy móc" },
+      "automate-private": {
+        label: "Tự động hoá tư nhân: mâu thuẫn cơ bản CNTB đạt điểm rõ nhất trong lịch sử",
+        flavor: "LLSX được xã hội hoá tột độ — máy móc do hàng triệu người vận hành, kết nối toàn cầu. Nhưng chiếm hữu vẫn tư nhân. Đây chính xác là mâu thuẫn Marx mô tả năm 1867. Giờ nó trở thành dữ liệu đo được.",
+      },
+      "automate-share": {
+        label: "Tự động hoá xã hội hoá: QHSX thử thích nghi — hay đang mua thêm thời gian?",
+        flavor: "Một phần lợi ích máy móc được tái phân phối. Câu hỏi lịch sử: đây là mầm mống của QHSX mới, hay là chiến thuật kéo dài tuổi thọ của cái cũ? Cần theo dõi tiếp.",
+      },
     },
   },
   "c-d3": {
@@ -961,8 +1027,14 @@ export const OPTION_COPY_OVERRIDES: Record<
       },
     },
     historian: {
-      "techno-fix": { label: "ảo tưởng kỹ trị trong quan hệ sở hữu cũ" },
-      "social-plan": { label: "kế hoạch hóa xanh như cải biến QHSX" },
+      "techno-fix": {
+        label: "Kỹ trị: ảo tưởng công nghệ thay đổi mà không đụng đến quan hệ sở hữu",
+        flavor: "Câu hỏi không bao giờ là 'công nghệ gì' — mà luôn là 'của ai, vì ai, kiểm soát bởi ai'. Ghi nhận: đây không phải lần đầu LLSX mới được đặt vào tay QHSX cũ và được gọi là 'tiến bộ'.",
+      },
+      "social-plan": {
+        label: "Kế hoạch hoá xanh: lần đầu QHSX bị thách thức trực tiếp trong hình thái này",
+        flavor: "Không phải cách mạng bạo lực — nhưng là chuyển dịch quan hệ sở hữu có chủ ý và có kế hoạch. Điều này hiếm trong lịch sử. Ghi nhận độ hiếm của nó và theo dõi xem nó có giữ được không.",
+      },
     },
   },
   "x-d1": {
@@ -987,8 +1059,14 @@ export const OPTION_COPY_OVERRIDES: Record<
       },
     },
     historian: {
-      ubi: { label: "phân phối giai đoạn đầu theo nhu cầu cơ bản và đóng góp" },
-      equal: { label: "cào bằng hình thức làm nghèo động lực sản xuất" },
+      ubi: {
+        label: "Phân phối hỗn hợp: 'làm theo năng lực, hưởng theo lao động' — XHCN giai đoạn đầu",
+        flavor: "Vẫn còn thước đo đóng góp — chưa phải 'hưởng theo nhu cầu'. Nhưng đã xoá sở hữu tư nhân về TLSX chiến lược. Ghi lại điểm xuất phát này và theo dõi cái gì thay đổi tiếp theo.",
+      },
+      equal: {
+        label: "Cào bằng tuyệt đối: bình đẳng hình thức tạo ra bất công nội dung",
+        flavor: "Nhu cầu khác nhau, năng lực khác nhau — đối xử như nhau là một dạng bất công mới. Sai lầm tư duy này từng phá vỡ nhiều dự án XHCN thực tế. Lịch sử đã trả lời câu hỏi này rồi.",
+      },
     },
   },
   "x-d2": {
@@ -1013,8 +1091,14 @@ export const OPTION_COPY_OVERRIDES: Record<
       },
     },
     historian: {
-      "data-common": { label: "AI commons như QHSX số mới" },
-      "data-private": { label: "tái sinh độc quyền tư bản trong dữ liệu" },
+      "data-common": {
+        label: "AI công cộng: sở hữu xã hội về tư liệu sản xuất số — câu hỏi quyết định thế kỷ này",
+        flavor: "Nếu dữ liệu là TLSX thế kỷ 21, thì ai sở hữu dữ liệu sở hữu thế kỷ này. AI công cộng là câu trả lời đầu tiên — nhưng cần theo dõi cơ chế quản trị, không chỉ tên gọi.",
+      },
+      "data-private": {
+        label: "Độc quyền AI: cấu trúc tư bản tái sinh trong hình thức số — tên mới, cơ chế cũ",
+        flavor: "Lao động tạo ra dữ liệu; tư bản sở hữu dữ liệu và thu giá trị thặng dư số. Lịch sử lặp lại với thuật toán. Ghi nhận: hình thức bóc lột thay đổi nhanh hơn nhận thức về nó.",
+      },
     },
   },
   "x-d3": {
@@ -1035,8 +1119,14 @@ export const OPTION_COPY_OVERRIDES: Record<
       },
     },
     historian: {
-      transparent: { label: "cơ chế kiểm soát quan liêu bằng dân chủ trực tiếp" },
-      topdown: { label: "nguy cơ bộ máy chung thành lợi ích riêng" },
+      transparent: {
+        label: "Dân chủ trực tiếp: điều kiện tối thiểu để bộ máy không tái sinh thành giai cấp đặc quyền",
+        flavor: "Bộ máy không tự giám sát được mình — đây là quy luật được xác nhận lặp đi lặp lại trong lịch sử. Minh bạch + bãi nhiệm không phải trang trí; chúng là cơ chế vật chất để XHCN không trượt ngược.",
+      },
+      topdown: {
+        label: "Tập trung quyền lực: nguy cơ bộ máy tự tái sản xuất thành tầng lớp đặc quyền mới",
+        flavor: "Lịch sử XHCN thế kỷ 20 cho thấy: khi bộ máy không bị kiểm soát từ dưới, nó trở thành giai cấp. Đây là mâu thuẫn Lenin cảnh báo từ 1923 — và chưa được giải quyết triệt để ở bất kỳ đâu.",
+      },
     },
   },
 };
@@ -1382,6 +1472,54 @@ function ruptureFallbackOption(decision: Decision, perspective: PerspectiveId): 
   };
 }
 
+function historianCauseChainForTag(option: DecisionOption): string[] {
+  const tag = option.tag ?? "neutral";
+  const label = option.label;
+  switch (tag) {
+    case "repression":
+    case "reactionary":
+      return [
+        `Bạo lực / bảo thủ: ${label}`,
+        "→ Ghi lại cơ chế QHSX cũ tự bảo vệ bằng cưỡng chế",
+        option.insight
+          ? "→ Bằng chứng: bạo lực là 'bà đỡ' của trật tự lỗi thời (Marx, Tư bản luận)"
+          : "→ Chi phí đàn áp tăng — dấu hiệu QHSX không còn tự tái sản xuất được",
+      ];
+    case "uprising":
+      return [
+        `Phản kháng: ${label}`,
+        "→ Lực lượng xã hội tìm đường ra ngoài quan hệ sản xuất cũ",
+        option.insight
+          ? "→ Bằng chứng cho tính chủ quan trong lịch sử khách quan"
+          : "→ Tổ chức đủ chưa? Điều kiện vật chất chín chưa?",
+      ];
+    case "reform":
+      return [
+        `Cải biến: ${label}`,
+        "→ QHSX tự điều chỉnh — hay đang thích nghi để tồn tại?",
+        option.insight
+          ? "→ Bằng chứng: cải cách có thể là bước chuyển — hoặc là cách hoãn bước chuyển"
+          : "→ Ghi câu hỏi: ai được lợi từ sự thay đổi này?",
+      ];
+    case "concession":
+      return [
+        `Nhượng bộ: ${label}`,
+        "→ Giai cấp thống trị nhường phần nhỏ để giữ cấu trúc lớn",
+        option.insight
+          ? "→ Mâu thuẫn được quản lý — chưa được giải quyết"
+          : "→ Nhượng bộ hôm nay mua thời gian cho ai?",
+      ];
+    default:
+      return [
+        `Quan sát: ${label}`,
+        "→ Phân tích điều kiện vật chất sinh ra lựa chọn này",
+        option.insight
+          ? "→ Bằng chứng trực tiếp cho lý luận lịch sử"
+          : "→ Bổ sung vào hồ sơ so sánh",
+      ];
+  }
+}
+
 function historianObservationEffect(option: DecisionOption): DecisionOption["effect"] {
   const tag = option.tag ?? "neutral";
   const rawTech = Math.abs(option.effect.tech ?? 0);
@@ -1409,11 +1547,7 @@ function toHistorianRecordOption(decision: Decision, option: DecisionOption): De
     // KHÔNG override flavor — giữ lại mô tả sự kiện để người chơi hiểu bối cảnh
     // flavor đến từ ...option spread (đã qua historian OPTION_COPY_OVERRIDES nếu có)
     effect: historianObservationEffect(option),
-    causeChain: [
-      `Ghi nhận: ${option.label}`,
-      "→ Phân tích điều kiện vật chất sinh ra lựa chọn này",
-      option.insight ? "→ Bằng chứng trực tiếp cho lý luận lịch sử" : "→ Bổ sung vào hồ sơ so sánh",
-    ],
+    causeChain: historianCauseChainForTag(option),
     unlocks: undefined,
     progressive: false,
     tag: "document",
