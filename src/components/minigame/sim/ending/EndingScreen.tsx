@@ -88,9 +88,10 @@ export function EndingScreen({ state, onRestart }: { state: SimState; onRestart:
 
       <button
         onClick={onRestart}
-        className="mt-10 inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-medium uppercase tracking-[0.25em] text-stone-950"
+        className="mt-10 inline-flex max-w-full items-center justify-center gap-2 rounded-full bg-white px-5 py-3 text-center text-xs font-medium uppercase tracking-[0.18em] text-stone-950 sm:text-sm sm:tracking-[0.25em]"
       >
-        <RotateCcw className="h-4 w-4" /> Chơi lại với góc nhìn khác
+        <RotateCcw className="h-4 w-4 shrink-0" />
+        <span className="whitespace-normal break-words">Chơi lại với góc nhìn khác</span>
       </button>
 
       <ReplayTimeline state={state} />
