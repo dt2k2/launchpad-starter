@@ -118,6 +118,7 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <TeamCredits />
       <Outlet />
     </QueryClientProvider>
   );
