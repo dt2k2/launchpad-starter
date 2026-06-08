@@ -592,7 +592,7 @@ export const STAGES: SimStage[] = [
             ],
           },
           {
-            id: "free",
+            id: "open-market",
             label: "Mở thị trường tự do",
             flavor: "Công trường thủ công bùng nổ — tiền tư bản nguyên thuỷ.",
             effect: { production: 12, tech: 10, contradiction: 10, revolution: 6 },
