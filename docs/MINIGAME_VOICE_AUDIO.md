@@ -72,7 +72,7 @@ Nếu file role-specific chưa tồn tại, code sẽ fallback về audio chung 
 | `era4-historian-tension.mp3` | Sản xuất xã hội hóa và chiếm hữu tư nhân là mâu thuẫn cơ bản của phương thức tư bản. |
 | `era4-historian-revolution.mp3` | Tự động hóa đẩy mâu thuẫn tới cực hạn: lực lượng sản xuất đòi một quan hệ sở hữu khác. |
 
-## Era 5 - Xã hội chủ nghĩa
+## Era 5 - Cộng sản chủ nghĩa
 
 | File | Voice text |
 | --- | --- |
@@ -82,6 +82,6 @@ Nếu file role-specific chưa tồn tại, code sẽ fallback về audio chung 
 | `era5-worker-enter.mp3` | Máy móc làm bớt phần nặng. Lần đầu, thời gian tự do có thể thuộc về người lao động. |
 | `era5-worker-tension.mp3` | Nếu dữ liệu chung bị khóa trong tay một nhóm, hình thức mới sẽ nuôi lại bất bình đẳng cũ. |
 | `era5-worker-revolution.mp3` | Tự quản không phải khẩu hiệu. Nó là quyền bầu, bãi nhiệm và kiểm soát thứ ta cùng sở hữu. |
-| `era5-historian-enter.mp3` | XHCN bắt đầu khi tư liệu sản xuất chủ yếu không còn là tài sản tư nhân của giai cấp bóc lột. |
+| `era5-historian-enter.mp3` | CSCN bắt đầu khi tư liệu sản xuất chủ yếu không còn là tài sản tư nhân của giai cấp bóc lột. |
 | `era5-historian-tension.mp3` | Tự động hóa không tự giải phóng. Quan hệ sở hữu quyết định công nghệ phục vụ ai. |
 | `era5-historian-revolution.mp3` | Một hình thái hậu tư bản phải được đo bằng quan hệ thật, không chỉ bằng tên gọi của nhà nước. |

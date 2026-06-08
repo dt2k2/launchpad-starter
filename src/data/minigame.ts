@@ -455,7 +455,7 @@ export const STAGES: MiniStage[] = [
   {
     id: "socialist",
     order: 5,
-    title: "Xã hội chủ nghĩa",
+    title: "Cộng sản chủ nghĩa",
     subtitle: "Sản xuất xã hội hoá. Phân phối hợp lý. Con người là mục đích.",
     shortDescription:
       "Định hướng cải biến quan hệ sản xuất theo trình độ lực lượng sản xuất ở thời tự động hoá – AI.",
@@ -484,7 +484,7 @@ export const STAGES: MiniStage[] = [
         stageId: "socialist",
         type: "mcq",
         prompt:
-          "Theo logic duy vật lịch sử, điều kiện vật chất để bước sang XHCN là gì?",
+          "Theo logic duy vật lịch sử, điều kiện vật chất để bước sang CSCN là gì?",
         options: [
           "Mong muốn của một vài lãnh tụ",
           "Lực lượng sản xuất phát triển vượt sức chứa của quan hệ sản xuất TBCN",
@@ -503,7 +503,7 @@ export const STAGES: MiniStage[] = [
         stageId: "socialist",
         type: "scenario",
         prompt:
-          "Một xã hội đạt mức tự động hoá rất cao. Cách phân phối nào phù hợp nhất với tinh thần XHCN?",
+          "Một xã hội đạt mức tự động hoá rất cao. Cách phân phối nào phù hợp nhất với tinh thần CSCN?",
         options: [
           "Ai có vốn người đó hưởng tất cả",
           "Đảm bảo nhu cầu cơ bản cho tất cả; phần còn lại theo đóng góp lao động",
@@ -512,7 +512,7 @@ export const STAGES: MiniStage[] = [
         ],
         correctIndex: 1,
         explanation:
-          "Giai đoạn đầu XHCN: 'làm theo năng lực, hưởng theo lao động', kết hợp đảm bảo nhu cầu cơ bản.",
+          "Giai đoạn đầu CSCN: 'làm theo năng lực, hưởng theo lao động', kết hợp đảm bảo nhu cầu cơ bản.",
         points: 4,
         progressOnCorrect: 35,
         contradictionOnWrong: 15,
@@ -531,7 +531,7 @@ export const STAGES: MiniStage[] = [
         ],
         correctMap: [1, 0, 3, 2],
         explanation:
-          "Không có công nghệ nào 'tự nhiên' là XHCN — cách sở hữu và sử dụng mới quyết định bản chất xã hội của nó.",
+          "Không có công nghệ nào 'tự nhiên' là CSCN — cách sở hữu và sử dụng mới quyết định bản chất xã hội của nó.",
         points: 5,
         progressOnCorrect: 40,
         contradictionOnWrong: 20,
@@ -545,7 +545,7 @@ export const STAGES: MiniStage[] = [
       techUnlocked: ["Tự động hoá", "AI", "Năng lượng tái tạo", "Hợp tác xã số"],
     },
     learningSummary:
-      "XHCN không phải khẩu hiệu — là câu trả lời cho mâu thuẫn giữa sản xuất xã hội hoá và sở hữu tư nhân.",
+      "CSCN không phải khẩu hiệu — là câu trả lời cho mâu thuẫn giữa sản xuất xã hội hoá và sở hữu tư nhân.",
     funFact:
       "Năm 2024, hơn 30% điện ở EU đến từ năng lượng tái tạo — tiền đề vật chất đang lớn lên rất nhanh.",
   },
