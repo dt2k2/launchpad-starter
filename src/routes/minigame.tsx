@@ -9,7 +9,7 @@ export const Route = createFileRoute("/minigame")({
       {
         name: "description",
         content:
-          "Mini game tương tác 5 ải: vượt qua từng hình thái kinh tế – xã hội, từ cộng sản nguyên thuỷ đến xã hội chủ nghĩa.",
+          "Mini game tương tác 5 ải: vượt qua từng hình thái kinh tế – xã hội, từ cộng sản nguyên thuỷ đến cộng sản chủ nghĩa.",
       },
       {
         property: "og:title",

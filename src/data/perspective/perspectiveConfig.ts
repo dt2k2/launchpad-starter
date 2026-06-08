@@ -387,7 +387,7 @@ export const DECISION_VOICE_OVERRIDES: Partial<
       decisionPrompt: "Máy làm thay phần nặng nhất. Vấn đề là ai được nghỉ, ai được học, ai vẫn bị buộc chứng minh mình có ích.",
     },
     historian: {
-      decisionPrompt: "Giai đoạn đầu XHCN phải giải quyết phân phối: nhu cầu cơ bản, đóng góp lao động và động lực phát triển cùng tồn tại.",
+      decisionPrompt: "Giai đoạn đầu CSCN phải giải quyết phân phối: nhu cầu cơ bản, đóng góp lao động và động lực phát triển cùng tồn tại.",
     },
   },
   "x-d2": {
@@ -409,7 +409,7 @@ export const DECISION_VOICE_OVERRIDES: Partial<
       decisionPrompt: "Ta đã đổi chủ sở hữu, nhưng chưa xong. Nếu đại biểu không thể bị bãi nhiệm, tiếng nói cơ sở sẽ lại bị nói thay.",
     },
     historian: {
-      decisionPrompt: "Mâu thuẫn nội tại của xây dựng XHCN: tổ chức quyền lực chung mà không để bộ máy chung biến thành lợi ích riêng.",
+      decisionPrompt: "Mâu thuẫn nội tại của xây dựng CSCN: tổ chức quyền lực chung mà không để bộ máy chung biến thành lợi ích riêng.",
     },
   },
 };
@@ -569,7 +569,7 @@ export const ENDING_NARRATIONS: Record<EndingVibe, Record<PerspectiveId, EndingN
     historian: {
       title: "Hình thái mới được tổ chức",
       body: "Tự động hoá + sở hữu xã hội về dữ liệu và AI mở ra một quan hệ sản xuất chưa từng có. Lý thuyết hậu-tư bản chuyển từ tiên tri sang mô tả.",
-      epitaph: "Cần khung phân loại mới: 'XHCN số' không vừa với danh mục 1917.",
+      epitaph: "Cần khung phân loại mới: 'CSCN số' không vừa với danh mục 1917.",
     },
   },
   stagnation: {
@@ -1070,12 +1070,12 @@ export const OPTION_COPY_OVERRIDES: Record<
     },
     historian: {
       ubi: {
-        label: "Phân phối hỗn hợp: 'làm theo năng lực, hưởng theo lao động' — XHCN giai đoạn đầu",
+        label: "Phân phối hỗn hợp: 'làm theo năng lực, hưởng theo lao động' — CSCN giai đoạn đầu",
         flavor: "Vẫn còn thước đo đóng góp — chưa phải 'hưởng theo nhu cầu'. Nhưng đã xoá sở hữu tư nhân về TLSX chiến lược. Ghi lại điểm xuất phát này và theo dõi cái gì thay đổi tiếp theo.",
       },
       equal: {
         label: "Cào bằng tuyệt đối: bình đẳng hình thức tạo ra bất công nội dung",
-        flavor: "Nhu cầu khác nhau, năng lực khác nhau — đối xử như nhau là một dạng bất công mới. Sai lầm tư duy này từng phá vỡ nhiều dự án XHCN thực tế. Lịch sử đã trả lời câu hỏi này rồi.",
+        flavor: "Nhu cầu khác nhau, năng lực khác nhau — đối xử như nhau là một dạng bất công mới. Sai lầm tư duy này từng phá vỡ nhiều dự án CSCN thực tế. Lịch sử đã trả lời câu hỏi này rồi.",
       },
     },
   },
@@ -1131,11 +1131,11 @@ export const OPTION_COPY_OVERRIDES: Record<
     historian: {
       transparent: {
         label: "Dân chủ trực tiếp: điều kiện tối thiểu để bộ máy không tái sinh thành giai cấp đặc quyền",
-        flavor: "Bộ máy không tự giám sát được mình — đây là quy luật được xác nhận lặp đi lặp lại trong lịch sử. Minh bạch + bãi nhiệm không phải trang trí; chúng là cơ chế vật chất để XHCN không trượt ngược.",
+        flavor: "Bộ máy không tự giám sát được mình — đây là quy luật được xác nhận lặp đi lặp lại trong lịch sử. Minh bạch + bãi nhiệm không phải trang trí; chúng là cơ chế vật chất để CSCN không trượt ngược.",
       },
       topdown: {
         label: "Tập trung quyền lực: nguy cơ bộ máy tự tái sản xuất thành tầng lớp đặc quyền mới",
-        flavor: "Lịch sử XHCN thế kỷ 20 cho thấy: khi bộ máy không bị kiểm soát từ dưới, nó trở thành giai cấp. Đây là mâu thuẫn Lenin cảnh báo từ 1923 — và chưa được giải quyết triệt để ở bất kỳ đâu.",
+        flavor: "Lịch sử CSCN thế kỷ 20 cho thấy: khi bộ máy không bị kiểm soát từ dưới, nó trở thành giai cấp. Đây là mâu thuẫn Lenin cảnh báo từ 1923 — và chưa được giải quyết triệt để ở bất kỳ đâu.",
       },
     },
   },

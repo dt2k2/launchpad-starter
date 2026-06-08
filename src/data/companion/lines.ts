@@ -169,7 +169,7 @@ export const COMPANION_LINES: CompanionLine[] = [
   { id: "h-cap-r",  perspective: "historian", trigger: "rupture", eraId: "capitalist", speaker: H,
     text: "Khi giai cấp công nhân tự giác về sứ mệnh lịch sử, hình thái mới mới có thể xuất hiện." },
 
-  /* ══════════════════ SOCIALIST — Xã hội chủ nghĩa ══════════════════ */
+  /* ══════════════════ SOCIALIST — Cộng sản chủ nghĩa ══════════════════ */
   // ── ruler (thư ký Đảng uỷ / cán bộ lãnh đạo)
   { id: "r-soc-s1", perspective: "ruler", trigger: "stage_start", eraId: "socialist", speaker: R.socialist,
     text: "Báo cáo đồng chí, kế hoạch quý đạt 104%. Nhưng tổ kỹ thuật nói máy mới đang nằm chờ linh kiện." },

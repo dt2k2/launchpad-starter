@@ -11,6 +11,7 @@ import { Glossary } from "@/components/Glossary";
 import { Quiz } from "@/components/Quiz";
 import { Footer } from "@/components/Footer";
 import { SmoothScroll } from "@/components/SmoothScroll";
+import { TeamCredits } from "@/components/TeamCredits";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -21,7 +22,7 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Hành trình cuộn dọc qua năm phương thức sản xuất đã định hình loài người — từ cộng sản nguyên thuỷ đến xã hội chủ nghĩa.",
+          "Hành trình cuộn dọc qua năm phương thức sản xuất đã định hình loài người — từ cộng sản nguyên thuỷ đến cộng sản chủ nghĩa.",
       },
       {
         property: "og:title",
@@ -68,6 +69,7 @@ function Index() {
   return (
     <>
       <SmoothScroll />
+      <TeamCredits />
       <main className="relative bg-stone-950 text-stone-100">
         <Hero onStart={startJourney} />
 

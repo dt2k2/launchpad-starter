@@ -226,7 +226,7 @@ export const ERAS: Era[] = [
   {
     id: "socialist",
     index: 4,
-    title: "Xã hội chủ nghĩa",
+    title: "Cộng sản chủ nghĩa",
     subtitle: "Sở hữu chung trên nền sản xuất hiện đại",
     timeRange: "Thế kỷ XX — tương lai",
     tagline: "Mỗi người làm theo năng lực, hưởng theo lao động.",
@@ -341,7 +341,7 @@ export const QUIZ = [
     answer: 1,
   },
   {
-    q: "Nguyên tắc phân phối ở giai đoạn đầu của xã hội chủ nghĩa là gì?",
+    q: "Nguyên tắc phân phối ở giai đoạn đầu của cộng sản chủ nghĩa là gì?",
     options: [
       "Làm theo năng lực, hưởng theo nhu cầu",
       "Phân phối đều tuyệt đối",

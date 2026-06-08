@@ -839,7 +839,7 @@ export const STAGES: SimStage[] = [
   {
     id: "socialist",
     order: 5,
-    title: "Xã hội chủ nghĩa",
+    title: "Cộng sản chủ nghĩa",
     subtitle: "Sản xuất xã hội hoá. Phân phối hợp lý. Con người là mục đích.",
     era: "~1917 – tương lai",
     intro:
@@ -871,7 +871,7 @@ export const STAGES: SimStage[] = [
           {
             id: "ubi",
             label: "Đảm bảo nhu cầu cơ bản + thưởng theo đóng góp",
-            flavor: "Giai đoạn đầu XHCN: 'làm theo năng lực, hưởng theo lao động'.",
+            flavor: "Giai đoạn đầu CSCN: 'làm theo năng lực, hưởng theo lao động'.",
             effect: { stability: 16, contradiction: -10, production: 8 },
             causeChain: [
               "Phân phối hỗn hợp",
@@ -938,7 +938,7 @@ export const STAGES: SimStage[] = [
             causeChain: [
               "Minh bạch + dân chủ số",
               "→ Bộ máy bị kiểm soát thường xuyên",
-              "→ XHCN không tha hoá",
+              "→ CSCN không tha hoá",
             ],
             unlocks: ["coop_net"],
             insight: "i-newrelations",
@@ -958,7 +958,7 @@ export const STAGES: SimStage[] = [
       {
         id: "i-distribution",
         era: "socialist",
-        title: "Phân phối ở giai đoạn đầu XHCN",
+        title: "Phân phối ở giai đoạn đầu CSCN",
         body: "'Làm theo năng lực, hưởng theo lao động' — chưa phải cộng sản, nhưng đã xoá được sở hữu tư nhân về TLSX chiến lược.",
       },
       {
