@@ -1385,9 +1385,17 @@ function ruptureFallbackOption(decision: Decision, perspective: PerspectiveId): 
 function historianObservationEffect(option: DecisionOption): DecisionOption["effect"] {
   const tag = option.tag ?? "neutral";
   const rawTech = Math.abs(option.effect.tech ?? 0);
-  const tech = Math.max(option.insight ? 3 : 1, Math.min(4, Math.ceil(rawTech * 0.35)));
+  // Tăng tech base từ 2-6 (thay vì 1-4) để historian có thể đạt evolve threshold
+  const tech = Math.max(option.insight ? 4 : 2, Math.min(6, Math.ceil(rawTech * 0.4)));
   const effect: DecisionOption["effect"] = { tech };
-  if (HISTORIAN_CONFLICT_TAGS.includes(tag)) effect.contradiction = 1;
+  // Ghi chép sự kiện có tác động phụ nhỏ qua lan truyền thông tin lịch sử
+  if (tag === "repression" || tag === "reactionary") {
+    effect.contradiction = 2; // ghi nhận áp bức → mâu thuẫn lộ rõ hơn trong ký ức xã hội
+  } else if (tag === "reform" || tag === "concession") {
+    effect.stability = 2;     // ghi nhận cải cách → chính danh tăng nhẹ
+  } else if (tag === "uprising") {
+    effect.revolution = 2;    // ghi nhận khởi nghĩa → phong trào được biết đến rộng hơn
+  }
   return effect;
 }
 
@@ -1395,13 +1403,16 @@ function toHistorianRecordOption(decision: Decision, option: DecisionOption): De
   return {
     ...option,
     id: `record:${decision.id}:${option.id}`,
-    label: `Ghi chép: ${option.label}`,
-    flavor: "Không can thiệp thay xã hội; chỉ ghi lại vì sao phương án này xuất hiện.",
+    // Giữ label phân tích của nhà sử học (đã qua applyOptionCopyOverride)
+    // với prefix [Hồ sơ] để người chơi phân biệt với options gốc của ruler/worker
+    label: `[Hồ sơ] ${option.label}`,
+    // KHÔNG override flavor — giữ lại mô tả sự kiện để người chơi hiểu bối cảnh
+    // flavor đến từ ...option spread (đã qua historian OPTION_COPY_OVERRIDES nếu có)
     effect: historianObservationEffect(option),
     causeChain: [
-      `Quan sát phương án: ${option.label}`,
-      "→ Tách mô tả lịch sử khỏi hành động trực tiếp",
-      option.insight ? "→ Mở thêm bằng chứng lý luận" : "→ Bổ sung dữ liệu so sánh",
+      `Ghi nhận: ${option.label}`,
+      "→ Phân tích điều kiện vật chất sinh ra lựa chọn này",
+      option.insight ? "→ Bằng chứng trực tiếp cho lý luận lịch sử" : "→ Bổ sung vào hồ sơ so sánh",
     ],
     unlocks: undefined,
     progressive: false,

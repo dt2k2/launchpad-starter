@@ -18,6 +18,7 @@ export function resolveTransition(s: SimState): TransitionDecision {
   const st = s.metrics.stability;
   const p = s.metrics.production;
   const rev = s.metrics.revolution;
+  const tech = s.metrics.tech;
   const org = s.pressures.organization;
   const rep = s.pressures.repression;
   const leg = 100 - s.pressures.legitimacyLoss;
@@ -61,7 +62,14 @@ export function resolveTransition(s: SimState): TransitionDecision {
     },
     {
       o: "evolve",
-      w: st > 35 && c < 75 && p >= 40 ? 32 + leg / 3 + p * 0.15 : 8,
+      // Ruler/Worker cần production >= 40 để evolve (vật chất quyết định).
+      // Historian được dùng tech >= 15 thay thế (p >= 8) — phản ánh vai trò
+      // của trí thức hữu cơ (Gramsci): ghi chép + phổ biến tư tưởng là hình thức
+      // tác động gián tiếp, không phải can thiệp trực tiếp vào lực lượng sản xuất.
+      // QUAN TRỌNG: bypass này CHỈ áp dụng cho historian, không rò sang 2 role kia.
+      w: st > 35 && c < 75 && (p >= 40 || (persp === "historian" && p >= 8 && tech >= 15))
+        ? 32 + leg / 3 + Math.max(p, persp === "historian" ? tech * 0.4 : 0) * 0.15
+        : 10,
       reason: "stable enough to transition",
     },
   ];
