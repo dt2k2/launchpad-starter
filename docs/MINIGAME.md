@@ -1,6 +1,6 @@
 # Mini Game "Hành trình Tiến hoá" — Tài liệu cơ chế
 
-> Mô phỏng tương tác về **Duy vật lịch sử**: người chơi điều khiển một xã hội đi qua 5 hình thái kinh tế – xã hội, từ Cộng sản nguyên thuỷ → Chiếm hữu nô lệ → Phong kiến → Tư bản → Xã hội chủ nghĩa. Người chơi **không trả lời quiz** — họ ra **quyết định** dưới áp lực mâu thuẫn.
+> Mô phỏng tương tác về **Duy vật lịch sử**: người chơi điều khiển một xã hội đi qua 5 hình thái kinh tế – xã hội, từ Cộng sản nguyên thuỷ → Chiếm hữu nô lệ → Phong kiến → Tư bản → Cộng sản chủ nghĩa. Người chơi **không trả lời quiz** — họ ra **quyết định** dưới áp lực mâu thuẫn.
 
 ---
 

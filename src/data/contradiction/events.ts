@@ -369,7 +369,7 @@ export const CONTRADICTION_EVENTS: ContradictionEvent[] = [
     pressureImpact: { legitimacyLoss: 15, productionInstability: 20 },
   },
 
-  /* ============== SOCIALIST (xã hội chủ nghĩa) ============== */
+  /* ============== SOCIALIST (cộng sản chủ nghĩa) ============== */
   {
     id: "bureaucratic_inertia",
     title: "Bộ máy trì trệ",

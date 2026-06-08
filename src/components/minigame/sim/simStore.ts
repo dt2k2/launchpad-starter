@@ -220,7 +220,7 @@ function baseMetricsFor(stage: SimStage): Record<MetricKey, number> {
  * Foundational techs per stage — techPool entries that NO option's `unlocks`
  * field grants. They represent the baseline LLSX of the era (đồ đá cho cộng
  * sản nguyên thuỷ, đồng cho chiếm hữu nô lệ, cày nặng + cối xay nước cho
- * phong kiến, máy hơi nước + điện cho tư bản, năng lượng tái tạo cho XHCN).
+ * phong kiến, máy hơi nước + điện cho tư bản, năng lượng tái tạo cho CSCN).
  * Without auto-grant chúng sẽ vĩnh viễn bị khoá. Tính một lần ở module load.
  */
 const BASELINE_TECH_BY_STAGE: Record<string, string[]> = (() => {

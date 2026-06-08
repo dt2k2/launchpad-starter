@@ -21,7 +21,7 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Hành trình cuộn dọc qua năm phương thức sản xuất đã định hình loài người — từ cộng sản nguyên thuỷ đến xã hội chủ nghĩa.",
+          "Hành trình cuộn dọc qua năm phương thức sản xuất đã định hình loài người — từ cộng sản nguyên thuỷ đến cộng sản chủ nghĩa.",
       },
       {
         property: "og:title",

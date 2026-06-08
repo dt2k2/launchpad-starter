@@ -223,7 +223,7 @@ export const ROLE_NARRATOR_LINES: Record<EraId, Record<PerspectiveId, NarratorLi
       revolution: { text: "Tự quản không phải là một khẩu hiệu suông. Nó là quyền bầu, quyền bãi nhiệm và quyền kiểm soát những thứ mà chúng ta cùng sở hữu." },
     },
     historian: {
-      enter: { text: "XHCN bắt đầu khi tư liệu sản xuất chủ yếu không còn là tài sản tư nhân của giai cấp bóc lột." },
+      enter: { text: "CSCN bắt đầu khi tư liệu sản xuất chủ yếu không còn là tài sản tư nhân của giai cấp bóc lột." },
       tension: { text: "Tự động hóa không thể tự nó giải phóng con người. Chính quan hệ sở hữu mới là thứ quyết định xem công nghệ sẽ phục vụ ai." },
       revolution: { text: "Một hình thái hậu tư bản phải được đo lường bằng những quan hệ thực tế, chứ không chỉ bằng danh xưng của một nhà nước." },
     },
@@ -272,7 +272,7 @@ export const REVOLUTION_MOTIFS: Record<EraId, RevolutionMotif> = {
   capitalist: {
     destruction: ["⚙", "$", "▣"],
     rebirth: ["◈", "✺", "☀"],
-    ruptureLabel: "Cách mạng xã hội chủ nghĩa",
+    ruptureLabel: "Cách mạng cộng sản chủ nghĩa",
     sparkColor: "oklch(0.78 0.14 70)",
   },
   socialist: {

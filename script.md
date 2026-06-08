@@ -37,7 +37,7 @@ Trong game, bạn sẽ dẫn dắt xã hội đi qua 5 thời đại lịch sử
 2. Chiếm hữu nô lệ.
 3. Phong kiến.
 4. Tư bản chủ nghĩa.
-5. Xã hội chủ nghĩa.
+5. Cộng sản chủ nghĩa.
 
 Nhưng xin lưu ý: 5 thời đại này không phải 5 màn chơi tuyến tính kiểu "giết xong trùm thì qua màn". Game định nghĩa chúng là 5 trạng thái cấu trúc. Ở đó, mỗi era đều sở hữu một giới hạn công nghệ riêng, một cách tổ chức sản xuất riêng và một mâu thuẫn nội tại không thể né tránh.
 
@@ -200,7 +200,7 @@ Game hoàn toàn không có một "Chiến thắng tuyệt đối":
 ## 13. Bản Rút Gọn 3 Phút (Dùng khi bị khống chế thời gian gắt gao)
 Nếu ban giám khảo hoặc giảng viên yêu cầu nói thật nhanh, hãy dùng phiên bản cô đọng này:
 
-> Kính chào thầy cô, dự án của nhóm em là minigame Hành Trình Tiến Hoá — một mô hình tương tác trực quan về Chủ nghĩa duy vật lịch sử. Thay vì kiểm tra lý thuyết bằng các câu hỏi trắc nghiệm, game ném người chơi vào dòng chảy của 5 hình thái kinh tế - xã hội từ Cộng sản nguyên thủy đến Xã hội chủ nghĩa.
+> Kính chào thầy cô, dự án của nhóm em là minigame Hành Trình Tiến Hoá — một mô hình tương tác trực quan về Chủ nghĩa duy vật lịch sử. Thay vì kiểm tra lý thuyết bằng các câu hỏi trắc nghiệm, game ném người chơi vào dòng chảy của 5 hình thái kinh tế - xã hội từ Cộng sản nguyên thủy đến Cộng sản chủ nghĩa.
 >
 > Điểm cốt lõi của game là Hệ thống 3 góc nhìn: Người chơi chọn nhập vai làm Ruler, Worker, hoặc Historian. Cùng một biến cố lịch sử, nhưng ba vị trí giai cấp này sẽ nhìn thấy ba thực tế khác nhau với hệ thống HUD và mục tiêu độc lập. Qua đó, game chứng minh luận điểm: Vị trí giai cấp định hình nhận thức xã hội.
 >
