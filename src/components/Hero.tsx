@@ -128,7 +128,7 @@ export function Hero({ onStart }: { onStart: () => void }) {
         <span>·</span>
         <span>Tư bản</span>
         <span>·</span>
-        <span>Xã hội chủ nghĩa</span>
+        <span>Cộng sản chủ nghĩa</span>
       </div>
     </section>
   );
