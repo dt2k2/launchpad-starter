@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Perspective System — single source of truth.
  *
  * 3 góc nhìn = 3 lăng kính lịch sử khác biệt thật sự:
@@ -464,18 +464,29 @@ export const PERSPECTIVE_OBJECTIVES: Record<PerspectiveId, PerspectiveObjective>
     pressuresWatched: ["classTension", "organization", "repression"],
     score: (s) => {
       const m = s.metrics;
+      // Phạt khi bộ máy XHCN tha hoá thành quan liêu (giai đoạn 5 trở đi).
+      // Áp lực đàn áp cao trong XHCN = bộ máy đang tự tái sản xuất thành giai cấp đặc quyền mới
+      // (Lenin 1923, Trotsky 1937 - Cách mạng bị phản bội)
+      const bureaucracyPenalty =
+        s.stagesCompleted >= 4
+          ? Math.max(0, (s.pressures.repression - 35) * 0.6)
+          : 0;
       const raw =
         s.revolutionsBurned * 28 +
         s.progressiveCount * 10 +
         0.25 * m.contradiction -
         0.2 * m.stability +
-        0.1 * m.production;
+        0.1 * m.production -
+        bureaucracyPenalty;
       return Math.max(0, Math.min(100, raw));
     },
     warning: (s) => {
       if (s.metrics.contradiction > 60 && s.metrics.stability > 60)
         return "Bóc lột tăng — quần chúng chưa thức tỉnh";
       if (s.metrics.stability > 75) return "Trật tự cũ vẫn vững — cần đẩy mâu thuẫn";
+      // Cảnh báo tha hoá quan liêu trong XHCN — bộ máy tự tái sản xuất thành giai cấp mới
+      if (s.stagesCompleted >= 4 && s.pressures.repression > 50)
+        return "Bộ máy đang tự tái sản xuất thành tầng lớp đặc quyền mới — dân chủ cơ sở đang bị xói mòn";
       return null;
     },
   },
@@ -641,11 +652,10 @@ export const OPTION_GATES: Record<
   hoard: { emphasizeFor: ["ruler"] },
   enslave: { emphasizeFor: ["ruler"] },
   free: { emphasizeFor: ["worker"] },
+  "open-market": { emphasizeFor: ["historian"] },
   war: { emphasizeFor: ["ruler"] },
   reform: { emphasizeFor: ["historian"] },
   crush: { visibleTo: ["ruler", "historian"], emphasizeFor: ["ruler"] },
-  concede: { emphasizeFor: ["historian"] },
-  ignore: { emphasizeFor: ["ruler"] },
   invest: { emphasizeFor: ["historian"] },
   grant: { emphasizeFor: ["ruler"] },
   fund: { emphasizeFor: ["ruler"] },
@@ -761,7 +771,7 @@ export const OPTION_COPY_OVERRIDES: Record<
     worker: {
       enslave: {
         label: "Chấp nhận xiềng xích đầu tiên",
-        flavor: "Thặng dư nhiều hơn, nhưng một ranh giới mới xuất hiện giữa người ra lệnh và người bị lệnh.",
+        flavor: "Thặng dư nhiều hơn, nhưng một ranh giới vĩnh viễn xuất hiện giữa người ra lệnh và người bị lệnh. Lịch sử bước qua đây bất kể ta chọn gì — hôm nay là họ, ngày mai ta chưa biết sẽ là ai. Đây không phải tiến bộ của ta; đây là tiến bộ mà ta phải trả giá.",
       },
       free: {
         label: "Đòi thả người bị bắt",
@@ -887,9 +897,9 @@ export const OPTION_COPY_OVERRIDES: Record<
         label: "Bám vào phường hội để giữ miếng ăn",
         flavor: "Đặc quyền nghề bảo vệ thợ cũ, nhưng cũng chặn người nghèo bước vào sản xuất đô thị.",
       },
-      free: {
-        label: "Phá rào nghề, nhận rủi ro chợ mới",
-        flavor: "Thị trường mở đường cho sản xuất lớn hơn, đồng thời đẩy người làm thuê vào cạnh tranh khắc nghiệt.",
+      "open-market": {
+        label: "Chấp nhận thị trường tự do, chịu rủi ro cạnh tranh",
+        flavor: "Phá rào mở ra sản xuất lớn hơn, nhưng cũng xoá bỏ lớp bảo hộ mỏng manh cuối cùng. Người làm thuê vào chợ tự do không phải là tự do — họ chỉ thay đổi kẻ bóc lột.",
       },
     },
     historian: {
@@ -897,7 +907,7 @@ export const OPTION_COPY_OVERRIDES: Record<
         label: "Đặc quyền phường hội: phong kiến tự bảo vệ trước LLSX đô thị đang lớn lên",
         flavor: "Không phải trì trệ mù quáng — đây là QHSX cũ nhận ra mối đe doạ và phản ứng. Nó sẽ thua, nhưng không thua ngay. Ghi lại cơ chế tự bảo vệ này.",
       },
-      free: {
+      "open-market": {
         label: "Thị trường tự do: LLSX đô thị phá khung đặc quyền — và mở ra QHSX tư bản",
         flavor: "Người làm ra của cải trong xưởng thủ công đô thị sắp vượt qua người thừa kế đất đai về quyền lực thực chất. Đây là thời điểm LLSX bắt đầu làm lung lay QHSX cũ.",
       },
@@ -1248,6 +1258,21 @@ export const EXTRA_OPTIONS: Record<
         "→ Tầng lớp thị dân tự do bị chặn đường",
       ],
       tag: "reactionary",
+    },
+    // Worker có lựa chọn thứ ba: không theo phường hội quý tộc, cũng không tin thị trường tự do tư sản —
+    // mà tự tổ chức theo lợi ích giai cấp. Đây mới là lập trường Worker thực sự trong phong kiến muộn.
+    worker: {
+      id: "f-d1-w-craft-union",
+      label: "Lập nghiệp đoàn thợ thủ công độc lập",
+      flavor: "Không theo phường hội quý tộc bảo vệ đặc quyền nghề, cũng không tin vào thị trường tự do của thương nhân — thợ thủ công tự tổ chức để đòi điều kiện lao động và mức lương tối thiểu do họ kiểm soát.",
+      effect: { revolution: 9, contradiction: 8, stability: -5, production: 2 },
+      causeChain: [
+        "Nghiệp đoàn thợ thủ công độc lập ra đời",
+        "→ Giai cấp lao động tự tổ chức ngoài khuôn khổ phong kiến lẫn tư bản",
+        "→ Tiền thân phong trào công đoàn hiện đại",
+      ],
+      progressive: true,
+      tag: "reform",
     },
   },
   "f-d2": {
