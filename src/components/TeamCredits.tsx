@@ -8,7 +8,7 @@ const TEAM = [
   { id: "SE170105", name: "Nguyễn Lê Đăng Khoa" },
 ];
 
-const BOTS = ["Lovable", "Claude"];
+const BOTS = ["Lovable", "Claude", "ChatGPT"];
 
 export function TeamCredits() {
   const [open, setOpen] = useState(false);
@@ -26,9 +26,7 @@ export function TeamCredits() {
             className="w-[260px] rounded-xl border border-white/10 bg-stone-950/80 p-4 text-white/85 shadow-2xl shadow-black/40 backdrop-blur-xl"
           >
             <div className="mb-3 flex items-center justify-between">
-              <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-amber-200/80">
-                Nhóm thực hiện
-              </p>
+              <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-amber-200/80">Nhóm thực hiện</p>
               <button
                 onClick={() => setOpen(false)}
                 aria-label="Đóng"
@@ -41,18 +39,14 @@ export function TeamCredits() {
             <ul className="space-y-1.5">
               {TEAM.map((m) => (
                 <li key={m.id} className="flex items-baseline gap-2 text-[13px]">
-                  <span className="font-mono text-[10px] tracking-wider text-amber-200/60">
-                    {m.id}
-                  </span>
+                  <span className="font-mono text-[10px] tracking-wider text-amber-200/60">{m.id}</span>
                   <span className="font-medium text-white">{m.name}</span>
                 </li>
               ))}
             </ul>
 
             <div className="mt-3 border-t border-white/10 pt-3">
-              <p className="mb-1.5 text-[10px] font-medium uppercase tracking-[0.3em] text-amber-200/60">
-                AI hỗ trợ
-              </p>
+              <p className="mb-1.5 text-[10px] font-medium uppercase tracking-[0.3em] text-amber-200/60">AI hỗ trợ</p>
               <p className="text-[12px] text-white/65">{BOTS.join(" · ")}</p>
             </div>
           </motion.div>
