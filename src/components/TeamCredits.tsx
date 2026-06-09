@@ -20,6 +20,20 @@ export function TeamCredits() {
       >
         <div className="mb-3">
           <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-amber-200/80">
+            Tên Môn Học
+          </p>
+          <p className="text-[13px] font-medium text-white">MLN111</p>
+        </div>
+
+        <div className="mb-3">
+          <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-amber-200/80">
+            Tên Lớp
+          </p>
+          <p className="text-[13px] font-medium text-white">IA1908</p>
+        </div>
+
+        <div className="mb-3">
+          <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-amber-200/80">
             Nhóm thực hiện
           </p>
         </div>
