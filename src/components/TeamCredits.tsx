@@ -11,7 +11,7 @@ const TEAM = [
 const BOTS = ["Lovable", "Claude", "ChatGPT"];
 
 export function TeamCredits() {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
 
   return (
     <div className="fixed left-4 top-4 z-40 select-none font-sans">
