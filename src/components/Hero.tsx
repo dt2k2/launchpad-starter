@@ -39,21 +39,6 @@ export function Hero({ onStart }: { onStart: () => void }) {
         </div>
       </div>
 
-      {/* Team Members - Top Left */}
-      <div className="absolute left-6 top-6 text-left">
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1 }}
-          className="space-y-1 font-display text-sm tracking-wide text-amber-200/90"
-        >
-          <p className="mb-2 text-base font-semibold">Đội ngũ phát triển</p>
-          <p className="text-sm">SE192802 Lưu Ngọc Ngân Giang</p>
-          <p className="text-sm">SE161931 Bùi Đức Thắng</p>
-          <p className="text-sm">SE170105 Nguyễn Lê Đăng Khoa</p>
-        </motion.div>
-      </div>
-
       <div className="relative mx-auto flex min-h-screen max-w-6xl flex-col items-center justify-center px-6 text-center">
         <motion.div
           initial={{ opacity: 0, y: 10 }}
