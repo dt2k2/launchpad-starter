@@ -1,6 +1,5 @@
-import { useState } from "react";
-import { Users, X } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { Users } from "lucide-react";
+import { motion } from "framer-motion";
 
 const TEAM = [
   { id: "SE192802", name: "Lưu Ngọc Ngân Giang" },
